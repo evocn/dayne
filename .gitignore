@@ -1,3 +1,7 @@
 bin/.build
-.ini
+tags
+*.rdbg
+*.exe
+*.pdb
+*.ini
 
