@@ -23,7 +23,7 @@ draw_text :: (text: string, x: int, y: int,
         case .SMALL; the_font = *render_context.small_font;
     }
 
-    lines := split(text, "\n");
+    lines := split(text, "\n",, temp);
     for lines {
         render_text(
             the_font, it,
