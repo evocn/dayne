@@ -28,8 +28,6 @@ render :: (menu: Menu) {
 
 
 draw_game_state :: () {
-    print("%\n", render_context.haruhachi);
-
     draw_sprite(
         render_context.haruhachi,
         index = 0,
