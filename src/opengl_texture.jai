@@ -1,7 +1,7 @@
-// Umi
-// Texture
+// Dayne
+// OpenGL Textures
 // Alex Hartford
-// June 2023
+// February 2024
 
 bind :: (texture : Texture, bind_id : u32) {
 	bind_texture(texture.id, bind_id);

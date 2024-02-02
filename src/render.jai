@@ -4,7 +4,6 @@
 // February 2024
 
 render :: (menu: Menu) {
-
     // Render everything in this block to the framebuffer.
     {
         glBindFramebuffer(GL_FRAMEBUFFER, render_context.fbo);
@@ -29,10 +28,42 @@ render :: (menu: Menu) {
 
 
 draw_game_state :: () {
-    draw_spritesheet(
+    print("%\n", render_context.haruhachi);
+
+    draw_sprite(
+        render_context.haruhachi,
+        index = 0,
+        pixel = .{0, 0},
+        scale_factor = 1,
+    );
+
+    draw_sprite(
         render_context.spritesheet,
         index = 0,
-        pixel = .{30, 30},
+        pixel = .{PIXEL_WIDTH - 64, 0},
+        scale_factor = 4,
+    );
+
+    draw_sprite(
+        render_context.spritesheet,
+        index = 2,
+        pixel = .{PIXEL_WIDTH - 80, 0},
+        scale_factor = 1,
+        horizontal_flip = true,
+    );
+
+    draw_sprite(
+        render_context.spritesheet,
+        index = 1,
+        pixel = .{PIXEL_WIDTH - 96, 0},
+        scale_factor = 1,
+    );
+
+    draw_sprite(
+        render_context.spritesheet,
+        index = 2,
+        pixel = .{PIXEL_WIDTH - 112, 0},
+        scale_factor = 1,
     );
 }
 
@@ -40,12 +71,22 @@ draw_game_state :: () {
 draw_user_interface :: () {
     draw_text(
         "This is the user interface.", 
-        x = PIXEL_WIDTH  / 2, 
-        y = PIXEL_HEIGHT / 2,
+        x = PIXEL_WIDTH  * 3 / 4, 
+        y = PIXEL_HEIGHT * 3 / 4,
         alignment   = Alignment.CENTER,
         progress    = -1,
         font        = .MAIN,
         color       = green,
+    );
+
+    draw_text(
+        "Welcome to Dayne!", 
+        x = PIXEL_WIDTH  * 3 / 4,
+        y = PIXEL_HEIGHT * 3 / 4 + 10,
+        alignment   = Alignment.RIGHT,
+        progress    = -1,
+        font        = .SMALL,
+        color       = yellow,
     );
 }
 
@@ -77,17 +118,17 @@ render_menu :: (using menu: Menu) {
 draw_menu_element :: (using element: *Menu_Element, height : int, color := white) {
     if kind == {
         case .GO;
-            using cast(*Go_Element)element;
+            using cast(*Menu_Element_Go)element;
             draw_text(name, 1, height, color=color);
 
         case .CHECKBOX;
-            using cast(*Checkbox_Element)element;
+            using cast(*Menu_Element_Checkbox)element;
             str := "Off";
             if value.* then str = "On";
             draw_text(tprint("% - %", name, str), 1, height, color=color);
 
         case .SLIDER;
-            using cast(*Slider_Element)element;
+            using cast(*Menu_Element_Slider)element;
             draw_text(tprint("% - %", name, value), 1, height, color=color);
     }
 }

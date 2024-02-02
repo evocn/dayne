@@ -1,7 +1,7 @@
 // Dayne
 // Menu
 // Alex Hartford
-// July 2023
+// February 2024
 
 menu_initialize :: () -> Menu {
     a: Allocator;
@@ -15,30 +15,30 @@ menu_initialize :: () -> Menu {
         elements.allocator = a;
         name = "Pause";
 
-        resume := New(Go_Element,, a);
+        resume := New(Menu_Element_Go,, a);
         resume.name = "Resume";
         resume.callback = resume_game;
         array_add(*elements, cast(*Menu_Element)resume);
 
-        screen_mode := New(Checkbox_Element,, a);
+        screen_mode := New(Menu_Element_Checkbox,, a);
         screen_mode.name = "Fullscreen";
         screen_mode.callback = set_screen_mode_according_to_fullscreen_variable;
-        screen_mode.value = *fullscreen;
+        screen_mode.value = *render_context.fullscreen;
         array_add(*elements, cast(*Menu_Element)screen_mode);
 
-        sfx := New(Slider_Element,, a);
+        sfx := New(Menu_Element_Slider,, a);
         sfx.name = "Sounds";
         sfx.value = ma_sound_group_get_volume(*audio_context.sfx_group);
         sfx.callback = set_sfx_volume;
         array_add(*elements, cast(*Menu_Element)sfx);
 
-        music := New(Slider_Element,, a);
+        music := New(Menu_Element_Slider,, a);
         music.name = "Music";
         music.value = ma_sound_group_get_volume(*audio_context.music_group);
         music.callback = set_music_volume;
         array_add(*elements, cast(*Menu_Element)music);
 
-        quit := New(Go_Element,, a);
+        quit := New(Menu_Element_Go,, a);
         quit.name = "Quit";
         quit.callback = quit_game;
         array_add(*elements, cast(*Menu_Element)quit);
@@ -48,15 +48,17 @@ menu_initialize :: () -> Menu {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Elements
+////////////////////////////////////////////////////////////////////////////////
 
-Go_Element :: struct {
+Menu_Element_Go :: struct {
     using #as menu_element: Menu_Element;
     kind = .GO;
 
     callback : #type ();
 }
 
-Checkbox_Element :: struct {
+Menu_Element_Checkbox :: struct {
     using #as menu_element: Menu_Element;
     kind = .CHECKBOX;
 
@@ -65,7 +67,7 @@ Checkbox_Element :: struct {
     callback : #type ();
 }
 
-Slider_Element :: struct {
+Menu_Element_Slider :: struct {
     using #as menu_element: Menu_Element;
     kind = .SLIDER;
 
@@ -95,6 +97,10 @@ Menu :: struct {
     elements : [..] *Menu_Element;
     element_index : int;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Functions
+////////////////////////////////////////////////////////////////////////////////
 
 resolve_menu_inputs :: (menu: *Menu, input: User_Input) {
     if input.start.just_pressed || input.east.just_pressed {
@@ -135,12 +141,12 @@ resolve_menu_inputs :: (menu: *Menu, input: User_Input) {
 toggle_menu_element :: (using element: *Menu_Element) {
     if kind == {
         case .GO;
-            using cast(*Go_Element)element;
+            using cast(*Menu_Element_Go)element;
             callback();
             play_sfx("click");
 
         case .CHECKBOX;
-            using cast(*Checkbox_Element)element;
+            using cast(*Menu_Element_Checkbox)element;
             value.* = !(value.*);
             callback();
             play_sfx("click");
@@ -159,13 +165,13 @@ nudge_menu_element :: (using element: *Menu_Element, left := false) {
             // Don't do anything.
 
         case .CHECKBOX;
-            using cast(*Checkbox_Element)element;
+            using cast(*Menu_Element_Checkbox)element;
             value.* = !(value.*);
             callback();
-            play_sfx("choose");
+            play_sfx("click");
 
         case .SLIDER;
-            using cast(*Slider_Element)element;
+            using cast(*Menu_Element_Slider)element;
             if left {
                 value = clamp(value - increment, min, max);
                 callback(value);
@@ -174,14 +180,16 @@ nudge_menu_element :: (using element: *Menu_Element, left := false) {
                 value = clamp(value + increment, min, max);
                 callback(value);
             }
+
+            play_sfx("click");
     }
 
     save_tweaks_file("all");
 }
 
-//
-// Callbacks for Menu Elements /////////////////////////////////////////////////
-//
+////////////////////////////////////////////////////////////////////////////////
+// Callbacks for Menu Elements
+////////////////////////////////////////////////////////////////////////////////
 resume_game :: () {
     return_to_prior_scene();
 }
@@ -192,36 +200,4 @@ quit_game :: () {
 
 go_to_settings :: () {
     switch_scene(.MENU);
-}
-
-// Fullscreen stuff
-
-go_fullscreen :: () {
-    display_mode : SDL_DisplayMode;
-    SDL_GetDesktopDisplayMode(0, *display_mode);
-
-    SDL_SetWindowResizable(window, SDL_FALSE);
-    SDL_SetWindowBordered(window, SDL_FALSE);
-    SDL_SetWindowPosition(window, 0, 0);
-    SDL_SetWindowSize(window, display_mode.w, display_mode.h);
-
-    SDL_GetWindowDisplayMode(window, *display_mode);
-}
-
-go_windowed :: () {
-    display_mode : SDL_DisplayMode;
-    SDL_GetDesktopDisplayMode(0, *display_mode);
-
-    SDL_SetWindowResizable(window, SDL_TRUE);
-    SDL_SetWindowBordered(window, SDL_TRUE);
-    SDL_SetWindowSize(window, WINDOW_WIDTH, WINDOW_HEIGHT);
-    SDL_SetWindowPosition(window, display_mode.w / 2 - WINDOW_WIDTH / 2, display_mode.h / 2 - WINDOW_HEIGHT / 2);
-    SDL_SetWindowResizable(window, SDL_FALSE);
-
-    SDL_GetWindowDisplayMode(window, *display_mode);
-}
-
-set_screen_mode_according_to_fullscreen_variable :: () {
-    if fullscreen then go_fullscreen();
-    else go_windowed();
 }

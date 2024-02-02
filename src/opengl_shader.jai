@@ -1,10 +1,10 @@
 // Dayne
-// Shader
+// OpenGL Shaders
 // Alex Hartford
 // February 2024
 
-use_tile_shader :: () -> Shader {
-    shader := render_context.shader;
+use_sprite_shader :: () -> Shader {
+    shader := render_context.sprite_shader;
     use_shader(shader);
 
     orthographic := orthographic_projection_matrix(0, 1, 0, 1, -1, 1);
@@ -23,16 +23,6 @@ use_text_shader :: () -> Shader {
     return shader;
 }
 
-use_sprite_shader :: () -> Shader {
-    shader := render_context.sprite_shader;
-    use_shader(shader);
-
-    orthographic := orthographic_projection_matrix(0, 1, 0, 1, -1, 1);
-    set_mat4(shader, "projection", orthographic);
-
-    return shader;
-}
-
 use_basic_shader :: () -> Shader {
     shader := render_context.basic_shader;
     use_shader(shader);
@@ -46,8 +36,6 @@ use_basic_shader :: () -> Shader {
 //
 //
 //
-
-shaders_path :: "shaders";
 
 Shader :: GLuint;
 

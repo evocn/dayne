@@ -3,17 +3,8 @@
 // Alex Hartford
 // February 2024
 
-////////////////////////////////////////////////////////////////////////////////
-
+VERSION :: 0;
 DEBUG_MEMORY :: true;
-
-//WINDOW_WIDTH  :: 3840;
-//WINDOW_HEIGHT :: 2160;
-WINDOW_WIDTH  :: 2400;
-WINDOW_HEIGHT :: 1600;
-
-PIXEL_WIDTH :: 400;
-PIXEL_HEIGHT :: 300;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -82,15 +73,8 @@ main :: () {
 // Global Variables
 ////////////////////////////////////////////////////////////////////////////////
 
-// Loose Globals
-window_width  : s32 = WINDOW_WIDTH;
-window_height : s32 = WINDOW_HEIGHT;
-
-fullscreen: bool;
 running := true;
 
-
-// Global Systems
 scratch_memory  : Flat_Pool;
 
 window          : *SDL_Window;
@@ -106,11 +90,12 @@ render_context  : Render_Context;
 // File Paths
 ////////////////////////////////////////////////////////////////////////////////
 
-assets_path     :: "assets";
+sprites_path    :: "assets/sprites";
 fonts_path      :: "assets/fonts";
 music_path      :: "assets/audio/music";
-ambience_path   :: "assets/audio/ambiences";
 sfx_path        :: "assets/audio/sfx";
+
+shaders_path    :: "shaders";
 
 boards_path     :: "boards";
 tweaks_path     :: ".";
@@ -133,12 +118,13 @@ System         :: #import "System";         // For get_path_of_running_executabl
 
 
 // Third Party Dependencies
-#import "stb_image";
 #import "SDL";
 #import "GL";
 ImGui :: #import "ImGui";
+#import "stb_image";
 #import "freetype-2.12.1";
 #import "miniaudio";
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Loads
@@ -146,12 +132,14 @@ ImGui :: #import "ImGui";
 
 // Core
 #load "types.jai";
-#load "state.jai";
+#load "window.jai";
 #load "initialize.jai";
+
 #load "input.jai";
 #load "simulate.jai";
 #load "render.jai";
 
+#load "state.jai";
 
 // Subsystems
 #load "text.jai";
@@ -164,8 +152,7 @@ ImGui :: #import "ImGui";
 
 // Rendering
 #load "opengl_rendering.jai";
-#load "shader.jai";
-#load "texture.jai";
+#load "opengl_shader.jai";
+#load "opengl_texture.jai";
 #load "sprite.jai";
-#load "spritesheet.jai";
 #load "color.jai";

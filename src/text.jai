@@ -3,9 +3,6 @@
 // Alex Hartford
 // February 2024
 
-////////////////////////////////////////////////////////////////////////////////
-// A simple module used to generate OpenGL-Renderable fonts from ttf/otf files and draw text.
-
 draw_text :: (text: string, x: int, y: int, 
               alignment := Alignment.LEFT,
               progress := -1,

@@ -1,41 +1,82 @@
-// Umi
+// Dayne
 // Sprite
 // Alex Hartford
-// July 2023
-
+// February 2024
 
 Sprite :: struct {
     texture : Texture = ---;
+    tile_size_in_pixels : int;
+    columns, rows : int;
 }
 
-make_sprite :: (using sprite : *Sprite, full_path : string, tiled := true) -> success: bool {
-    texture =, success := load_texture(full_path);
-    return success;
-}
+draw_sprite :: (
+                sprite : Sprite,
+                pixel : Pair,
+                index: int = 0,
+                scale_factor := 1,
+                horizontal_flip := false,
+                use_color_override := false, color_override := white
+               )
+{
+    shader := use_sprite_shader();
 
-draw_sprite :: (using sprite : Sprite, x_offset := 0, y_offset := 0, right := false, use_color_override := false, color_override := black) {
-    bind(sprite.texture, 0);
-    shader := render_context.sprite_shader;
+    assert(index >= 0 && index < (sprite.columns * sprite.rows));
 
-    model := Matrix4_Identity;
+    // Find the right uv coordinates for the texture.
+    {
+        col := index % sprite.columns;
+        row := index / sprite.columns;
 
-    if right {
-        translation_vector := Vector3.{cast(float)(PIXEL_WIDTH - texture.width) / PIXEL_WIDTH + cast(float)x_offset / PIXEL_WIDTH, cast(float)(y_offset) / PIXEL_HEIGHT, 0};
-        translate(*model, translation_vector);
+        spritesheet_offset := Vector2.{col / cast(float)sprite.columns, row / cast(float)sprite.rows};
+        set_vec2(shader, "spritesheet_offset", spritesheet_offset);
+        relative_sheet_scale := Vector2.{1.0 / sprite.columns, 1.0 / sprite.rows};
+        set_vec2(shader, "relative_sheet_scale", relative_sheet_scale);
     }
-    else {
-        translation_vector := Vector3.{-cast(float)x_offset / PIXEL_WIDTH, cast(float)(y_offset) / PIXEL_HEIGHT, 0};
-        translate(*model, translation_vector);
+
+    // Scale / Translate for the screen
+    {
+        model := Matrix4_Identity;
+            x_translation := pixel.x / cast(float)PIXEL_WIDTH;
+            y_translation := pixel.y / cast(float)PIXEL_HEIGHT;
+            translation_vector := Vector3.{x_translation, y_translation, 0};
+
+            x_scale := scale_factor / (cast(float)PIXEL_WIDTH  / sprite.tile_size_in_pixels);
+            y_scale := scale_factor / (cast(float)PIXEL_HEIGHT / sprite.tile_size_in_pixels);
+            scale_vector := Vector3.{x_scale, y_scale, 1};
+
+            translate(*model, translation_vector);
+            scale(*model, scale_vector);
+        set_mat4(shader, "model", model);
     }
 
-    scale_vector := Vector3.{cast(float)texture.width / PIXEL_WIDTH, cast(float)texture.height / PIXEL_HEIGHT, 1};
-    scale(*model, scale_vector);
 
-    set_mat4(shader, "model", model);
+    set_bool(shader, "horizontal_flip", horizontal_flip);
 
+
+    // @TODO?
     set_vec4(shader, "color_override", color_override);
-    set_bool(shader, "horizontal_flip", right);
     set_bool(shader, "use_color_override", use_color_override);
 
+
+    bind(sprite.texture, 0);
     draw_quad(render_context.quad);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+make_sprite :: (sprite : *Sprite, full_path : string, tile_size_in_pixels : int = -1) -> success: bool {
+    success : bool;
+    sprite.texture, success = load_texture(full_path);
+    if tile_size_in_pixels == -1 {
+        sprite.tile_size_in_pixels = max(sprite.texture.height, sprite.texture.width);
+        sprite.columns = 1;
+        sprite.rows = 1;
+    }
+    else {
+        sprite.tile_size_in_pixels = tile_size_in_pixels;
+        sprite.columns = sprite.texture.width  / tile_size_in_pixels;
+        sprite.rows    = sprite.texture.height / tile_size_in_pixels;
+    }
+
+    return success;
 }

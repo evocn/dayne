@@ -4,20 +4,24 @@
 // February 2024
 
 initialize_everything :: () {
+    set_working_directory_to_base_folder :: () {
+        executable_path := path_strip_filename(System.get_path_of_running_executable());
+        set_working_directory(tprint("%/../", executable_path));
+    }
     set_working_directory_to_base_folder();
+
 
     initialize_sdl();
     initialize_gl();
     initialize_imgui();
 
-    initialize_rendering_structures();
 
-    initialize_images();
+    initialize_render_context();
 
-    initialize_fonts();
+    initialize_audio_context();
 
-    initialize_audio();
 
+    // Tweaks File
     apply_default_settings();
     tweaks_file_exists := load_tweaks_file_and_apply_results("all");
     if tweaks_file_exists then log("Applied tweaks file settings.\n");
@@ -31,7 +35,7 @@ initialize_sdl :: () {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 
     window = SDL_CreateWindow("Dayne",
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_width, window_height,
+        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, render_context.window_width, render_context.window_height,
         SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN);
 
     if !window {
@@ -71,7 +75,7 @@ initialize_imgui :: () {
     ImGui_ImplSdl_Init(window);
 
     io := ImGui.GetIO();
-    io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", window_height / 50.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
+    io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", render_context.window_height / 50.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
 
     // Settings
     {
@@ -81,30 +85,74 @@ initialize_imgui :: () {
 }
 
 
-initialize_audio :: () {
-    result := ma_engine_init(null, *audio_context.engine);
+initialize_render_context :: () {
+    using render_context;
+
+    // Shaders
+    basic_shader = make_shader("screen.vs", "basic.fs");
+    sprite_shader= make_shader("screen.vs", "texture.fs");
+    text_shader  = make_shader("text.vs", "text.fs");
+    quad_shader  = make_shader("quad.vs", "quad.fs");
+
+    // Primitives
+    initialize_quad_rendering_objects(*quad);
+
+    // Buffers
+    initialize_framebuffer();
+
+    initialize_fonts :: () {
+        initialize_freetype();
+
+        initialize_font(*render_context.main_font,  "bm.ttf", 9);
+        initialize_font(*render_context.small_font, "gosub.otf", 6);
+
+        FT_Done_FreeType(ft);
+    }
+    initialize_fonts();
+
+
+    initialize_images :: () {
+        success : bool;
+
+        // Sprites
+        full_path := tprint("%/sheet.png", sprites_path);
+        success = make_sprite(*render_context.spritesheet, full_path, 16);
+        assert(success);
+
+        full_path = tprint("%/haruhachi.png", sprites_path);
+        success = make_sprite(*render_context.haruhachi, full_path, -1);
+        assert(success);
+    }
+    initialize_images();
+}
+
+
+initialize_audio_context :: () {
+    using audio_context;
+
+    result := ma_engine_init(null, *engine);
     if result != .MA_SUCCESS {
         log_error("Unable to initialize the miniaudio engine!\n");
         assert(false);
     }
 
+    // Sound Groups
     {
-        // Sound Groups
-        result = ma_sound_group_init(*audio_context.engine, 0, null, *audio_context.music_group);
+        result = ma_sound_group_init(*engine, 0, null, *music_group);
         if result != .MA_SUCCESS {
             log_error("Unable to initialize one or more sound groups.\n");
             assert(false);
         }
 
-        result = ma_sound_group_init(*audio_context.engine, 0, null, *audio_context.sfx_group);
+        result = ma_sound_group_init(*engine, 0, null, *sfx_group);
         if result != .MA_SUCCESS {
             log_error("Unable to initialize one or more sound groups.\n");
             assert(false);
         }
     }
 
+    // SFX
     {
-        // SFX
         sfx_paths := File_Utilities.file_list(sfx_path, recursive = true, follow_symlinks = false);
         for sfx_paths {
             load_sfx(it);
@@ -114,8 +162,8 @@ initialize_audio :: () {
         array_reset(*sfx_paths);
     }
 
+    // Music
     {
-        // Music
         music_paths := File_Utilities.file_list(music_path, recursive = true, follow_symlinks = false);
         for music_paths {
             load_music(it);
@@ -124,61 +172,6 @@ initialize_audio :: () {
 
         array_reset(*music_paths);
     }
-}
-
-initialize_fonts :: () {
-    initialize_freetype();
-
-    initialize_font(*render_context.main_font,  "bm.ttf", 9);
-    initialize_font(*render_context.small_font, "gosub.otf", 7);
-
-    FT_Done_FreeType(ft);
-}
-
-initialize_rendering_structures :: () {
-    using render_context;
-
-    // Shaders
-    basic_shader = make_shader("screen.vs", "basic.fs");
-    shader       = make_shader("screen.vs", "texture.fs");
-    text_shader  = make_shader("text.vs", "text.fs");
-    quad_shader  = make_shader("quad.vs", "quad.fs");
-    sprite_shader= make_shader("sprite.vs", "texture.fs");
-
-    // Primitives
-    initialize_quad_rendering_objects(*quad);
-
-    // Buffers
-    initialize_framebuffer();
-}
-
-initialize_images :: () {
-    success : bool;
-
-    // Spritesheets
-    full_path := tprint("%/sheet.png", assets_path);
-    success = make_spritesheet(*render_context.spritesheet, full_path, 16);
-    assert(success);
-}
-
-//
-// Various Configuration Functions /////////////////////////////////////////////
-//
-
-set_working_directory_to_base_folder :: () {
-	executable_path := path_strip_filename(System.get_path_of_running_executable());
-	set_working_directory(tprint("%/../", executable_path));
-}
-
-deactivate_mouse :: () {
-    SDL_ShowCursor(0);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-}
-
-activate_mouse :: () {
-    SDL_ShowCursor(1);
-    SDL_SetRelativeMouseMode(SDL_FALSE);
-    SDL_WarpMouseInWindow(window, window_width / 2, window_height / 2);
 }
 
 //

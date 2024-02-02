@@ -3,25 +3,26 @@
 // Alex Hartford
 // February 2024
 
-Render_Context :: struct {
+OpenGL_Context :: struct {
     using shaders : struct {
         basic_shader    : Shader;
-        shader          : Shader;
+        sprite_shader   : Shader;
         text_shader     : Shader;
         quad_shader     : Shader;
-        sprite_shader   : Shader;
     }
-
-    main_font  : Font;
-    small_font : Font;
 
     // Primitives for drawing things
         quad : Quad;
 
-        spritesheet : Spritesheet;
+        spritesheet : Sprite;
+        haruhachi : Sprite;
 
         fbo : GLuint;
         render_texture : GLuint;
+
+    // Fonts
+        main_font  : Font;
+        small_font : Font;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -185,14 +186,28 @@ initialize_framebuffer :: () {
 }
 
 draw_screen_quad :: (shader: Shader) {
+    viewport_portion_of_the_screen_in_x := cast(float)render_context.viewport_height / render_context.window_height;
+    viewport_portion_of_the_screen_in_y := cast(float)render_context.viewport_width / render_context.window_width;
+
     model := Matrix4_Identity;
+        // Scale
+        default_scale_x :: 2;
+        default_scale_y :: 2;
 
-    translation_vector := Vector3.{-1, -1, 1};
-    translate(*model, translation_vector);
+        scale_x : float = default_scale_x * viewport_portion_of_the_screen_in_x;
+        scale_y : float = default_scale_y * viewport_portion_of_the_screen_in_y;
+        scale_vector := Vector3.{scale_y, scale_x, 1};
 
-    scale_vector := Vector3.{2, 2, 1};
-    scale(*model, scale_vector);
+        // Translate
+        default_translate_x :: -1;
+        default_translate_y :: -1;
 
+        translate_x : float = default_translate_x * viewport_portion_of_the_screen_in_y;
+        translate_y : float = xx default_translate_y;
+        translation_vector := Vector3.{translate_x, translate_y, 1};
+
+        translate(*model, translation_vector);
+        scale(*model, scale_vector);
     set_mat4(shader, "model", model);
 
     draw_quad(render_context.quad);
@@ -201,8 +216,8 @@ draw_screen_quad :: (shader: Shader) {
 // Renders the framebuffer as a texture on a screen-space quad.
 render_framebuffer_to_screen :: () {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, xx window_width, xx window_height);
-    glClearColor(1.0, 1.0, 0.0, 1.0);
+    glViewport(0, 0, xx render_context.window_width, xx render_context.window_height);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
     shader := render_context.quad_shader;

@@ -156,13 +156,16 @@ handle_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
                 assert(gamepad != null);
 
             case SDL_JOYDEVICEREMOVED;
-                log("Gamepad removed!");
+                log("Gamepad removed! ... Just figured you'd like to know <:");
                 gamepad = null;
 
             case SDL_WINDOWEVENT;
                 if event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED {
-                    window_width  = event.window.data1;
-                    window_height = event.window.data2;
+                    render_context.window_width  = event.window.data1;
+                    render_context.window_height = event.window.data2;
+
+                    render_context.viewport_height = render_context.window_height;
+                    render_context.viewport_width  = cast(s32)(render_context.viewport_height * GAME_ASPECT_RATIO);
                 }
         }
     }
