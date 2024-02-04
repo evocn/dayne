@@ -116,11 +116,11 @@ initialize_render_context :: () {
 
         // Sprites
         full_path := tprint("%/sheet.png", sprites_path);
-        success = make_sprite(*render_context.spritesheet, full_path, 16);
+        success = make_sprite_sheet(*render_context.spritesheet, full_path, 16, 16);
         assert(success);
 
         full_path = tprint("%/haruhachi.png", sprites_path);
-        success = make_sprite(*render_context.haruhachi, full_path, -1);
+        success = make_sprite(*render_context.haruhachi, full_path);
         assert(success);
     }
     initialize_images();

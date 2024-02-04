@@ -6,77 +6,6 @@
 VERSION :: 0;
 DEBUG_MEMORY :: true;
 
-////////////////////////////////////////////////////////////////////////////////
-
-main :: () {
-    initialize_everything();
-
-    input: User_Input;
-    gamepad: SDL_Joystick;
-    player_interface: Player_Interface;
-
-    menu := menu_initialize();
-
-    play_music("bach");
-
-
-
-
-
-
-
-
-
-    dt, last_frame := 0.0;
-    while running {
-        {
-            // Frame Startup
-        }
-
-        handle_input(*input, *gamepad);
-        defer post_frame_update(*input);
-
-        simulate(
-            player_interface, input, 
-            *menu,
-            dt
-        );
-
-        render(menu);
-
-        if program_state.current_scene == .EDITOR {
-            update_and_draw_editor();
-            ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
-        }
-
-        SDL_GL_SwapWindow(window);
-        SDL_Delay(1);
-
-        {
-            // Frame Cleanup
-
-            current_time := cast(float32)seconds_since_init();
-            dt = current_time - last_frame;
-            last_frame = current_time;
-
-            reset_temporary_storage();
-        }
-    }
-
-    cleanup_for_shutdown(*menu);
-
-    #if DEBUG_MEMORY then report_memory_leaks();
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Global Variables
-////////////////////////////////////////////////////////////////////////////////
-
-running := true;
-
-scratch_memory  : Flat_Pool;
-
 window          : *SDL_Window;
 gl_context      : *SDL_GLContext;
 imgui_context   : *ImGui.ImGuiContext;
@@ -86,8 +15,11 @@ program_state   : Program_State;
 audio_context   : Audio_Context;
 render_context  : Render_Context;
 
-////////////////////////////////////////////////////////////////////////////////
-// File Paths
+
+// Loose Globals
+scratch_memory  : Flat_Pool;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 sprites_path    :: "assets/sprites";
@@ -99,6 +31,91 @@ shaders_path    :: "shaders";
 
 boards_path     :: "boards";
 tweaks_path     :: ".";
+
+////////////////////////////////////////////////////////////////////////////////
+
+main :: () {
+    initialize_everything();
+
+    gamepad: SDL_Joystick;
+
+    main_menu := menu_initialize();
+
+    play_music("bach");
+
+    game_state : Game_State;
+    _ := array_add(*game_state.players);
+
+
+
+
+
+
+
+
+    dt, last_frame := 0.0;
+    while program_state.running {
+        ////////////////////////////////////////////////////////////////////////////////
+        // Frame Startup
+        {
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // Input
+        gather_input(*game_state.players[0].input, *gamepad);
+        defer {
+            post_frame_update(*game_state.players[0].input);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // Simulate
+        {
+            rainbow_color = update_rainbow_color(dt);
+
+
+            // Dispatch based on program state
+            if #complete program_state.current_scene == {
+                case .GAME;
+                    simulate(*game_state, dt);
+
+                case .MENU;
+                    simulate_menu(*main_menu, *game_state.players[0].input);
+
+                case .EDITOR;
+                    simulate_editor(*game_state.players[0].input);
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // Render
+        render(
+            main_menu
+        );
+
+        if program_state.current_scene == .EDITOR {
+            update_and_draw_editor();
+            ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
+        }
+
+        SDL_GL_SwapWindow(window);
+        SDL_Delay(1);
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // Frame Cleanup
+        {
+
+            current_time := cast(float32)seconds_since_init();
+            dt = current_time - last_frame;
+            last_frame = current_time;
+
+            reset_temporary_storage();
+        }
+    }
+
+    cleanup_for_shutdown(*main_menu);
+
+    #if DEBUG_MEMORY then report_memory_leaks();
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,6 +157,8 @@ ImGui :: #import "ImGui";
 #load "render.jai";
 
 #load "state.jai";
+
+#load "player.jai";
 
 // Subsystems
 #load "text.jai";

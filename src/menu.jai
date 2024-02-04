@@ -102,40 +102,6 @@ Menu :: struct {
 // Functions
 ////////////////////////////////////////////////////////////////////////////////
 
-resolve_menu_inputs :: (menu: *Menu, input: User_Input) {
-    if input.start.just_pressed || input.east.just_pressed {
-        return_to_prior_scene();
-        play_sfx("click");
-    }
-
-    if input.up.just_pressed {
-        menu.element_index -= 1;
-        if menu.element_index < 0 {
-            menu.element_index += 1;
-        }
-        play_sfx("click");
-    }
-    if input.down.just_pressed {
-        menu.element_index += 1;
-        if menu.element_index >= menu.elements.count {
-            menu.element_index -= 1;
-        }
-        play_sfx("click");
-    }
-    if input.left.just_pressed {
-        nudge_menu_element(menu.elements[menu.element_index], left=true);
-        play_sfx("click");
-    }
-    if input.right.just_pressed {
-        nudge_menu_element(menu.elements[menu.element_index]);
-        play_sfx("click");
-    }
-
-    if input.south.just_pressed {
-        toggle_menu_element(menu.elements[menu.element_index]);
-    }
-}
-
 // This could return false if we want there to be menu options that bonk on failure.
 // Not sure what that would be useful for, just figured I'd mention it in case it became useful.
 toggle_menu_element :: (using element: *Menu_Element) {
@@ -195,7 +161,7 @@ resume_game :: () {
 }
 
 quit_game :: () {
-    running = false;
+    program_state.running = false;
 }
 
 go_to_settings :: () {

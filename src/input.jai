@@ -57,13 +57,14 @@ User_Input :: struct {
 //
 //
 
-handle_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
+gather_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
     event : SDL_Event;
     while SDL_PollEvent(*event) {
         ImGui_ImplSdl_ProcessEvent(*event);
         if event.type == {
             case SDL_QUIT;
-                running = false;
+                program_state.running = false;
+
             case SDL_KEYUP;
                 if program_state.imgui_capturing_keyboard return;
 

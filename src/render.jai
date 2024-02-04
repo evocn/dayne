@@ -37,29 +37,29 @@ draw_game_state :: () {
 
     draw_sprite(
         render_context.spritesheet,
-        index = 0,
+        index = 4,
         pixel = .{PIXEL_WIDTH - 64, 0},
         scale_factor = 4,
-    );
-
-    draw_sprite(
-        render_context.spritesheet,
-        index = 2,
-        pixel = .{PIXEL_WIDTH - 80, 0},
-        scale_factor = 1,
         horizontal_flip = true,
     );
 
     draw_sprite(
         render_context.spritesheet,
-        index = 1,
+        index = 5,
+        pixel = .{PIXEL_WIDTH - 80, 0},
+        scale_factor = 1,
+    );
+
+    draw_sprite(
+        render_context.spritesheet,
+        index = 6,
         pixel = .{PIXEL_WIDTH - 96, 0},
         scale_factor = 1,
     );
 
     draw_sprite(
         render_context.spritesheet,
-        index = 2,
+        index = 7,
         pixel = .{PIXEL_WIDTH - 112, 0},
         scale_factor = 1,
     );

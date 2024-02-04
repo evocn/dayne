@@ -3,9 +3,6 @@
 // Alex Hartford
 // February 2024
 
-resolve_editor_inputs :: (input: User_Input) {
-}
-
 update_and_draw_editor :: () {
     io := ImGui.GetIO();
     program_state.imgui_capturing_mouse     = io.WantCaptureMouse;

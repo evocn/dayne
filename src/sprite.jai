@@ -5,7 +5,7 @@
 
 Sprite :: struct {
     texture : Texture = ---;
-    tile_size_in_pixels : int;
+    tile_width_in_pixels, tile_height_in_pixels : int;
     columns, rows : int;
 }
 
@@ -40,8 +40,8 @@ draw_sprite :: (
             y_translation := pixel.y / cast(float)PIXEL_HEIGHT;
             translation_vector := Vector3.{x_translation, y_translation, 0};
 
-            x_scale := scale_factor / (cast(float)PIXEL_WIDTH  / sprite.tile_size_in_pixels);
-            y_scale := scale_factor / (cast(float)PIXEL_HEIGHT / sprite.tile_size_in_pixels);
+            x_scale := scale_factor / (cast(float)PIXEL_WIDTH  / sprite.tile_width_in_pixels);
+            y_scale := scale_factor / (cast(float)PIXEL_HEIGHT / sprite.tile_height_in_pixels);
             scale_vector := Vector3.{x_scale, y_scale, 1};
 
             translate(*model, translation_vector);
@@ -64,19 +64,26 @@ draw_sprite :: (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-make_sprite :: (sprite : *Sprite, full_path : string, tile_size_in_pixels : int = -1) -> success: bool {
+make_sprite :: (sprite: *Sprite, full_path: string) -> success: bool {
     success : bool;
     sprite.texture, success = load_texture(full_path);
-    if tile_size_in_pixels == -1 {
-        sprite.tile_size_in_pixels = max(sprite.texture.height, sprite.texture.width);
-        sprite.columns = 1;
-        sprite.rows = 1;
-    }
-    else {
-        sprite.tile_size_in_pixels = tile_size_in_pixels;
-        sprite.columns = sprite.texture.width  / tile_size_in_pixels;
-        sprite.rows    = sprite.texture.height / tile_size_in_pixels;
-    }
+
+    sprite.tile_width_in_pixels  = sprite.texture.width;
+    sprite.tile_height_in_pixels = sprite.texture.height;
+    sprite.columns = 1;
+    sprite.rows = 1;
+
+    return success;
+}
+
+make_sprite_sheet :: (sprite : *Sprite, full_path : string, tile_width_in_pixels : int, tile_height_in_pixels : int) -> success: bool {
+    success : bool;
+    sprite.texture, success = load_texture(full_path);
+
+    sprite.tile_width_in_pixels  = tile_width_in_pixels;
+    sprite.tile_height_in_pixels = tile_height_in_pixels;
+    sprite.columns = sprite.texture.width  / tile_width_in_pixels;
+    sprite.rows    = sprite.texture.height / tile_height_in_pixels;
 
     return success;
 }
