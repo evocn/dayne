@@ -175,3 +175,7 @@ ImGui :: #import "ImGui";
 #load "opengl_texture.jai";
 #load "sprite.jai";
 #load "color.jai";
+
+
+// Gameplay
+#load "game.jai";
