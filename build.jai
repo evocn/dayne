@@ -45,15 +45,19 @@ build :: () {
 
     // Create a manifest and an icon file.
 	#if OS == .WINDOWS {
+        icons_path :: "assets/misc";
+
 		exe_name := sprint("%/%.exe", options.output_path, options.output_executable_name);
 		defer free(exe_name);
 
-		ico_data := create_ico_file_from_bitmap_filename("assets/misc/icon.png");
+        ico_data := create_ico_file_from_bitmap_filename(tprint("%/icon.png", icons_path));
 		defer free(ico_data);
-		set_icon_by_data(exe_name, ico_data);
-        write_entire_file("assets/misc/icon.ico", ico_data);
 
-		print("Icon     added: %\n", set_icon_by_filename(exe_name, "assets/misc/icon.ico"));
+		set_icon_by_data(exe_name, ico_data);
+
+        generated_icon_file_path := tprint("%/generated.ico", icons_path);
+        write_entire_file(generated_icon_file_path, ico_data);
+		print("Icon     added: %\n", set_icon_by_filename(exe_name, generated_icon_file_path));
 
 		manifest_options: Manifest_Options;
 		print("Manifest added: %\n", add_manifest_to_executable(exe_name, manifest_options));

@@ -76,11 +76,14 @@ initialize_imgui :: () {
     imgui_context = ImGui.CreateContext();
     ImGui_ImplSdl_Init(window);
 
-    io := ImGui.GetIO();
-    io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", render_context.window_height / 40.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
-
     // Settings
     {
+        io := ImGui.GetIO();
+        io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", render_context.window_height / 40.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
+
+        // Default location
+        io.IniFilename = "bin/imgui.ini";
+
         ImGui.StyleColorsClassic();
         //ImGui.StyleColorsLight();
     }

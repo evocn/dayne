@@ -34,7 +34,11 @@ render :: (game: Game) {
 
 
 draw_game_state :: (game: Game) {
-    draw_entity(game.entity);
+    for entity: game.entities {
+        if !entity then continue;
+
+        draw_entity(entity.*);
+    }
 }
 
 
@@ -61,7 +65,6 @@ draw_user_interface :: (game: Game) {
 
 draw_entity :: (entity: Entity) {
     pixel := world_space_to_screen_pixel(entity.position);
-    print("%\n", pixel);
 
     draw_sprite(
         render_context.spritesheet,

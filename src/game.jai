@@ -8,6 +8,7 @@ Game :: struct {
 
     score : int;
 
-    entity : Entity;
+    MAX_ENTITIES :: 1000;
+    entities : [MAX_ENTITIES] *Entity;
 }
 

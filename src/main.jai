@@ -31,7 +31,7 @@ sfx_path        :: "assets/audio/sfx";
 shaders_path    :: "shaders";
 
 boards_path     :: "boards";
-tweaks_path     :: ".";
+tweaks_path     :: "bin";
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -48,7 +48,9 @@ main :: () {
     _ := array_add(*game.players);
 
 
-    game.entity = .{
+    game.entities[0] = New(Entity);
+
+    game.entities[0].* = .{
         sprite = 1,
         color  = pink,
 
@@ -138,6 +140,7 @@ using Basic :: #import "Basic"()(MEMORY_DEBUGGER=DEBUG_MEMORY);
 #import "String";
 #import "Math";
 #import "Hash_Table";
+#import "Bucket_Array";
 #import "File";
 #import "Text_File_Handler";
 File_Utilities :: #import "File_Utilities"; // For file_list()
