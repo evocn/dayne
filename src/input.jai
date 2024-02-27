@@ -108,13 +108,27 @@ gather_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
                 {
                     if event.key.keysym.sym == SDLK_r {
                         if program_state.current_scene == {
+                            case .DEMO; #through;
+                            case .MENU; #through;
                             case .GAME;
-                            switch_scene(.EDITOR);
-                            activate_mouse();
+                                switch_scene(.EDITOR);
+                                activate_mouse();
 
                             case .EDITOR;
-                            switch_scene(.GAME);
-                            deactivate_mouse();
+                                switch_scene(.GAME);
+                                deactivate_mouse();
+                        }
+                    }
+
+                    if event.key.keysym.sym == SDLK_p {
+                        if program_state.current_scene == {
+                            case .EDITOR; #through;
+                            case .MENU; #through;
+                            case .GAME;
+                                switch_scene(.DEMO);
+
+                            case .DEMO;
+                                switch_scene(.GAME);
                         }
                     }
                 }

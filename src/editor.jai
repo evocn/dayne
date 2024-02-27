@@ -26,7 +26,6 @@ update_and_draw_editor :: () {
 editor :: () {
     ImGui.Begin("Editor");
     {
-
     }
     ImGui.End();
 }

@@ -1,24 +1,19 @@
-// Dayne
-// Simulate
-// Alex Hartford
-// February 2024
-
-Game_State :: struct {
-    score : int;
-    players : [..] Player_Interface;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
-simulate :: (game_state: Game_State, dt: float) {
-    if game_state.players[0].input.start.just_pressed {
-        switch_scene(.MENU);
-    }
+simulate :: (game: Game, dt: float) {
+    for player : game.players {
+        input := player.input;
+        state := player.state;
 
-    if #complete game_state.players[0].state == {
-        case .DEFAULT;            
-            if game_state.players[0].input.up.just_pressed {
-            }
+        if input.start.just_pressed {
+            switch_scene(.MENU);
+        }
+
+        if #complete state == {
+            case .DEFAULT;            
+                if input.up.just_pressed {
+                }
+        }
     }
 }
 
@@ -61,4 +56,9 @@ simulate_menu :: (menu: *Menu, input: User_Input) {
 ////////////////////////////////////////////////////////////////////////////////
 
 simulate_editor :: (input: User_Input) {
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+simulate_demo :: (input: User_Input) {
 }

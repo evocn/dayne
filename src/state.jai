@@ -6,7 +6,7 @@
 Program_State :: struct {
     running := true;
 
-    current_scene : Scene = .GAME;
+    current_scene : Scene = .DEMO;
     prior_scene : Scene;
 
     imgui_capturing_mouse    := false;
@@ -19,6 +19,7 @@ Program_State :: struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 Scene :: enum {
+    DEMO;
     GAME;
     MENU;
     EDITOR;

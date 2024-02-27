@@ -3,7 +3,7 @@
 // Alex Hartford
 // February 2024
 
-render :: (menu: Menu) {
+render :: () {
     // Render everything in this block to the framebuffer.
     {
         glBindFramebuffer(GL_FRAMEBUFFER, render_context.fbo);
@@ -12,12 +12,15 @@ render :: (menu: Menu) {
         glClear(GL_COLOR_BUFFER_BIT);
 
         if #complete program_state.current_scene == {
+            case .DEMO;
+                draw_demo_screen();
+
             case .GAME;
                 draw_game_state();
                 draw_user_interface();
 
             case .MENU;
-                render_menu(menu);
+                render_menu(main_menu);
 
             case .EDITOR;
         }
@@ -26,14 +29,32 @@ render :: (menu: Menu) {
     render_framebuffer_to_screen();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 
 draw_game_state :: () {
+}
+
+
+draw_user_interface :: () {
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Below this is the specialized code for rendering various fixtures.
+// It is all here to have centralized drawing code, separate from 
+// implementation details.
+////////////////////////////////////////////////////////////////////////////////
+
+draw_demo_screen :: () {
+    /*
     draw_sprite(
         render_context.haruhachi,
         index = 0,
         pixel = .{0, 0},
         scale_factor = 1,
     );
+    */
 
     draw_sprite(
         render_context.spritesheet,
@@ -63,13 +84,10 @@ draw_game_state :: () {
         pixel = .{PIXEL_WIDTH - 112, 0},
         scale_factor = 1,
     );
-}
 
-
-draw_user_interface :: () {
     draw_text(
-        "This is the user interface.", 
-        x = PIXEL_WIDTH  * 3 / 4, 
+        "Dayne", 
+        x = PIXEL_WIDTH  / 2, 
         y = PIXEL_HEIGHT * 3 / 4,
         alignment   = Alignment.CENTER,
         progress    = -1,
@@ -78,10 +96,20 @@ draw_user_interface :: () {
     );
 
     draw_text(
-        "Welcome to Dayne!", 
-        x = PIXEL_WIDTH  * 3 / 4,
-        y = PIXEL_HEIGHT * 3 / 4 + 10,
-        alignment   = Alignment.RIGHT,
+        "PROTOTYPING ENGINE",
+        x = PIXEL_WIDTH  / 2,
+        y = PIXEL_HEIGHT * 3 / 4 - 10,
+        alignment   = Alignment.CENTER,
+        progress    = -1,
+        font        = .SMALL,
+        color       = red,
+    );
+
+    draw_text(
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,/\\!?@#$%^&*<>{}()[]",
+        x = PIXEL_WIDTH / 2,
+        y = PIXEL_HEIGHT * 3 / 4 - 20,
+        alignment   = Alignment.CENTER,
         progress    = -1,
         font        = .SMALL,
         color       = yellow,
@@ -89,11 +117,6 @@ draw_user_interface :: () {
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-// Below this is the specialized code for rendering various structures.
-// It is all here to have centralized drawing code, separate from 
-// implementation details.
-////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 // Menu

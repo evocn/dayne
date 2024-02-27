@@ -19,6 +19,7 @@ render_context  : Render_Context;
 // Loose Globals
 scratch_memory  : Flat_Pool;
 
+main_menu       : Menu;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -39,12 +40,12 @@ main :: () {
 
     gamepad: SDL_Joystick;
 
-    main_menu := menu_initialize();
+    main_menu = menu_initialize();
 
     play_music("bach");
 
-    game_state : Game_State;
-    _ := array_add(*game_state.players);
+    game : Game;
+    _ := array_add(*game.players);
 
 
 
@@ -62,9 +63,9 @@ main :: () {
 
         ////////////////////////////////////////////////////////////////////////////////
         // Input
-        gather_input(*game_state.players[0].input, *gamepad);
+        gather_input(*game.players[0].input, *gamepad);
         defer {
-            post_frame_update(*game_state.players[0].input);
+            post_frame_update(*game.players[0].input);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -75,21 +76,23 @@ main :: () {
 
             // Dispatch based on program state
             if #complete program_state.current_scene == {
+                case .DEMO;
+                    simulate_demo(*game.players[0].input);
+
                 case .GAME;
-                    simulate(*game_state, dt);
+                    simulate(*game, dt);
 
                 case .MENU;
-                    simulate_menu(*main_menu, *game_state.players[0].input);
+                    simulate_menu(*main_menu, *game.players[0].input);
 
                 case .EDITOR;
-                    simulate_editor(*game_state.players[0].input);
+                    simulate_editor(*game.players[0].input);
             }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         // Render
         render(
-            main_menu
         );
 
         if program_state.current_scene == .EDITOR {
@@ -156,6 +159,7 @@ ImGui :: #import "ImGui";
 #load "simulate.jai";
 #load "render.jai";
 
+#load "game.jai";
 #load "state.jai";
 
 #load "player.jai";

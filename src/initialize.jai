@@ -35,8 +35,10 @@ initialize_sdl :: () {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 
     window = SDL_CreateWindow("Dayne",
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, render_context.window_width, render_context.window_height,
-        SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN);
+        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+        render_context.window_width, render_context.window_height,
+        SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN
+    );
 
     if !window {
         print("Could not create window: %\n", to_string(SDL_GetError()));
@@ -75,7 +77,7 @@ initialize_imgui :: () {
     ImGui_ImplSdl_Init(window);
 
     io := ImGui.GetIO();
-    io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", render_context.window_height / 50.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
+    io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", render_context.window_height / 40.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
 
     // Settings
     {
@@ -104,7 +106,7 @@ initialize_render_context :: () {
         initialize_freetype();
 
         initialize_font(*render_context.main_font,  "bm.ttf", 9);
-        initialize_font(*render_context.small_font, "gosub.otf", 6);
+        initialize_font(*render_context.small_font, "3x5.ttf", 8);
 
         FT_Done_FreeType(ft);
     }
