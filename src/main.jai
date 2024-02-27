@@ -48,6 +48,13 @@ main :: () {
     _ := array_add(*game.players);
 
 
+    game.entity = .{
+        sprite = 1,
+        color  = pink,
+
+        position = .{0, 0},
+    };
+
 
 
 
@@ -71,14 +78,8 @@ main :: () {
         ////////////////////////////////////////////////////////////////////////////////
         // Simulate
         {
-            rainbow_color = update_rainbow_color(dt);
-
-
             // Dispatch based on program state
             if #complete program_state.current_scene == {
-                case .DEMO;
-                    simulate_demo(*game.players[0].input);
-
                 case .GAME;
                     simulate(*game, dt);
 
@@ -90,13 +91,19 @@ main :: () {
             }
         }
 
+        // Update stuff
+        {
+            rainbow_color = update_rainbow_color(dt);
+        }
+
         ////////////////////////////////////////////////////////////////////////////////
         // Render
         render(
+            game
         );
 
         if program_state.current_scene == .EDITOR {
-            update_and_draw_editor();
+            update_and_draw_editor(*game);
             ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
         }
 
@@ -159,10 +166,11 @@ ImGui :: #import "ImGui";
 #load "simulate.jai";
 #load "render.jai";
 
-#load "game.jai";
 #load "state.jai";
 
+#load "game.jai";
 #load "player.jai";
+#load "entity.jai";
 
 // Subsystems
 #load "text.jai";

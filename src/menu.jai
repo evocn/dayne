@@ -28,13 +28,13 @@ menu_initialize :: () -> Menu {
 
         sfx := New(Menu_Element_Slider,, a);
         sfx.name = "Sounds";
-        sfx.value = ma_sound_group_get_volume(*audio_context.sfx_group);
+        sfx.value = get_sfx_volume();
         sfx.callback = set_sfx_volume;
         array_add(*elements, cast(*Menu_Element)sfx);
 
         music := New(Menu_Element_Slider,, a);
         music.name = "Music";
-        music.value = ma_sound_group_get_volume(*audio_context.music_group);
+        music.value = get_music_volume();
         music.callback = set_music_volume;
         array_add(*elements, cast(*Menu_Element)music);
 

@@ -3,7 +3,7 @@
 // Alex Hartford
 // February 2024
 
-update_and_draw_editor :: () {
+update_and_draw_editor :: (game: *Game) {
     io := ImGui.GetIO();
     program_state.imgui_capturing_mouse     = io.WantCaptureMouse;
     program_state.imgui_capturing_keyboard  = io.WantCaptureKeyboard;
@@ -12,7 +12,7 @@ update_and_draw_editor :: () {
     ImGui_ImplSdl_NewFrame(window);
     ImGui.NewFrame();
     {
-        editor();
+        editor(game);
 
         ImGui.ShowDemoWindow();
     }
@@ -23,9 +23,12 @@ update_and_draw_editor :: () {
 // Individual Editors
 ////////////////////////////////////////////////////////////////////////////////
 
-editor :: () {
+editor :: (game: *Game) {
     ImGui.Begin("Editor");
     {
+        ImGui.Checkbox("Draw Demo", *program_state.draw_demo);
+
+        ImGui.SliderInt("Score", xx *game.score, 0, 99);
     }
     ImGui.End();
 }

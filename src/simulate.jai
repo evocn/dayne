@@ -5,7 +5,7 @@ simulate :: (game: Game, dt: float) {
         input := player.input;
         state := player.state;
 
-        if input.start.just_pressed {
+        if input.select.just_pressed {
             switch_scene(.MENU);
         }
 
@@ -20,7 +20,7 @@ simulate :: (game: Game, dt: float) {
 ////////////////////////////////////////////////////////////////////////////////
 
 simulate_menu :: (menu: *Menu, input: User_Input) {
-    if input.start.just_pressed || input.east.just_pressed {
+    if input.select.just_pressed {
         return_to_prior_scene();
         play_sfx("click");
     }
@@ -56,9 +56,4 @@ simulate_menu :: (menu: *Menu, input: User_Input) {
 ////////////////////////////////////////////////////////////////////////////////
 
 simulate_editor :: (input: User_Input) {
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-simulate_demo :: (input: User_Input) {
 }

@@ -4,46 +4,38 @@
 // February 2024
 
 Color :: Vector4;
-Hex_Color :: u32;
 
-black_hex   : Hex_Color : 0x060608;
-white_hex   : Hex_Color : 0xffffff;
-gray_hex    : Hex_Color : 0x7c7c7c;
-
-purple_hex  : Hex_Color : 0x2f256b;
-red_hex     : Hex_Color : 0xd14444;
-green_hex   : Hex_Color : 0x67ab7a;
-yellow_hex  : Hex_Color : 0xECA72C;
-blue_hex    : Hex_Color : 0x067ab7;
-pink_hex    : Hex_Color : 0xb869d3;
-
+// Assumes a hex number in the form 0xRRGGBB (no Alpha)
 color_from_hex :: ($h: u32) -> Color {
     color : Color;
     color.x = ((h >> 16) & 0xff) / 255.0;
-    color.y = ((h >> 8) & 0xff) / 255.0;
-    color.z = ((h >> 0) & 0xff) / 255.0;
+    color.y = ((h >>  8) & 0xff) / 255.0;
+    color.z = ((h >>  0) & 0xff) / 255.0;
     color.w = 1.0;
 
     return color;
 }
 
-//
-//
+
+
+// The Palette
+////////////////////////////////////////////////////////////////////////////////
 
 color_none :: Color.{};
-white   :: #run color_from_hex(white_hex);
-black   :: #run color_from_hex(black_hex);
-gray    :: #run color_from_hex(gray_hex);
+white   :: #run color_from_hex(0xffffff);
+black   :: #run color_from_hex(0x060608);
+gray    :: #run color_from_hex(0x7c7c7c);
 
-purple  :: #run color_from_hex(purple_hex);
-red     :: #run color_from_hex(red_hex);
-green   :: #run color_from_hex(green_hex);
-yellow  :: #run color_from_hex(yellow_hex);
-blue    :: #run color_from_hex(blue_hex);
-pink    :: #run color_from_hex(pink_hex);
+purple  :: #run color_from_hex(0x2f256b);
+red     :: #run color_from_hex(0xd14444);
+green   :: #run color_from_hex(0x67ab7a);
+yellow  :: #run color_from_hex(0xECA72C);
+blue    :: #run color_from_hex(0x067ab7);
+pink    :: #run color_from_hex(0xb869d3);
 
-//
-//
+
+// Rainbow color below!
+////////////////////////////////////////////////////////////////////////////////
 
 rainbow_color : Color;
 

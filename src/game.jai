@@ -4,7 +4,10 @@
 // February 2024
 
 Game :: struct {
-    score : int;
     players : [..] Player_Interface;
+
+    score : int;
+
+    entity : Entity;
 }
 

@@ -3,7 +3,7 @@
 // Alex Hartford
 // February 2024
 
-render :: () {
+render :: (game: Game) {
     // Render everything in this block to the framebuffer.
     {
         glBindFramebuffer(GL_FRAMEBUFFER, render_context.fbo);
@@ -11,18 +11,19 @@ render :: () {
         glClearColor(black.x, black.y, black.z, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        if #complete program_state.current_scene == {
-            case .DEMO;
-                draw_demo_screen();
+        if program_state.draw_demo {
+            draw_demo_screen();
+            //draw_credits_screen();
+        }
 
+        if #complete program_state.current_scene == {
+            case .EDITOR; #through;
             case .GAME;
-                draw_game_state();
-                draw_user_interface();
+                draw_game_state(game);
+                draw_user_interface(game);
 
             case .MENU;
                 render_menu(main_menu);
-
-            case .EDITOR;
         }
     }
 
@@ -32,11 +33,23 @@ render :: () {
 ////////////////////////////////////////////////////////////////////////////////
 
 
-draw_game_state :: () {
+draw_game_state :: (game: Game) {
+    draw_entity(game.entity);
 }
 
 
-draw_user_interface :: () {
+draw_user_interface :: (game: Game) {
+
+
+    draw_text(
+        tprint("SCORE: %", game.score),
+        x = 2,
+        y = PIXEL_HEIGHT - 10,
+        alignment   = Alignment.LEFT,
+        progress    = -1,
+        font        = .SMALL,
+        color       = white,
+    );
 }
 
 
@@ -45,6 +58,46 @@ draw_user_interface :: () {
 // It is all here to have centralized drawing code, separate from 
 // implementation details.
 ////////////////////////////////////////////////////////////////////////////////
+
+draw_entity :: (entity: Entity) {
+    pixel := world_space_to_screen_pixel(entity.position);
+    print("%\n", pixel);
+
+    draw_sprite(
+        render_context.spritesheet,
+        index = entity.sprite,
+        pixel = pixel,
+        scale_factor = 1,
+        horizontal_flip = entity.flip,
+        use_color_override = true,
+        color_override = entity.color,
+    );
+}
+
+world_space_to_screen_pixel :: (world_space: Vector2) -> pixel: Pair {
+    pixel: Pair;
+
+    pixel.x = cast(int)world_space.x;
+    pixel.y = cast(int)world_space.y;
+
+    // @NOTE: Camera Transform Here
+
+    return pixel;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+draw_credits_screen :: () {
+    draw_text(
+        "Game by Alex Hartford",
+        x = PIXEL_WIDTH  / 2,
+        y = 2,
+        alignment   = Alignment.CENTER,
+        progress    = -1,
+        font        = .MAIN,
+        color       = white,
+    );
+}
 
 draw_demo_screen :: () {
     /*

@@ -63,12 +63,25 @@ stop_music :: () {
 //
 //
 
+// SFX turns out really loud without this little nudge
+INTERNAL_SFX_VOLUME_MULTIPLIER :: 0.3;
+
 set_sfx_volume :: (desired_volume: float) {
-    ma_sound_group_set_volume(*audio_context.sfx_group, desired_volume);
+    actual_volume := desired_volume * INTERNAL_SFX_VOLUME_MULTIPLIER;
+    ma_sound_group_set_volume(*audio_context.sfx_group, actual_volume);
 }
+
+get_sfx_volume :: () -> float {
+    return ma_sound_group_get_volume(*audio_context.sfx_group) / INTERNAL_SFX_VOLUME_MULTIPLIER;
+}
+
 
 set_music_volume :: (desired_volume: float) {
     ma_sound_group_set_volume(*audio_context.music_group, desired_volume);
+}
+
+get_music_volume :: () -> float{
+    return ma_sound_group_get_volume(*audio_context.music_group);
 }
 
 

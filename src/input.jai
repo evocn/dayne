@@ -74,13 +74,13 @@ gather_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
                     if event.key.keysym.sym == SDLK_s       release(*input.down);
                     if event.key.keysym.sym == SDLK_d       release(*input.right);
 
-                    if event.key.keysym.sym == SDLK_SPACE   release(*input.south);
-                    if event.key.keysym.sym == SDLK_z       release(*input.east);
-                    if event.key.keysym.sym == SDLK_q       release(*input.west);
-                    if event.key.keysym.sym == SDLK_e       release(*input.north);
+                    if event.key.keysym.sym == SDLK_h       release(*input.west);
+                    if event.key.keysym.sym == SDLK_j       release(*input.south);
+                    if event.key.keysym.sym == SDLK_k       release(*input.north);
+                    if event.key.keysym.sym == SDLK_l       release(*input.east);
 
-                    if event.key.keysym.sym == SDLK_ESCAPE  release(*input.start);
-                    if event.key.keysym.sym == SDLK_RETURN  release(*input.select);
+                    if event.key.keysym.sym == SDLK_SPACE   release(*input.start);
+                    if event.key.keysym.sym == SDLK_ESCAPE  release(*input.select);
                 }
 
             case SDL_KEYDOWN;
@@ -95,21 +95,19 @@ gather_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
                     if event.key.keysym.sym == SDLK_s       press(*input.down);
                     if event.key.keysym.sym == SDLK_d       press(*input.right);
 
-                    if event.key.keysym.sym == SDLK_SPACE   press(*input.south);
-                    if event.key.keysym.sym == SDLK_z       press(*input.east);
-                    if event.key.keysym.sym == SDLK_q       press(*input.west);
-                    if event.key.keysym.sym == SDLK_e       press(*input.north);
+                    if event.key.keysym.sym == SDLK_h       press(*input.west);
+                    if event.key.keysym.sym == SDLK_j       press(*input.south);
+                    if event.key.keysym.sym == SDLK_k       press(*input.north);
+                    if event.key.keysym.sym == SDLK_l       press(*input.east);
 
-                    if event.key.keysym.sym == SDLK_ESCAPE  press(*input.start);
-                    if event.key.keysym.sym == SDLK_RETURN  press(*input.select);
+                    if event.key.keysym.sym == SDLK_SPACE   press(*input.start);
+                    if event.key.keysym.sym == SDLK_ESCAPE  press(*input.select);
                 }
 
                 // Development keybinds
                 {
                     if event.key.keysym.sym == SDLK_r {
                         if program_state.current_scene == {
-                            case .DEMO; #through;
-                            case .MENU; #through;
                             case .GAME;
                                 switch_scene(.EDITOR);
                                 activate_mouse();
@@ -117,18 +115,6 @@ gather_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
                             case .EDITOR;
                                 switch_scene(.GAME);
                                 deactivate_mouse();
-                        }
-                    }
-
-                    if event.key.keysym.sym == SDLK_p {
-                        if program_state.current_scene == {
-                            case .EDITOR; #through;
-                            case .MENU; #through;
-                            case .GAME;
-                                switch_scene(.DEMO);
-
-                            case .DEMO;
-                                switch_scene(.GAME);
                         }
                     }
                 }

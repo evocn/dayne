@@ -16,8 +16,11 @@ draw_text :: (text: string, x: int, y: int,
 
     the_font : *Font;
     if #complete font == {
-        case .MAIN;  the_font = *render_context.main_font;
-        case .SMALL; the_font = *render_context.small_font;
+        case .MAIN;
+            the_font = *render_context.main_font;
+
+        case .SMALL;
+            the_font = *render_context.small_font;
     }
 
     lines := split(text, "\n",, temp);

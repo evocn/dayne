@@ -13,8 +13,8 @@ save_tweaks_file :: (file_name : string) {
 
         print_to_builder(*builder, "fullscreen %\n", render_context.fullscreen);
 
-        print_to_builder(*builder, "sfx %\n", ma_sound_group_get_volume(*audio_context.sfx_group));
-        print_to_builder(*builder, "music %\n", ma_sound_group_get_volume(*audio_context.music_group));
+        print_to_builder(*builder, "sfx %\n", get_sfx_volume());
+        print_to_builder(*builder, "music %\n", get_music_volume());
     }
 
     full_path := tprint("%/%.tweaks", tweaks_path, file_name);
@@ -70,11 +70,12 @@ load_tweaks_file_and_apply_results :: (file_name : string) -> file_exists: bool 
 //
 
 apply_default_settings :: () {
-    DEFAULT_SFX_VOLUME :: 1.0;
-    DEFAULT_MUSIC_VOLUME :: 1.0;
     render_context.fullscreen = false;
 
     set_screen_mode_according_to_fullscreen_variable();
+
+    DEFAULT_SFX_VOLUME :: 0.5;
+    DEFAULT_MUSIC_VOLUME :: 0.5;
 
     set_sfx_volume(DEFAULT_SFX_VOLUME);
     set_music_volume(DEFAULT_MUSIC_VOLUME);
