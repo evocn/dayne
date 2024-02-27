@@ -5,3 +5,12 @@
 
 Game :: struct {
 }
+
+Game_State :: struct {
+    score : int;
+    player : Player_Interface;
+    narrative : Narrative;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+

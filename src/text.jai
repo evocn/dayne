@@ -60,6 +60,9 @@ Alignment :: enum {
     RIGHT;
 }
 
+global_x : float;
+global_y : float;
+
 render_text :: (font : Font, text : string, x : float, y : float, alignment : Alignment, progress : int)
 {
     glActiveTexture(GL_TEXTURE0);
@@ -77,6 +80,9 @@ render_text :: (font : Font, text : string, x : float, y : float, alignment : Al
             total_width += glyph.advance >> 6;
         }
     }
+
+    x += global_x;
+    y += global_y;
 
     for char : (cast([] u8)text) {
         if progress != -1 && it_index >= progress {

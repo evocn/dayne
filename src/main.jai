@@ -44,8 +44,7 @@ main :: () {
     play_music("bach");
 
     game_state : Game_State;
-    _ := array_add(*game_state.players);
-
+    game_state.narrative = the_main_narrative();
 
 
 
@@ -62,9 +61,9 @@ main :: () {
 
         ////////////////////////////////////////////////////////////////////////////////
         // Input
-        gather_input(*game_state.players[0].input, *gamepad);
+        gather_input(*game_state.player.input, *gamepad);
         defer {
-            post_frame_update(*game_state.players[0].input);
+            post_frame_update(*game_state.player.input);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -79,16 +78,17 @@ main :: () {
                     simulate(*game_state, dt);
 
                 case .MENU;
-                    simulate_menu(*main_menu, *game_state.players[0].input);
+                    simulate_menu(*main_menu, *game_state.player.input);
 
                 case .EDITOR;
-                    simulate_editor(*game_state.players[0].input);
+                    simulate_editor(*game_state.player.input);
             }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         // Render
         render(
+            game_state,
             main_menu
         );
 
@@ -179,3 +179,4 @@ ImGui :: #import "ImGui";
 
 // Gameplay
 #load "game.jai";
+#load "narrative.jai";

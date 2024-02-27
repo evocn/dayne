@@ -3,7 +3,7 @@
 // Alex Hartford
 // February 2024
 
-render :: (menu: Menu) {
+render :: (game_state: Game_State, menu: Menu) {
     // Render everything in this block to the framebuffer.
     {
         glBindFramebuffer(GL_FRAMEBUFFER, render_context.fbo);
@@ -13,13 +13,15 @@ render :: (menu: Menu) {
 
         if #complete program_state.current_scene == {
             case .GAME;
-                draw_game_state();
-                draw_user_interface();
+                draw_game_state(game_state);
+                draw_user_interface(game_state);
 
             case .MENU;
                 render_menu(menu);
 
             case .EDITOR;
+                draw_game_state(game_state);
+                draw_user_interface(game_state);
         }
     }
 
@@ -27,14 +29,7 @@ render :: (menu: Menu) {
 }
 
 
-draw_game_state :: () {
-    draw_sprite(
-        render_context.haruhachi,
-        index = 0,
-        pixel = .{0, 0},
-        scale_factor = 1,
-    );
-
+draw_game_state :: (game_state: Game_State) {
     draw_sprite(
         render_context.spritesheet,
         index = 4,
@@ -42,49 +37,27 @@ draw_game_state :: () {
         scale_factor = 4,
         horizontal_flip = true,
     );
-
-    draw_sprite(
-        render_context.spritesheet,
-        index = 5,
-        pixel = .{PIXEL_WIDTH - 80, 0},
-        scale_factor = 1,
-    );
-
-    draw_sprite(
-        render_context.spritesheet,
-        index = 6,
-        pixel = .{PIXEL_WIDTH - 96, 0},
-        scale_factor = 1,
-    );
-
-    draw_sprite(
-        render_context.spritesheet,
-        index = 7,
-        pixel = .{PIXEL_WIDTH - 112, 0},
-        scale_factor = 1,
-    );
 }
 
 
-draw_user_interface :: () {
-    draw_text(
-        "This is the user interface.", 
-        x = PIXEL_WIDTH  * 3 / 4, 
-        y = PIXEL_HEIGHT * 3 / 4,
-        alignment   = Alignment.CENTER,
-        progress    = -1,
-        font        = .MAIN,
-        color       = green,
-    );
+draw_user_interface :: (game_state: Game_State) {
+    draw_narrative(game_state.narrative);
+}
+
+draw_narrative :: (narrative: Narrative) {
+    line := narrative.lines[narrative.index];
+
+    text := line.text;
+    color := line.speaker.color;
 
     draw_text(
-        "Welcome to Dayne!", 
-        x = PIXEL_WIDTH  * 3 / 4,
-        y = PIXEL_HEIGHT * 3 / 4 + 10,
-        alignment   = Alignment.RIGHT,
+        text,
+        x = PIXEL_WIDTH  / 2,
+        y = PIXEL_HEIGHT / 2,
+        alignment   = Alignment.CENTER,
         progress    = -1,
         font        = .SMALL,
-        color       = yellow,
+        color       = color,
     );
 }
 

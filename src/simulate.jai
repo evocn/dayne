@@ -3,22 +3,22 @@
 // Alex Hartford
 // February 2024
 
-Game_State :: struct {
-    score : int;
-    players : [..] Player_Interface;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 simulate :: (game_state: Game_State, dt: float) {
-    if game_state.players[0].input.start.just_pressed {
+    if game_state.player.input.start.just_pressed {
         switch_scene(.MENU);
     }
 
-    if #complete game_state.players[0].state == {
-        case .DEFAULT;            
-            if game_state.players[0].input.up.just_pressed {
+    if #complete game_state.player.state == {
+        case .NARRATIVE; {
+            if game_state.player.input.south.just_pressed {
+                next(*game_state.narrative);
             }
+        }
+
+        case .COMBAT; {
+            if game_state.player.input.south.just_pressed {
+            }
+        }
     }
 }
 

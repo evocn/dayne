@@ -11,5 +11,6 @@ Player_Interface :: struct {
 
 
 Player_Interface_State :: enum {
-    DEFAULT;
+    NARRATIVE;
+    COMBAT;
 }
