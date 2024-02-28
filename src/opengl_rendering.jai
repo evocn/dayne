@@ -16,6 +16,7 @@ OpenGL_Context :: struct {
 
         spritesheet : Sprite;
         haruhachi : Sprite;
+        controls : Sprite;
 
         fbo : GLuint;
         render_texture : GLuint;
@@ -26,79 +27,108 @@ OpenGL_Context :: struct {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Pixel
+// Immediate Mode Drawing Functions
 ////////////////////////////////////////////////////////////////////////////////
 
-Pixel :: struct {
-    position: Vector2;
-    vao, vbo: GLuint;
+draw_pixel :: (screen_pixel: Pair, color := white) {
+    Pixel :: struct {
+        position: Vector2;
+        vao, vbo: GLuint;
+    }
+
+    pixel: Pixel;
+
+    // Get pixel ready for drawing with OpenGL
+    {
+        pixel.position.x = cast(float)screen_pixel.x / PIXEL_WIDTH;
+        pixel.position.y = cast(float)screen_pixel.y / PIXEL_HEIGHT;
+
+        glGenVertexArrays(1, *pixel.vao);
+        glGenBuffers(1, *pixel.vbo);
+
+        glBindVertexArray(pixel.vao);
+        defer glBindVertexArray(0);
+
+        glBindBuffer(GL_ARRAY_BUFFER, pixel.vbo);
+        defer glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBufferData(GL_ARRAY_BUFFER, 2 * size_of(float), *pixel.position, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, cast(*void)0);
+        glEnableVertexAttribArray(0);
+    }
+
+    // Draw the thing!
+    {
+        shader := use_basic_shader();
+        set_vec4(shader, "color", color);
+
+        model := Matrix4_Identity;
+        set_mat4(shader, "model", model);
+
+        glBindVertexArray(pixel.vao);
+        glBindBuffer(GL_ARRAY_BUFFER, pixel.vbo);
+
+        glDrawArrays(GL_POINTS, 0, 1);
+    }
 }
 
-get_pixel_ready_for_drawing_with_opengl :: (using pixel: *Pixel, pixel_position: Pair) {
-    pixel.position.x = cast(float)pixel_position.x / PIXEL_WIDTH;
-    pixel.position.y = cast(float)pixel_position.y / PIXEL_HEIGHT;
-
-	glGenVertexArrays(1, *vao);
-	glGenBuffers(1, *vbo);
-
-	glBindVertexArray(vao);
-	defer glBindVertexArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	defer glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBufferData(GL_ARRAY_BUFFER, 2 * size_of(float), *position, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, cast(*void)0);
-	glEnableVertexAttribArray(0);
-}
-
-draw_pixel :: (using pixel: Pixel) {
-	glBindVertexArray(vao);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-	glDrawArrays(GL_POINTS, 0, 1);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Line
 ////////////////////////////////////////////////////////////////////////////////
 
-Line :: struct {
-    points: [2] Vector2;
-    vao, vbo: GLuint;
-}
+draw_line :: (a: Pair, b: Pair, color := white) {
+    Line :: struct {
+        points: [2] Vector2;
+        vao, vbo: GLuint;
+    }
 
-get_line_ready_for_drawing_with_opengl :: (using line: *Line, pixel_position_a: Pair, pixel_position_b: Pair) {
-    line.points[0].x = cast(float)pixel_position_a.x / PIXEL_WIDTH;
-    line.points[0].y = cast(float)pixel_position_a.y / PIXEL_HEIGHT;
+    line: Line;
 
-    line.points[1].x = cast(float)pixel_position_b.x / PIXEL_WIDTH;
-    line.points[1].y = cast(float)pixel_position_b.y / PIXEL_HEIGHT;
+    // Get line ready for drawing with OpenGL
+    {
+        line.points[0].x = cast(float)a.x / PIXEL_WIDTH;
+        line.points[0].y = cast(float)a.y / PIXEL_HEIGHT;
 
-	glGenVertexArrays(1, *vao);
-	glGenBuffers(1, *vbo);
+        line.points[1].x = cast(float)b.x / PIXEL_WIDTH;
+        line.points[1].y = cast(float)b.y / PIXEL_HEIGHT;
 
-	glBindVertexArray(vao);
-	defer glBindVertexArray(0);
+        glGenVertexArrays(1, *line.vao);
+        glGenBuffers(1, *line.vbo);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	defer glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBufferData(GL_ARRAY_BUFFER, points.count * 2 * size_of(float), *points[0], GL_STATIC_DRAW);
+        glBindVertexArray(line.vao);
+        defer glBindVertexArray(0);
 
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, cast(*void)0);
-	glEnableVertexAttribArray(0);
-}
+        glBindBuffer(GL_ARRAY_BUFFER, line.vbo);
+        defer glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBufferData(GL_ARRAY_BUFFER, line.points.count * 2 * size_of(float), *line.points[0], GL_STATIC_DRAW);
 
-draw_line :: (using line: Line) {
-	glBindVertexArray(vao);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, cast(*void)0);
+        glEnableVertexAttribArray(0);
+    }
 
-	glDrawArrays(GL_LINES, 0, 2);
+    // Draw the thing!
+    {
+        shader := use_basic_shader();
+        set_vec4(shader, "color", color);
+
+        model := Matrix4_Identity;
+        set_mat4(shader, "model", model);
+
+        glBindVertexArray(line.vao);
+        glBindBuffer(GL_ARRAY_BUFFER, line.vbo);
+
+        glDrawArrays(GL_LINES, 0, 2);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Quads and Rectangles
 ////////////////////////////////////////////////////////////////////////////////
+
+blit_quad :: () {
+    // @TODO!
+}
 
 Quad :: struct {
     points := float.[0, 0, 0,

@@ -6,7 +6,7 @@
 Program_State :: struct {
     running := true;
 
-    current_scene : Scene = .GAME;
+    current_scene : Scene = .TITLE;
     prior_scene : Scene;
 
     imgui_capturing_mouse    := false;
@@ -21,12 +21,13 @@ Program_State :: struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 Scene :: enum {
+    TITLE;
     GAME;
     MENU;
     EDITOR;
 }
 
-switch_scene :: (new_scene: Scene) {
+change_scene :: (new_scene: Scene) {
     using program_state;
 
     prior_scene = current_scene;

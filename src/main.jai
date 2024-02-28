@@ -38,8 +38,6 @@ tweaks_path     :: "bin";
 main :: () {
     initialize_everything();
 
-    gamepad: SDL_Joystick;
-
     main_menu = menu_initialize();
 
     play_music("bach");
@@ -62,7 +60,6 @@ main :: () {
 
 
 
-
     dt, last_frame := 0.0;
     while program_state.running {
         ////////////////////////////////////////////////////////////////////////////////
@@ -72,9 +69,8 @@ main :: () {
 
         ////////////////////////////////////////////////////////////////////////////////
         // Input
-        gather_input(*game.players[0].input, *gamepad);
-        defer {
-            post_frame_update(*game.players[0].input);
+        for * player : game.players {
+            gather_input(*player.input, *player.gamepad);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -82,14 +78,17 @@ main :: () {
         {
             // Dispatch based on program state
             if #complete program_state.current_scene == {
+                case .TITLE;
+                    simulate_title(game.players[0].input);
+
                 case .GAME;
                     simulate(*game, dt);
 
                 case .MENU;
-                    simulate_menu(*main_menu, *game.players[0].input);
+                    simulate_menu(*main_menu, game.players[0].input);
 
                 case .EDITOR;
-                    simulate_editor(*game.players[0].input);
+                    simulate_editor(game.players[0].input);
             }
         }
 
@@ -115,12 +114,15 @@ main :: () {
         ////////////////////////////////////////////////////////////////////////////////
         // Frame Cleanup
         {
+            for * player : game.players {
+                post_frame_update(*player.input);
+            }
+
+            reset_temporary_storage();
 
             current_time := cast(float32)seconds_since_init();
             dt = current_time - last_frame;
             last_frame = current_time;
-
-            reset_temporary_storage();
         }
     }
 
@@ -143,6 +145,7 @@ using Basic :: #import "Basic"()(MEMORY_DEBUGGER=DEBUG_MEMORY);
 #import "Bucket_Array";
 #import "File";
 #import "Text_File_Handler";
+#import "Random";
 File_Utilities :: #import "File_Utilities"; // For file_list()
 System         :: #import "System";         // For get_path_of_running_executable()
 
@@ -161,7 +164,7 @@ ImGui :: #import "ImGui";
 ////////////////////////////////////////////////////////////////////////////////
 
 // Core
-#load "types.jai";
+#load "util.jai";
 #load "window.jai";
 #load "initialize.jai";
 
@@ -182,7 +185,6 @@ ImGui :: #import "ImGui";
 #load "editor.jai";
 #load "imgui_init.jai";
 #load "tweaks.jai";
-
 
 // Rendering
 #load "opengl_rendering.jai";

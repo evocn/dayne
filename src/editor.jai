@@ -26,6 +26,8 @@ update_and_draw_editor :: (game: *Game) {
 editor :: (game: *Game) {
     ImGui.Begin("Editor");
     {
+        ImGui.Text("% FPS", program_state.framerate);
+
         ImGui.Checkbox("Draw Demo", *program_state.draw_demo);
 
         ImGui.SliderInt("Score", xx *game.score, 0, 99);

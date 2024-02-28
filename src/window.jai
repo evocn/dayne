@@ -27,15 +27,12 @@ Render_Context :: struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-deactivate_mouse :: () {
+mouse_game_mode :: () {
     SDL_ShowCursor(0);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
-activate_mouse :: () {
+mouse_editor_mode :: () {
     SDL_ShowCursor(1);
-    SDL_SetRelativeMouseMode(SDL_FALSE);
-    SDL_WarpMouseInWindow(window, render_context.window_width / 2, render_context.window_height / 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

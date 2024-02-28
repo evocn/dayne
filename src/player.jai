@@ -7,6 +7,8 @@ Player_Interface :: struct {
     state : Player_Interface_State;
 
     input : User_Input;
+
+    gamepad: SDL_Joystick;
 }
 
 

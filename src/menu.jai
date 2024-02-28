@@ -165,5 +165,5 @@ quit_game :: () {
 }
 
 go_to_settings :: () {
-    switch_scene(.MENU);
+    change_scene(.MENU);
 }

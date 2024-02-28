@@ -6,7 +6,7 @@ simulate :: (game: Game, dt: float) {
         state := player.state;
 
         if input.select.just_pressed {
-            switch_scene(.MENU);
+            change_scene(.MENU);
         }
 
         if #complete state == {
@@ -14,6 +14,20 @@ simulate :: (game: Game, dt: float) {
                 if input.up.just_pressed {
                 }
         }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+simulate_title :: (input: User_Input) {
+    if input.south.just_pressed {
+        change_scene(.GAME);
+        play_sfx("sea");
+    }
+
+    if input.select.just_pressed {
+        change_scene(.MENU);
+        play_sfx("click");
     }
 }
 

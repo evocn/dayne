@@ -36,6 +36,9 @@ post_frame_update :: (input: *User_Input) {
     update(*input.west);
     update(*input.start);
     update(*input.select);
+
+    update(*input.left_mouse);
+    update(*input.right_mouse);
 }
 
 
@@ -52,6 +55,10 @@ User_Input :: struct {
 
     start   : Button;
     select  : Button;
+
+    mouse_position : Pair;
+    left_mouse : Button;
+    right_mouse: Button;
 }
 
 //
@@ -69,18 +76,18 @@ gather_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
                 if program_state.imgui_capturing_keyboard return;
 
                 {
-                    if event.key.keysym.sym == SDLK_w       release(*input.up);
-                    if event.key.keysym.sym == SDLK_a       release(*input.left);
-                    if event.key.keysym.sym == SDLK_s       release(*input.down);
-                    if event.key.keysym.sym == SDLK_d       release(*input.right);
+                         if event.key.keysym.sym == SDLK_w       release(*input.up);
+                    else if event.key.keysym.sym == SDLK_a       release(*input.left);
+                    else if event.key.keysym.sym == SDLK_s       release(*input.down);
+                    else if event.key.keysym.sym == SDLK_d       release(*input.right);
 
-                    if event.key.keysym.sym == SDLK_h       release(*input.west);
-                    if event.key.keysym.sym == SDLK_j       release(*input.south);
-                    if event.key.keysym.sym == SDLK_k       release(*input.north);
-                    if event.key.keysym.sym == SDLK_l       release(*input.east);
+                    else if event.key.keysym.sym == SDLK_h       release(*input.west);
+                    else if event.key.keysym.sym == SDLK_j       release(*input.south);
+                    else if event.key.keysym.sym == SDLK_k       release(*input.north);
+                    else if event.key.keysym.sym == SDLK_l       release(*input.east);
 
-                    if event.key.keysym.sym == SDLK_SPACE   release(*input.start);
-                    if event.key.keysym.sym == SDLK_ESCAPE  release(*input.select);
+                    else if event.key.keysym.sym == SDLK_SPACE   release(*input.start);
+                    else if event.key.keysym.sym == SDLK_ESCAPE  release(*input.select);
                 }
 
             case SDL_KEYDOWN;
@@ -90,18 +97,18 @@ gather_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
                 {
                     if event.key.repeat != 0 return;
 
-                    if event.key.keysym.sym == SDLK_w       press(*input.up);
-                    if event.key.keysym.sym == SDLK_a       press(*input.left);
-                    if event.key.keysym.sym == SDLK_s       press(*input.down);
-                    if event.key.keysym.sym == SDLK_d       press(*input.right);
+                         if event.key.keysym.sym == SDLK_w       press(*input.up);
+                    else if event.key.keysym.sym == SDLK_a       press(*input.left);
+                    else if event.key.keysym.sym == SDLK_s       press(*input.down);
+                    else if event.key.keysym.sym == SDLK_d       press(*input.right);
 
-                    if event.key.keysym.sym == SDLK_h       press(*input.west);
-                    if event.key.keysym.sym == SDLK_j       press(*input.south);
-                    if event.key.keysym.sym == SDLK_k       press(*input.north);
-                    if event.key.keysym.sym == SDLK_l       press(*input.east);
+                    else if event.key.keysym.sym == SDLK_h       press(*input.west);
+                    else if event.key.keysym.sym == SDLK_j       press(*input.south);
+                    else if event.key.keysym.sym == SDLK_k       press(*input.north);
+                    else if event.key.keysym.sym == SDLK_l       press(*input.east);
 
-                    if event.key.keysym.sym == SDLK_SPACE   press(*input.start);
-                    if event.key.keysym.sym == SDLK_ESCAPE  press(*input.select);
+                    else if event.key.keysym.sym == SDLK_SPACE   press(*input.start);
+                    else if event.key.keysym.sym == SDLK_ESCAPE  press(*input.select);
                 }
 
                 // Development keybinds
@@ -109,14 +116,41 @@ gather_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
                     if event.key.keysym.sym == SDLK_r {
                         if program_state.current_scene == {
                             case .GAME;
-                                switch_scene(.EDITOR);
-                                activate_mouse();
+                                change_scene(.EDITOR);
+                                mouse_editor_mode();
 
                             case .EDITOR;
-                                switch_scene(.GAME);
-                                deactivate_mouse();
+                                change_scene(.GAME);
+                                mouse_game_mode();
                         }
                     }
+                }
+
+            case SDL_MOUSEBUTTONDOWN;
+                if program_state.imgui_capturing_mouse return;
+
+                // Main Program Inputs
+                {
+                    if event.button.button == SDL_BUTTON_LEFT   press(*input.left_mouse);
+                    if event.button.button == SDL_BUTTON_RIGHT  press(*input.right_mouse);
+                }
+
+            case SDL_MOUSEBUTTONUP;
+                if program_state.imgui_capturing_mouse return;
+
+                // Main Program Inputs
+                {
+                    if event.button.button == SDL_BUTTON_LEFT   release(*input.left_mouse);
+                    if event.button.button == SDL_BUTTON_RIGHT  release(*input.right_mouse);
+                }
+
+            case SDL_MOUSEMOTION;
+                if program_state.imgui_capturing_mouse return;
+
+                // Main Program Inputs
+                {
+                    input.mouse_position.x = cast(int)(event.motion.x * (cast(float)PIXEL_WIDTH  / render_context.window_width));
+                    input.mouse_position.y = PIXEL_HEIGHT - cast(int)(event.motion.y * (cast(float)PIXEL_HEIGHT / render_context.window_height)) - 1;
                 }
 
 

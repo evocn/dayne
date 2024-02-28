@@ -49,7 +49,6 @@ initialize_sdl :: () {
     // Settings
     {
         SDL_ShowCursor(0);
-        SDL_SetRelativeMouseMode(SDL_TRUE);
 
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, xx SDL_GL_CONTEXT_PROFILE_CORE);
     }
@@ -126,6 +125,10 @@ initialize_render_context :: () {
 
         full_path = tprint("%/haruhachi.png", sprites_path);
         success = make_sprite(*render_context.haruhachi, full_path);
+        assert(success);
+
+        full_path = tprint("%/controls.png", sprites_path);
+        success = make_sprite(*render_context.controls, full_path);
         assert(success);
     }
     initialize_images();
