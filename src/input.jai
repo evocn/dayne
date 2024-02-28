@@ -122,6 +122,9 @@ gather_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
                             case .EDITOR;
                                 change_scene(.GAME);
                                 mouse_game_mode();
+
+                                program_state.imgui_capturing_mouse = false;
+                                program_state.imgui_capturing_keyboard = false;
                         }
                     }
                 }

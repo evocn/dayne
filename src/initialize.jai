@@ -28,7 +28,7 @@ initialize_everything :: () {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Subsystem Initialization ////////////////////////////////////////////////////
+// Subsystem Initialization
 ////////////////////////////////////////////////////////////////////////////////
 
 initialize_sdl :: () {
@@ -182,14 +182,15 @@ initialize_audio_context :: () {
     }
 }
 
-//
-// Shutdown ////////////////////////////////////////////////////////////////////
-//
+////////////////////////////////////////////////////////////////////////////////
+// Shutdown
+////////////////////////////////////////////////////////////////////////////////
 
 // Note that this function doesn't actually need to exist. The OS will always clean our stuff up.
 // This is just here so we can clean house and see the real leaks if they happen when we are debugging memory.
-cleanup_for_shutdown :: (menu: *Menu) {
-    array_reset(*menu.elements);
+cleanup_for_shutdown :: (game: *Game) {
+    // Cleanup Game Struct
+    array_reset(*game.players);
 
     // Audio Cleanup
     {
@@ -210,7 +211,7 @@ cleanup_for_shutdown :: (menu: *Menu) {
         ma_engine_uninit(*engine);
     }
 
-    array_reset(*menu.elements);
+    array_reset(*main_menu.elements);
     deinit(*render_context.main_font.characters);
     deinit(*render_context.small_font.characters);
     reset(*scratch_memory, overwrite_memory=true);

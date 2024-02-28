@@ -16,8 +16,6 @@ color_from_hex :: ($h: u32) -> Color {
     return color;
 }
 
-
-
 // The Palette
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -33,24 +31,23 @@ yellow  :: #run color_from_hex(0xECA72C);
 blue    :: #run color_from_hex(0x067ab7);
 pink    :: #run color_from_hex(0xb869d3);
 
-
 // Rainbow color below!
 ////////////////////////////////////////////////////////////////////////////////
 
-rainbow_color : Color;
+rainbow : Color;
 
-rainbow_color_time : float;
+rainbow_time : float;
 RAINBOW_OSCILLATION_SPEED :: 5.0;
 
 update_rainbow_color :: (dt: float) -> Color {
-    rainbow_color_time += dt * RAINBOW_OSCILLATION_SPEED;
+    rainbow_time += dt * RAINBOW_OSCILLATION_SPEED;
 
-    if rainbow_color_time >= 6.0 then rainbow_color_time = rainbow_color_time - 6.0;
+    if rainbow_time >= 6.0 then rainbow_time = rainbow_time - 6.0;
     
-    if rainbow_color_time > 5.0 then return yellow;
-    else if rainbow_color_time > 4.0 then return pink;
-    else if rainbow_color_time > 3.0 then return blue;
-    else if rainbow_color_time > 2.0 then return green;
-    else if rainbow_color_time > 1.0 then return red;
-    return purple;
+    if      rainbow_time > 5.0 then return pink;
+    else if rainbow_time > 4.0 then return red;
+    else if rainbow_time > 3.0 then return yellow;
+    else if rainbow_time > 2.0 then return green;
+    else if rainbow_time > 1.0 then return blue;
+    else                            return purple;
 }

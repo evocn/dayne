@@ -16,14 +16,20 @@ render :: (game: Game) {
             //draw_credits_screen();
         }
 
+        draw_particle_system(the_particle_system);
+
         if #complete program_state.current_scene == {
             case .TITLE;
                 draw_title_screen();
 
-            case .EDITOR; #through;
             case .GAME;
                 draw_game_state(game);
                 draw_user_interface(game);
+
+            case .EDITOR;
+                draw_game_state(game);
+
+                draw_editor_features();
 
             case .MENU;
                 draw_menu(main_menu);
@@ -74,6 +80,10 @@ draw_user_interface :: (game: Game) {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+draw_editor_features :: () {
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Below this is the specialized code for rendering various fixtures.
@@ -148,7 +158,7 @@ draw_title_screen :: () {
         alignment   = Alignment.RIGHT,
         progress    = -1,
         font        = .SMALL,
-        color       = rainbow_color,
+        color       = rainbow,
     );
 }
 
@@ -212,14 +222,25 @@ draw_demo_screen :: () {
         color       = yellow,
     );
 
-    draw_pixel(.{25, 15}, color=pink);
-    draw_pixel(.{25, 20}, color=red);
-    draw_pixel(.{25, 25}, color=yellow);
-    draw_pixel(.{25, 30}, color=green);
-    draw_pixel(.{25, 35}, color=blue);
-    draw_pixel(.{25, 40}, color=purple);
+    draw_pixel(.{10, 50}, color=rainbow);
+    draw_pixel(.{15, 50}, color=pink);
+    draw_pixel(.{20, 50}, color=red);
+    draw_pixel(.{25, 50}, color=yellow);
+    draw_pixel(.{30, 50}, color=green);
+    draw_pixel(.{35, 50}, color=blue);
+    draw_pixel(.{40, 50}, color=purple);
+    draw_pixel(.{45, 50}, color=white);
+    draw_pixel(.{50, 50}, color=gray);
 
-    draw_line(.{30, 0}, .{30, PIXEL_HEIGHT}, rainbow_color);
+    draw_line(.{0, 55}, .{PIXEL_WIDTH, 55}, color=rainbow);
+    draw_line(.{0, 60}, .{PIXEL_WIDTH, 60}, color=pink);
+    draw_line(.{0, 65}, .{PIXEL_WIDTH, 65}, color=red);
+    draw_line(.{0, 70}, .{PIXEL_WIDTH, 70}, color=yellow);
+    draw_line(.{0, 75}, .{PIXEL_WIDTH, 75}, color=green);
+    draw_line(.{0, 80}, .{PIXEL_WIDTH, 80}, color=blue);
+    draw_line(.{0, 85}, .{PIXEL_WIDTH, 85}, color=purple);
+    draw_line(.{0, 90}, .{PIXEL_WIDTH, 90}, color=white);
+    draw_line(.{0, 95}, .{PIXEL_WIDTH, 95}, color=gray);
 }
 
 draw_controls_display :: () {
@@ -251,6 +272,20 @@ draw_controls_display :: () {
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+draw_particle_system :: (particle_system: Particle_System) {
+    for particle: particle_system.particles {
+        draw_particle(particle);
+    }
+}
+
+draw_particle :: (particle: Particle) {
+    pixel := world_space_to_screen_pixel(particle.position);
+    
+    draw_pixel(pixel, particle.color);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

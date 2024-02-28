@@ -21,6 +21,8 @@ scratch_memory  : Flat_Pool;
 
 main_menu       : Menu;
 
+the_particle_system : Particle_System;
+
 ////////////////////////////////////////////////////////////////////////////////
 
 sprites_path    :: "assets/sprites";
@@ -56,6 +58,9 @@ main :: () {
     };
 
 
+    for * particle: the_particle_system.particles {
+        generate_particle(particle);
+    }
 
 
 
@@ -92,9 +97,9 @@ main :: () {
             }
         }
 
-        // Update stuff
+        // Update visual stuff
         {
-            rainbow_color = update_rainbow_color(dt);
+            update(*the_particle_system, dt);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -123,11 +128,14 @@ main :: () {
             current_time := cast(float32)seconds_since_init();
             dt = current_time - last_frame;
             last_frame = current_time;
+
+            // Bullshit
+            rainbow = update_rainbow_color(dt);
         }
     }
 
-    cleanup_for_shutdown(*main_menu);
-
+    // Memory Debugging code
+    cleanup_for_shutdown(*game);
     #if DEBUG_MEMORY then report_memory_leaks();
 }
 
@@ -185,6 +193,8 @@ ImGui :: #import "ImGui";
 #load "editor.jai";
 #load "imgui_init.jai";
 #load "tweaks.jai";
+
+#load "particle.jai";
 
 // Rendering
 #load "opengl_rendering.jai";

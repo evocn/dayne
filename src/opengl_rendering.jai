@@ -70,6 +70,12 @@ draw_pixel :: (screen_pixel: Pair, color := white) {
 
         glDrawArrays(GL_POINTS, 0, 1);
     }
+
+    // Free vao/vbo for other things!
+    {
+        glDeleteVertexArrays(1, *pixel.vao);
+        glDeleteBuffers(1, *pixel.vbo);
+    }
 }
 
 
@@ -119,6 +125,12 @@ draw_line :: (a: Pair, b: Pair, color := white) {
         glBindBuffer(GL_ARRAY_BUFFER, line.vbo);
 
         glDrawArrays(GL_LINES, 0, 2);
+    }
+
+    // Free vao/vbo for other things!
+    {
+        glDeleteVertexArrays(1, *line.vao);
+        glDeleteBuffers(1, *line.vbo);
     }
 }
 
