@@ -1,5 +1,5 @@
 # Tweaks file
 
-fullscreen true
-sfx 1
+fullscreen false
+sfx 0.5
 music 0
