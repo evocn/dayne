@@ -18,6 +18,8 @@ render :: (game: Game) {
 
         draw_particle_system(the_particle_system);
 
+        draw_pixel(.{50, get_value(the_animator)}, color = rainbow);
+
         if #complete program_state.current_scene == {
             case .TITLE;
                 draw_title_screen();

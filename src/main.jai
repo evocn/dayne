@@ -23,6 +23,8 @@ main_menu       : Menu;
 
 the_particle_system : Particle_System;
 
+the_animator : Animator;
+
 ////////////////////////////////////////////////////////////////////////////////
 
 sprites_path    :: "assets/sprites";
@@ -47,7 +49,6 @@ main :: () {
     game : Game;
     _ := array_add(*game.players);
 
-
     game.entities[0] = New(Entity);
 
     game.entities[0].* = .{
@@ -62,6 +63,18 @@ main :: () {
         generate_particle(particle);
     }
 
+    the_animator = make_animator(
+        key_frames = ...[
+            .{
+                time  = 0.0,
+                value = 5,
+            },
+            .{
+                time  = 0.5,
+                value = 10,
+            }
+        ],
+    );
 
 
 
@@ -100,6 +113,8 @@ main :: () {
         // Update visual stuff
         {
             update(*the_particle_system, dt);
+
+            update(*the_animator, dt);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -195,6 +210,8 @@ ImGui :: #import "ImGui";
 #load "tweaks.jai";
 
 #load "particle.jai";
+
+#load "animator.jai";
 
 // Rendering
 #load "opengl_rendering.jai";
