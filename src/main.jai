@@ -202,3 +202,9 @@ ImGui :: #import "ImGui";
 #load "opengl_texture.jai";
 #load "sprite.jai";
 #load "color.jai";
+
+// Physics
+#load "physics.jai";
+#load "physics_collider.jai";
+#load "physics_solid.jai";
+#load "physics_actor.jai";

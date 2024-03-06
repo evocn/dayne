@@ -24,3 +24,11 @@ rng :: inline (max: float) -> float {
 rng :: inline (min: float, max: float) -> float {
     return random_get_within_range(min, max);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+// Rounds a float to the nearest int.
+round :: (f: float) -> int {
+    return cast(int)(f + 0.5);
+}
+
