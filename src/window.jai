@@ -6,16 +6,16 @@
 PIXEL_WIDTH     :: 240;
 PIXEL_HEIGHT    :: 160;
 
-WINDOW_SCALE_FACTOR :: 8;
-
-DEFAULT_WINDOW_WIDTH    :: PIXEL_WIDTH  * WINDOW_SCALE_FACTOR;
-DEFAULT_WINDOW_HEIGHT   :: PIXEL_HEIGHT * WINDOW_SCALE_FACTOR;
+DEFAULT_WINDOW_SCALE_FACTOR :: 6;
+DEFAULT_WINDOW_WIDTH    :: PIXEL_WIDTH  * DEFAULT_WINDOW_SCALE_FACTOR;
+DEFAULT_WINDOW_HEIGHT   :: PIXEL_HEIGHT * DEFAULT_WINDOW_SCALE_FACTOR;
 
 GAME_ASPECT_RATIO : float : cast(float)PIXEL_WIDTH / PIXEL_HEIGHT;
 
 Render_Context :: struct {
     window_width  : s32 = DEFAULT_WINDOW_WIDTH;
     window_height : s32 = DEFAULT_WINDOW_HEIGHT;
+    window_scale_factor : s32 = DEFAULT_WINDOW_SCALE_FACTOR;
 
     viewport_width : s32 = cast(s32)(DEFAULT_WINDOW_HEIGHT * GAME_ASPECT_RATIO);
     viewport_height: s32 = DEFAULT_WINDOW_HEIGHT;
@@ -48,6 +48,9 @@ go_fullscreen :: () {
     SDL_SetWindowPosition(window, 0, 0);
     SDL_SetWindowSize(window, display_mode.w, display_mode.h);
 
+    render_context.window_width  = display_mode.w;
+    render_context.window_height = display_mode.h;
+
     SDL_GetWindowDisplayMode(window, *display_mode);
 }
 
@@ -57,13 +60,17 @@ go_windowed :: () {
 
     SDL_SetWindowResizable(window, SDL_TRUE);
     SDL_SetWindowBordered(window, SDL_TRUE);
+
+    render_context.window_width  = PIXEL_WIDTH  * render_context.window_scale_factor;
+    render_context.window_height = PIXEL_HEIGHT * render_context.window_scale_factor;
+
     SDL_SetWindowSize(window,
-        DEFAULT_WINDOW_WIDTH,
-        DEFAULT_WINDOW_HEIGHT
+        render_context.window_width,
+        render_context.window_height,
     );
     SDL_SetWindowPosition(window, 
-        display_mode.w / 2 - DEFAULT_WINDOW_WIDTH / 2,
-        display_mode.h / 2 - DEFAULT_WINDOW_HEIGHT / 2
+        display_mode.w / 2 - render_context.window_width  / 2,
+        display_mode.h / 2 - render_context.window_height / 2
     );
     SDL_SetWindowResizable(window, SDL_FALSE);
 

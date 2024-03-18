@@ -24,11 +24,12 @@ white   :: #run color_from_hex(0xffffff);
 black   :: #run color_from_hex(0x060608);
 gray    :: #run color_from_hex(0x7c7c7c);
 
-purple  :: #run color_from_hex(0x2f256b);
 red     :: #run color_from_hex(0xd14444);
+orange  :: #run color_from_hex(0xffd787);
+yellow  :: #run color_from_hex(0xeca72c);
 green   :: #run color_from_hex(0x67ab7a);
-yellow  :: #run color_from_hex(0xECA72C);
 blue    :: #run color_from_hex(0x067ab7);
+purple  :: #run color_from_hex(0x2f256b);
 pink    :: #run color_from_hex(0xb869d3);
 
 // Rainbow color below!

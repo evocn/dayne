@@ -3,7 +3,21 @@
 // Alex Hartford
 // February 2024
 
-save_tweaks_file :: (file_name : string) {
+tweaks_apply_defaults :: () {
+    render_context.fullscreen = false;
+
+    set_screen_mode_according_to_fullscreen_variable();
+
+    DEFAULT_SFX_VOLUME :: 0.5;
+    DEFAULT_MUSIC_VOLUME :: 0.5;
+
+    set_sfx_volume(DEFAULT_SFX_VOLUME);
+    set_music_volume(DEFAULT_MUSIC_VOLUME);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+tweaks_save_to_file :: (file_name : string) {
     builder : String_Builder;
     defer free_buffers(*builder);
 
@@ -21,7 +35,7 @@ save_tweaks_file :: (file_name : string) {
     write_entire_file(full_path, *builder);
 }
 
-load_tweaks_file_and_apply_results :: (file_name : string) -> file_exists: bool {
+tweaks_load_from_file_and_apply :: (file_name : string) -> file_exists: bool {
     handler : Text_File_Handler;
     defer deinit(*handler);
     handler.do_version_number = false;
@@ -64,19 +78,4 @@ load_tweaks_file_and_apply_results :: (file_name : string) -> file_exists: bool 
     }
 
     return true;
-}
-
-//
-//
-
-apply_default_settings :: () {
-    render_context.fullscreen = false;
-
-    set_screen_mode_according_to_fullscreen_variable();
-
-    DEFAULT_SFX_VOLUME :: 0.5;
-    DEFAULT_MUSIC_VOLUME :: 0.5;
-
-    set_sfx_volume(DEFAULT_SFX_VOLUME);
-    set_music_volume(DEFAULT_MUSIC_VOLUME);
 }

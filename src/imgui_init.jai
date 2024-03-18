@@ -3,6 +3,10 @@
 // Alex Hartford
 // June 2023
 
+// This code seems to be the boilerplate to get ImGui's draw lists all set up with OpenGL atm.
+// Not sure if I've ever tried skipping this, but idk if it's a big deal.
+// Check out the comments from the original file (included in Jai module) for more details.
+
 // Data
 g_Time: u64 = 0;
 g_MousePressed := bool.[false, false, false];

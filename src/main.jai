@@ -3,25 +3,16 @@
 // Alex Hartford
 // February 2024
 
-VERSION :: 0;
 DEBUG_MEMORY :: true;
-
-window          : *SDL_Window;
-gl_context      : *SDL_GLContext;
-imgui_context   : *ImGui.ImGuiContext;
 
 program_state   : Program_State;
 
 audio_context   : Audio_Context;
 render_context  : Render_Context;
 
-
-// Loose Globals
 scratch_memory  : Flat_Pool;
 
 main_menu       : Menu;
-
-the_particle_system : Particle_System;
 
 the_animator : Animator;
 
@@ -47,20 +38,27 @@ main :: () {
     play_music("bach");
 
     game : Game;
-    _ := array_add(*game.players);
+    array_add(*game.players, .{});
 
-    game.entities[0] = New(Entity);
+    // Create a "Guy" Entity
+    {
+        new_guy := cast(*Guy) make_entity(.GUY);
+        new_guy.* = Guy.{
+            sprite = 1,
+            color  = pink,
 
-    game.entities[0].* = .{
-        sprite = 1,
-        color  = pink,
+            position = .{0, 0},
+        };
+        array_add(*game.entities, cast(*Entity)new_guy);
+    }
 
-        position = .{0, 0},
-    };
-
-
-    for * particle: the_particle_system.particles {
-        generate_particle(particle);
+    // Create a "Particle_System" Entity
+    {
+        new_particle_system := cast(*Particle_System) make_entity(.PARTICLE_SYSTEM);
+        for * particle: new_particle_system.particles {
+            generate_particle(particle);
+        }
+        array_add(*game.entities, cast(*Entity)new_particle_system);
     }
 
     the_animator = make_animator(
@@ -97,24 +95,25 @@ main :: () {
             // Dispatch based on program state
             if #complete program_state.current_scene == {
                 case .TITLE;
-                    simulate_title(game.players[0].input);
+                    apply_input_to_title(game.players[0].input);
 
                 case .GAME;
-                    simulate(*game, dt);
+                    apply_player_inputs_to_game(*game);
+                    simulate_game(*game, dt);
 
                 case .MENU;
-                    simulate_menu(*main_menu, game.players[0].input);
+                    apply_input_to_menu(*main_menu, game.players[0].input);
 
                 case .EDITOR;
-                    simulate_editor(game.players[0].input);
+                    apply_input_to_editor(game.players[0].input);
             }
         }
 
-        // Update visual stuff
+        // Frame Update
         {
-            update(*the_particle_system, dt);
-
             update(*the_animator, dt);
+
+            rainbow = update_rainbow_color(dt);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -143,9 +142,6 @@ main :: () {
             current_time := cast(float32)seconds_since_init();
             dt = current_time - last_frame;
             last_frame = current_time;
-
-            // Bullshit
-            rainbow = update_rainbow_color(dt);
         }
     }
 
@@ -159,7 +155,7 @@ main :: () {
 // Imports
 ////////////////////////////////////////////////////////////////////////////////
 
-// Standard Library files
+// Standard Library Imports
 using Basic :: #import "Basic"()(MEMORY_DEBUGGER=DEBUG_MEMORY);
 #import "Flat_Pool";
 #import "String";
@@ -188,35 +184,33 @@ ImGui :: #import "ImGui";
 
 // Core
 #load "util.jai";
-#load "window.jai";
 #load "initialize.jai";
-
-#load "input.jai";
-#load "simulate.jai";
-#load "render.jai";
-
+#load "window.jai";
 #load "state.jai";
 
+#load "input.jai";
+#load "interface.jai";
 #load "game.jai";
-#load "player.jai";
-#load "entity.jai";
+#load "render.jai";
 
 // Subsystems
 #load "text.jai";
 #load "audio.jai";
 #load "menu.jai";
 #load "editor.jai";
-#load "imgui_init.jai";
 #load "tweaks.jai";
 
-#load "particle.jai";
 
+#load "entity.jai";
+#load "guy.jai";
+#load "particle.jai";
 #load "animator.jai";
 
 // Rendering
 #load "opengl_rendering.jai";
 #load "opengl_shader.jai";
 #load "opengl_texture.jai";
+
 #load "sprite.jai";
 #load "color.jai";
 
@@ -225,3 +219,4 @@ ImGui :: #import "ImGui";
 #load "physics_collider.jai";
 #load "physics_solid.jai";
 #load "physics_actor.jai";
+

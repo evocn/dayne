@@ -4,11 +4,26 @@
 // February 2024
 
 Game :: struct {
-    players : [..] Player_Interface;
+    players : [..] Player;
+
+    Player :: struct {
+        state : enum {
+            NO_INPUT;
+            DEFAULT;
+        }
+
+        input : Input;
+
+        gamepad: SDL_Joystick;
+    }
 
     score : int;
 
-    MAX_ENTITIES :: 1000;
-    entities : [MAX_ENTITIES] *Entity;
+    entities : [..] *Entity;
 }
 
+simulate_game :: (game: *Game, dt: float) {
+    for entity : game.entities {
+        determine_entity_kind_and_update(entity, dt);
+    }
+}

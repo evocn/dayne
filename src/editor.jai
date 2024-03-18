@@ -3,6 +3,8 @@
 // Alex Hartford
 // February 2024
 
+#load "imgui_init.jai";
+
 update_and_draw_editor :: (game: *Game) {
     io := ImGui.GetIO();
     program_state.imgui_capturing_mouse     = io.WantCaptureMouse;

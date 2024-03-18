@@ -27,6 +27,9 @@ generate_particle :: (particle: *Particle) {
 ////////////////////////////////////////////////////////////////////////////////
 
 Particle_System :: struct {
+    using #as entity: Entity;
+    kind = .PARTICLE_SYSTEM;
+
     particles : [100] Particle;
 }
 
@@ -34,4 +37,19 @@ update :: (particle_system: *Particle_System, dt: float) {
     for * particle: particle_system.particles {
         update(particle, dt);
     }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+draw :: (particle_system: Particle_System) {
+    for particle: particle_system.particles {
+        draw_particle(particle);
+    }
+}
+
+draw_particle :: (particle: Particle) {
+    pixel := world_space_to_screen_pixel(particle.position);
+    
+    draw_pixel(pixel, particle.color);
 }

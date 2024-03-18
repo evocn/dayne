@@ -25,7 +25,7 @@ update :: (button: *Button) {
     }
 }
 
-post_frame_update :: (input: *User_Input) {
+post_frame_update :: (input: *Input) {
     update(*input.up);
     update(*input.left);
     update(*input.down);
@@ -42,7 +42,7 @@ post_frame_update :: (input: *User_Input) {
 }
 
 
-User_Input :: struct {
+Input :: struct {
     up      : Button;
     left    : Button;
     down    : Button;
@@ -64,7 +64,7 @@ User_Input :: struct {
 //
 //
 
-gather_input :: (input: *User_Input, gamepad: *SDL_Joystick) {
+gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
     event : SDL_Event;
     while SDL_PollEvent(*event) {
         ImGui_ImplSdl_ProcessEvent(*event);

@@ -3,6 +3,11 @@
 // Alex Hartford
 // February 2024
 
+window          : *SDL_Window;
+gl_context      : *SDL_GLContext;
+imgui_context   : *ImGui.ImGuiContext;
+
+
 initialize_everything :: () {
     set_working_directory_to_base_folder :: () {
         executable_path := path_strip_filename(System.get_path_of_running_executable());
@@ -22,8 +27,8 @@ initialize_everything :: () {
 
 
     // Tweaks File
-    apply_default_settings();
-    tweaks_file_exists := load_tweaks_file_and_apply_results("all");
+    tweaks_apply_defaults();
+    tweaks_file_exists := tweaks_load_from_file_and_apply("all");
     if tweaks_file_exists then log("Applied tweaks file settings.\n");
 }
 
@@ -78,7 +83,7 @@ initialize_imgui :: () {
     // Settings
     {
         io := ImGui.GetIO();
-        io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", render_context.window_height / 40.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
+        io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", render_context.window_height / 20.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
 
         // Default location
         io.IniFilename = "bin/imgui.ini";

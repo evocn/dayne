@@ -16,8 +16,6 @@ render :: (game: Game) {
             //draw_credits_screen();
         }
 
-        draw_particle_system(the_particle_system);
-
         draw_pixel(.{50, get_value(the_animator)}, color = rainbow);
 
         if #complete program_state.current_scene == {
@@ -47,12 +45,13 @@ render :: (game: Game) {
 
 draw_game_state :: (game: Game) {
     for entity: game.entities {
-        if !entity then continue;
-
-        draw_entity(entity.*);
+        determine_entity_kind_and_draw(entity);
     }
+
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
 
 draw_user_interface :: (game: Game) {
 
@@ -84,6 +83,7 @@ draw_user_interface :: (game: Game) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+
 draw_editor_features :: () {
 }
 
@@ -92,20 +92,6 @@ draw_editor_features :: () {
 // It is all here to have centralized drawing code, separate from 
 // implementation details.
 ////////////////////////////////////////////////////////////////////////////////
-
-draw_entity :: (entity: Entity) {
-    pixel := world_space_to_screen_pixel(entity.position);
-
-    draw_sprite(
-        render_context.spritesheet,
-        index = entity.sprite,
-        pixel = pixel,
-        scale_factor = 1,
-        horizontal_flip = entity.flip,
-        use_color_override = true,
-        color_override = entity.color,
-    );
-}
 
 world_space_to_screen_pixel :: (world_space: Vector2) -> pixel: Pair {
     pixel: Pair;
@@ -272,23 +258,6 @@ draw_controls_display :: () {
         color_override = gray,
     );
 }
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-draw_particle_system :: (particle_system: Particle_System) {
-    for particle: particle_system.particles {
-        draw_particle(particle);
-    }
-}
-
-draw_particle :: (particle: Particle) {
-    pixel := world_space_to_screen_pixel(particle.position);
-    
-    draw_pixel(pixel, particle.color);
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Menu
