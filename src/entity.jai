@@ -3,7 +3,24 @@
 // Alex Hartford
 // March 2024
 
+/*
+Current thoughts on entity systems:
+
+I think these systems are good, if a little more friction can come out of them.
+At the moment, I still have to manually add code in like four different functions when I make a new entity.
+That's an improvement over the ~8 different places I would have to add code if I wasn't using this,
+and the compiler helps me out with #complete enum protection,
+but it should be a lot better!
+
+Most of the trouble I am having is that in order to cast from *Entity to *Sub_Entity, I always need an if..case.
+I'm pretty sure this is necessary, as the compiler has to know the type of the structure at compile time.
+I could be wrong, and be able to somehow cast to 
+*/
+
 Entity :: struct {
+    // @NOTE: This could also just be type : Type, but there are problems:
+    // * I don't want to have to make serialization more complicated.
+    // * I want #complete if..case statements to keep throwing good errors.
     Kind :: enum #complete {
         UNDEFINED;
         GUY;
@@ -11,6 +28,8 @@ Entity :: struct {
     }
     kind : Kind;        @NoSerialize
     entity_id : u64;    @NoSerialize
+
+    name : string;
 
     position : Vector2;
 }
@@ -63,6 +82,8 @@ make_entity :: (kind : Entity.Kind) -> *Entity {
 
     entity.entity_id = next_entity_id;
     next_entity_id += 1;
+
+    entity.name = "placeholder";
 
     return entity;
 }

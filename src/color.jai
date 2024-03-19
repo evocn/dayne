@@ -32,7 +32,8 @@ blue    :: #run color_from_hex(0x067ab7);
 purple  :: #run color_from_hex(0x2f256b);
 pink    :: #run color_from_hex(0xb869d3);
 
-// Rainbow color below!
+colors : [10] Color = .[white, black, gray, red, orange, yellow, green, blue, purple, pink];
+
 ////////////////////////////////////////////////////////////////////////////////
 
 rainbow : Color;
@@ -43,12 +44,19 @@ RAINBOW_OSCILLATION_SPEED :: 5.0;
 update_rainbow_color :: (dt: float) -> Color {
     rainbow_time += dt * RAINBOW_OSCILLATION_SPEED;
 
-    if rainbow_time >= 6.0 then rainbow_time = rainbow_time - 6.0;
+    if rainbow_time >= 7.0 then rainbow_time = rainbow_time - 6.0;
     
-    if      rainbow_time > 5.0 then return pink;
-    else if rainbow_time > 4.0 then return red;
-    else if rainbow_time > 3.0 then return yellow;
-    else if rainbow_time > 2.0 then return green;
-    else if rainbow_time > 1.0 then return blue;
-    else                            return purple;
+    if      rainbow_time > 6.0 then return red;
+    else if rainbow_time > 5.0 then return orange;
+    else if rainbow_time > 4.0 then return yellow;
+    else if rainbow_time > 3.0 then return green;
+    else if rainbow_time > 2.0 then return blue;
+    else if rainbow_time > 1.0 then return purple;
+    else                            return pink;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+random_color :: () -> Color {
+    return random_choice(colors);
 }

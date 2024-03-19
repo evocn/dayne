@@ -10,6 +10,10 @@
 // Plus this code is weird, and I don't like it.
 // In any case, this works for now, and we can change it later if the spirit moves us
 
+// @TODO:
+// * Colors should just index into an array probably? That way we can choose colors properly in the editor?
+// * Floats should probably save some other way, so that it's not prone to shifting?
+
 VERSION :: 1;
 
 save_entities :: (entities : [..] *Entity, filename : string) -> success : bool {

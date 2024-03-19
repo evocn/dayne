@@ -83,7 +83,7 @@ initialize_imgui :: () {
     // Settings
     {
         io := ImGui.GetIO();
-        io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", render_context.window_height / 20.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
+        io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/cascadia.ttf", render_context.window_height / 30.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
 
         // Default location
         io.IniFilename = "bin/imgui.ini";
