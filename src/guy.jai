@@ -7,10 +7,15 @@ Guy :: struct {
     using #as entity: Entity;
     kind = .GUY;
 
-    // Appearance
+
     sprite  : int;
     color   : Color;
-    flip    : bool;
+
+    flip    : bool;     @NoSerialize
+}
+
+initialize :: (guy: *Guy) {
+    guy.flip = false;
 }
 
 update :: (guy: *Guy, dt: float) {

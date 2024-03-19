@@ -3,9 +3,8 @@
 // Alex Hartford
 // February 2024
 
+// This structure defines the game's current state.
 Game :: struct {
-    players : [..] Player;
-
     Player :: struct {
         state : enum {
             NO_INPUT;
@@ -16,6 +15,7 @@ Game :: struct {
 
         gamepad: SDL_Joystick;
     }
+    players : [..] Player;
 
     score : int;
 

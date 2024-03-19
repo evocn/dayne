@@ -1,0 +1,9 @@
+[1] # Version
+
+1	# Kind
+14.039957 0	# position
+2	# sprite
+0.721569 0.411765 0.827451 1	# color
+
+2	# Kind
+0 0	# position

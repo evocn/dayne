@@ -30,6 +30,16 @@ editor :: (game: *Game) {
     {
         ImGui.Text("% FPS", program_state.framerate);
 
+        if ImGui.Button("Load") {
+            success := load_entities(*game.entities, "entities.txt");
+            assert(success, "Failed to load entities from a file.\n");
+        }
+        ImGui.SameLine();
+        if ImGui.Button("Save") {
+            success := save_entities(game.entities, "entities.txt");
+            assert(success, "Failed to save entities to a file.\n");
+        }
+
         ImGui.Checkbox("Draw Demo", *program_state.draw_demo);
 
         ImGui.SliderInt("Score", xx *game.score, 0, 99);

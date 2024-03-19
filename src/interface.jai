@@ -5,8 +5,6 @@
 
 // This file includes functions which define how the Input gathered elsewhere
 // should be applied to different program systems.
-// For instance, what should inputs do to the title screen? To the Game? Menus?
-// That's here for now. Maybe later it will go somewhere nicer.
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main Game Inputs
@@ -85,7 +83,6 @@ apply_input_to_menu :: (menu: *Menu, input: Input) {
         toggle_menu_element(menu.elements[menu.element_index]);
     }
 }
-
 
 apply_input_to_editor :: (input: Input) {
 }

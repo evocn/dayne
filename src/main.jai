@@ -11,6 +11,7 @@ audio_context   : Audio_Context;
 render_context  : Render_Context;
 
 scratch_memory  : Flat_Pool;
+entity_pool     : Flat_Pool; // @TODO: Put this in a better location!
 
 main_menu       : Menu;
 
@@ -25,7 +26,7 @@ sfx_path        :: "assets/audio/sfx";
 
 shaders_path    :: "shaders";
 
-boards_path     :: "boards";
+data_path       :: "data";
 tweaks_path     :: "bin";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,25 +41,9 @@ main :: () {
     game : Game;
     array_add(*game.players, .{});
 
-    // Create a "Guy" Entity
     {
-        new_guy := cast(*Guy) make_entity(.GUY);
-        new_guy.* = Guy.{
-            sprite = 1,
-            color  = pink,
-
-            position = .{0, 0},
-        };
-        array_add(*game.entities, cast(*Entity)new_guy);
-    }
-
-    // Create a "Particle_System" Entity
-    {
-        new_particle_system := cast(*Particle_System) make_entity(.PARTICLE_SYSTEM);
-        for * particle: new_particle_system.particles {
-            generate_particle(particle);
-        }
-        array_add(*game.entities, cast(*Entity)new_particle_system);
+        success := load_entities(*game.entities, "entities.txt");
+        assert(success, "Failed to load entities from a file.\n");
     }
 
     the_animator = make_animator(
@@ -118,9 +103,7 @@ main :: () {
 
         ////////////////////////////////////////////////////////////////////////////////
         // Render
-        render(
-            game
-        );
+        render(game);
 
         if program_state.current_scene == .EDITOR {
             update_and_draw_editor(*game);
@@ -150,37 +133,28 @@ main :: () {
     #if DEBUG_MEMORY then report_memory_leaks();
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Imports
 ////////////////////////////////////////////////////////////////////////////////
 
-// Standard Library Imports
 using Basic :: #import "Basic"()(MEMORY_DEBUGGER=DEBUG_MEMORY);
 #import "Flat_Pool";
 #import "String";
 #import "Math";
-#import "Hash_Table";
-#import "Bucket_Array";
 #import "File";
-#import "Text_File_Handler";
 #import "Random";
+#import "Hash_Table";
+#import "Text_File_Handler";
 File_Utilities :: #import "File_Utilities"; // For file_list()
 System         :: #import "System";         // For get_path_of_running_executable()
 
 
-// Third Party Dependencies
 #import "SDL";
 #import "GL";
 ImGui :: #import "ImGui";
 #import "stb_image";
 #import "freetype-2.12.1";
 #import "miniaudio";
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Loads
-////////////////////////////////////////////////////////////////////////////////
 
 // Core
 #load "util.jai";
@@ -202,8 +176,10 @@ ImGui :: #import "ImGui";
 
 
 #load "entity.jai";
+#load "entity_serialization.jai";
 #load "guy.jai";
-#load "particle.jai";
+#load "particle_system.jai";
+
 #load "animator.jai";
 
 // Rendering
@@ -219,4 +195,3 @@ ImGui :: #import "ImGui";
 #load "physics_collider.jai";
 #load "physics_solid.jai";
 #load "physics_actor.jai";
-
