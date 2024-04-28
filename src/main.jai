@@ -173,7 +173,6 @@ ImGui :: #import "ImGui";
 #load "audio.jai";
 #load "menu.jai";
 #load "editor.jai";
-#load "editor_imgui_init.jai";
 #load "tweaks.jai";
 
 

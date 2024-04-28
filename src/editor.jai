@@ -3,7 +3,7 @@
 // Alex Hartford
 // February 2024
 
-#load "imgui_init.jai";
+#load "editor_imgui_init.jai";
 
 editor_state : struct {
     entity_index : int = -1;

@@ -24,7 +24,7 @@ build :: () {
 
 	compiler_begin_intercept(workspace);
 
-    add_build_file("src/main.jai", w);
+    add_build_file("src/main.jai", workspace);
 
 	// Set up ctags options
 	ctags: CTags;
