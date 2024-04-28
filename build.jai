@@ -24,12 +24,12 @@ build :: () {
 
 	compiler_begin_intercept(w);
 
-    add_build_file(tprint("%/src/main.jai", #filepath), w);
+    add_build_file("src/main.jai", w);
 
 	// Set up ctags options
 	ctags: CTags;
 	ctags.output_filename = "src/tags";
-	ctags.base_path = tprint("%/src", #filepath);
+	ctags.base_path = "src";
 	defer reset(*ctags);
 
 	while true {

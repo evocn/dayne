@@ -53,18 +53,24 @@ draw_game_state :: (game: Game) {
     }
 }
 
+draw_mouse_cursor :: (position : Pair, color : Color) {
+    draw_pixel(position, color);
+    draw_pixel(position + .{0, -1}, color);
+    draw_pixel(position + .{0, -2}, color);
+    draw_pixel(position + .{1, 0}, color);
+    draw_pixel(position + .{2, 0}, color);
+}
 
 draw_user_interface :: (game: Game) {
-
     // Mouse Position
     {
         mouse_color := white;
-        if      game.players[0].input.left_mouse.is_down then mouse_color = yellow;
+        if      game.players[0].input.left_mouse.is_down  then mouse_color = yellow;
         else if game.players[0].input.right_mouse.is_down then mouse_color = pink;
 
-        draw_pixel(
+        draw_mouse_cursor(
             game.players[0].input.mouse_position,
-            color = mouse_color,
+            mouse_color,
         );
     }
 

@@ -206,7 +206,7 @@ ImGui :: #import "ImGui";
 #load "audio.jai";
 #load "menu.jai";
 #load "editor.jai";
-#load "imgui_init.jai";
+#load "editor_imgui_init.jai";
 #load "tweaks.jai";
 
 #load "particle.jai";
