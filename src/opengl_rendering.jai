@@ -3,6 +3,10 @@
 // Alex Hartford
 // February 2024
 
+// I have these split out into "OpenGL specific" stuff, but in truth, most of
+// this is couched in a GL-centric world. Eventually, we'll do different
+// backends and actually rip this code out.
+
 OpenGL_Context :: struct {
     using shaders : struct {
         basic_shader    : Shader;
@@ -227,6 +231,7 @@ initialize_framebuffer :: () {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+// This function properly performs aspect ratio calculations to letterbox the screen quad.
 draw_screen_quad :: (shader: Shader) {
     viewport_portion_of_the_screen_in_x := cast(float)render_context.viewport_height / render_context.window_height;
     viewport_portion_of_the_screen_in_y := cast(float)render_context.viewport_width / render_context.window_width;

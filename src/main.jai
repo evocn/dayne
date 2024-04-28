@@ -3,25 +3,17 @@
 // Alex Hartford
 // February 2024
 
-VERSION :: 0;
 DEBUG_MEMORY :: true;
-
-window          : *SDL_Window;
-gl_context      : *SDL_GLContext;
-imgui_context   : *ImGui.ImGuiContext;
 
 program_state   : Program_State;
 
 audio_context   : Audio_Context;
 render_context  : Render_Context;
 
-
-// Loose Globals
 scratch_memory  : Flat_Pool;
+entity_pool     : Flat_Pool; // @TODO: Put this in a better location!
 
 main_menu       : Menu;
-
-the_particle_system : Particle_System;
 
 the_animator : Animator;
 
@@ -34,7 +26,7 @@ sfx_path        :: "assets/audio/sfx";
 
 shaders_path    :: "shaders";
 
-boards_path     :: "boards";
+data_path       :: "data";
 tweaks_path     :: "bin";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,20 +39,11 @@ main :: () {
     play_music("bach");
 
     game : Game;
-    _ := array_add(*game.players);
+    array_add(*game.players, .{});
 
-    game.entities[0] = New(Entity);
-
-    game.entities[0].* = .{
-        sprite = 1,
-        color  = pink,
-
-        position = .{0, 0},
-    };
-
-
-    for * particle: the_particle_system.particles {
-        generate_particle(particle);
+    {
+        success := load_entities(*game.entities, "entities.txt");
+        assert(success, "Failed to load entities from a file.\n");
     }
 
     the_animator = make_animator(
@@ -97,31 +80,30 @@ main :: () {
             // Dispatch based on program state
             if #complete program_state.current_scene == {
                 case .TITLE;
-                    simulate_title(game.players[0].input);
+                    apply_input_to_title(game.players[0].input);
 
                 case .GAME;
-                    simulate(*game, dt);
+                    apply_player_inputs_to_game(*game);
+                    simulate_game(*game, dt);
 
                 case .MENU;
-                    simulate_menu(*main_menu, game.players[0].input);
+                    apply_input_to_menu(*main_menu, game.players[0].input);
 
                 case .EDITOR;
-                    simulate_editor(game.players[0].input);
+                    apply_input_to_editor(game.players[0].input);
             }
         }
 
-        // Update visual stuff
+        // Frame Update
         {
-            update(*the_particle_system, dt);
-
             update(*the_animator, dt);
+
+            rainbow = update_rainbow_color(dt);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         // Render
-        render(
-            game
-        );
+        render(game);
 
         if program_state.current_scene == .EDITOR {
             update_and_draw_editor(*game);
@@ -143,9 +125,6 @@ main :: () {
             current_time := cast(float32)seconds_since_init();
             dt = current_time - last_frame;
             last_frame = current_time;
-
-            // Bullshit
-            rainbow = update_rainbow_color(dt);
         }
     }
 
@@ -154,26 +133,23 @@ main :: () {
     #if DEBUG_MEMORY then report_memory_leaks();
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Imports
 ////////////////////////////////////////////////////////////////////////////////
 
-// Standard Library files
 using Basic :: #import "Basic"()(MEMORY_DEBUGGER=DEBUG_MEMORY);
 #import "Flat_Pool";
 #import "String";
 #import "Math";
-#import "Hash_Table";
-#import "Bucket_Array";
 #import "File";
-#import "Text_File_Handler";
 #import "Random";
+#import "Hash_Table";
+#import "Text_File_Handler";
 File_Utilities :: #import "File_Utilities"; // For file_list()
 System         :: #import "System";         // For get_path_of_running_executable()
+Reflection :: #import "Reflection";
 
 
-// Third Party Dependencies
 #import "SDL";
 #import "GL";
 ImGui :: #import "ImGui";
@@ -181,25 +157,16 @@ ImGui :: #import "ImGui";
 #import "freetype-2.12.1";
 #import "miniaudio";
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Loads
-////////////////////////////////////////////////////////////////////////////////
-
 // Core
 #load "util.jai";
-#load "window.jai";
 #load "initialize.jai";
-
-#load "input.jai";
-#load "simulate.jai";
-#load "render.jai";
-
+#load "window.jai";
 #load "state.jai";
 
+#load "input.jai";
+#load "interface.jai";
 #load "game.jai";
-#load "player.jai";
-#load "entity.jai";
+#load "render.jai";
 
 // Subsystems
 #load "text.jai";
@@ -209,7 +176,11 @@ ImGui :: #import "ImGui";
 #load "editor_imgui_init.jai";
 #load "tweaks.jai";
 
-#load "particle.jai";
+
+#load "entity.jai";
+#load "entity_serialization.jai";
+#load "guy.jai";
+#load "particle_system.jai";
 
 #load "animator.jai";
 
@@ -217,5 +188,12 @@ ImGui :: #import "ImGui";
 #load "opengl_rendering.jai";
 #load "opengl_shader.jai";
 #load "opengl_texture.jai";
+
 #load "sprite.jai";
 #load "color.jai";
+
+// Physics
+#load "physics.jai";
+#load "physics_collider.jai";
+#load "physics_solid.jai";
+#load "physics_actor.jai";

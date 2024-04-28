@@ -4,13 +4,13 @@
 // February 2024
 
 build :: () {
-    w := compiler_create_workspace("Main Workspace");
-    if !w {
+    workspace := compiler_create_workspace("Main Workspace");
+    if !workspace {
         print("Workspace creation failed.\n");
         return;
     }
 
-    options := get_build_options(w);
+    options := get_build_options(workspace);
     options.output_executable_name = "dayne";
 
     // NOTE: this refers to a relative path from this (build.jai) file.
@@ -19,10 +19,10 @@ build :: () {
     options.output_type = .EXECUTABLE;
     options.text_output_flags = 2;
 
-    set_build_options(options, w);
+    set_build_options(options, workspace);
     set_build_options_dc(.{do_output=false});
 
-	compiler_begin_intercept(w);
+	compiler_begin_intercept(workspace);
 
     add_build_file("src/main.jai", w);
 
@@ -36,7 +36,7 @@ build :: () {
 		message := compiler_wait_for_message();
 		if !message continue;
 
-		if message.workspace == w {
+		if message.workspace == workspace {
 			process_message(*ctags, message);
 		}
 

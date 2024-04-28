@@ -3,12 +3,27 @@
 // Alex Hartford
 // February 2024
 
+// This structure defines the game's current state.
 Game :: struct {
-    players : [..] Player_Interface;
+    Player :: struct {
+        state : enum {
+            NO_INPUT;
+            DEFAULT;
+        }
+
+        input : Input;
+
+        gamepad: SDL_Joystick;
+    }
+    players : [..] Player;
 
     score : int;
 
-    MAX_ENTITIES :: 1000;
-    entities : [MAX_ENTITIES] *Entity;
+    entities : [..] *Entity;
 }
 
+simulate_game :: (game: *Game, dt: float) {
+    for entity : game.entities {
+        determine_entity_kind_and_update(entity, dt);
+    }
+}

@@ -1,25 +1,43 @@
+// Dayne
+// Interface
+// Alex Hartford
+// March 2024
+
+// This file includes functions which define how the Input gathered elsewhere
+// should be applied to different program systems.
+
 ////////////////////////////////////////////////////////////////////////////////
+// Main Game Inputs
 
-simulate :: (game: Game, dt: float) {
+apply_player_inputs_to_game :: (game: *Game) {
     for player : game.players {
-        input := player.input;
-        state := player.state;
-
-        if input.select.just_pressed {
+        if player.input.select.just_pressed {
             change_scene(.MENU);
         }
 
-        if #complete state == {
-            case .DEFAULT;            
-                if input.up.just_pressed {
-                }
+        apply_inputs_from_player_to_game(player, game);
+    }
+}
+
+apply_inputs_from_player_to_game :: (player: Game.Player, game: *Game) {
+    input := player.input;
+    state := player.state;
+
+    if #complete state == {
+        case .NO_INPUT; {           
+        }
+
+        case .DEFAULT; {           
+            if input.up.just_pressed {
+            }
         }
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Miscellaneous Program States
 
-simulate_title :: (input: User_Input) {
+apply_input_to_title :: (input: Input) {
     if input.south.just_pressed {
         change_scene(.GAME);
         play_sfx("sea");
@@ -31,9 +49,8 @@ simulate_title :: (input: User_Input) {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
 
-simulate_menu :: (menu: *Menu, input: User_Input) {
+apply_input_to_menu :: (menu: *Menu, input: Input) {
     if input.select.just_pressed {
         return_to_prior_scene();
         play_sfx("click");
@@ -67,7 +84,5 @@ simulate_menu :: (menu: *Menu, input: User_Input) {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-simulate_editor :: (input: User_Input) {
+apply_input_to_editor :: (input: Input) {
 }
