@@ -44,15 +44,14 @@ entities_editor :: (game: *Game) {
             assert(success, "Failed to save entities to a file.\n");
         }
 
-        ImGui.BeginListBox("### Entities");
-        {
+        if ImGui.BeginListBox("### Entities") {
             for entity, index : game.entities {
                 if ImGui.Button(temp_c_string(tprint("%", entity.name))) {
                     editor_state.entity_index = index;
                 }
             }
+            ImGui.EndListBox();
         }
-        ImGui.EndListBox();
 
         ImGui.Text("Make");
         if ImGui.Button("Guy") then array_add(*game.entities, make_entity(.GUY));
