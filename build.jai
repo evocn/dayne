@@ -45,7 +45,7 @@ build :: () {
 
     // Create a manifest and an icon file.
 	#if OS == .WINDOWS {
-        icons_path :: "assets/misc";
+        icons_path :: "assets/art/misc";
 
 		exe_name := sprint("%/%.exe", options.output_path, options.output_executable_name);
 		defer free(exe_name);

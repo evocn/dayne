@@ -18,9 +18,12 @@ OpenGL_Context :: struct {
     // Primitives for drawing things
         quad : Quad;
 
-        spritesheet : Sprite;
-        haruhachi : Sprite;
-        controls : Sprite;
+        MAX_SPRITES :: 128;
+        sprites : Table(string, *Sprite);
+        sprite_storage : [MAX_SPRITES] Sprite;
+
+        spritesheets : Table(string, *Spritesheet);
+        spritesheet_storage : [MAX_SPRITES] Spritesheet;
 
         fbo : GLuint;
         render_texture : GLuint;
@@ -28,13 +31,18 @@ OpenGL_Context :: struct {
     // Fonts
         main_font  : Font;
         small_font : Font;
+        big_font   : Font;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Immediate Mode Drawing Functions
 ////////////////////////////////////////////////////////////////////////////////
 
-draw_pixel :: (screen_pixel: Pair, color := white) {
+draw_pixel :: (pair : Pair, color := white) {
+    draw_pixel(pair.x, pair.y, color);
+}
+
+draw_pixel :: (x : int, y : int, color := white) {
     Pixel :: struct {
         position: Vector2;
         vao, vbo: GLuint;
@@ -44,8 +52,8 @@ draw_pixel :: (screen_pixel: Pair, color := white) {
 
     // Get pixel ready for drawing with OpenGL
     {
-        pixel.position.x = cast(float)screen_pixel.x / PIXEL_WIDTH;
-        pixel.position.y = cast(float)screen_pixel.y / PIXEL_HEIGHT;
+        pixel.position.x = cast(float)x / PIXEL_WIDTH;
+        pixel.position.y = cast(float)y / PIXEL_HEIGHT;
 
         glGenVertexArrays(1, *pixel.vao);
         glGenBuffers(1, *pixel.vbo);
@@ -61,7 +69,7 @@ draw_pixel :: (screen_pixel: Pair, color := white) {
         glEnableVertexAttribArray(0);
     }
 
-    // Draw the thing!
+    // Draw the damn thing!
     {
         shader := use_basic_shader();
         set_vec4(shader, "color", color);

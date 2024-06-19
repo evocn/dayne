@@ -7,19 +7,24 @@
 Game :: struct {
     Player :: struct {
         state : enum {
-            NO_INPUT;
             DEFAULT;
+            NO_INPUT;
         }
 
         input : Input;
 
         gamepad: SDL_Joystick;
     }
-    players : [..] Player;
-
-    score : int;
+    player : Player;
 
     entities : [..] *Entity;
+
+    //
+    //
+
+    spine : Spine;
+
+    page : Page;
 }
 
 simulate_game :: (game: *Game, dt: float) {

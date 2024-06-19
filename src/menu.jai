@@ -109,13 +109,11 @@ toggle_menu_element :: (using element: *Menu_Element) {
         case .GO;
             using cast(*Menu_Element_Go)element;
             callback();
-            play_sfx("click");
 
         case .CHECKBOX;
             using cast(*Menu_Element_Checkbox)element;
             value.* = !(value.*);
             callback();
-            play_sfx("click");
 
         case .SLIDER;
             // Don't do anything.
@@ -134,7 +132,6 @@ nudge_menu_element :: (using element: *Menu_Element, left := false) {
             using cast(*Menu_Element_Checkbox)element;
             value.* = !(value.*);
             callback();
-            play_sfx("click");
 
         case .SLIDER;
             using cast(*Menu_Element_Slider)element;
@@ -147,7 +144,6 @@ nudge_menu_element :: (using element: *Menu_Element, left := false) {
                 callback(value);
             }
 
-            play_sfx("click");
     }
 
     tweaks_save_to_file("all");

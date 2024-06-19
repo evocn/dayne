@@ -8,7 +8,7 @@ Guy :: struct {
     kind = .GUY;
 
 
-    sprite  : int;
+    spritesheet_index : int;
     color   : Color;
 
     flip    : bool;     @NoSerialize
@@ -25,10 +25,12 @@ update :: (guy: *Guy, dt: float) {
 draw :: (guy: Guy) {
     pixel := world_space_to_screen_pixel(guy.position);
 
-    draw_sprite(
-        render_context.spritesheet,
-        index = guy.sprite,
-        pixel = pixel,
+    draw_spritesheet(
+        "main",
+        index = guy.spritesheet_index,
+        x = pixel.x,
+        y = pixel.y,
+
         scale_factor = 1,
         horizontal_flip = guy.flip,
         use_color_override = true,

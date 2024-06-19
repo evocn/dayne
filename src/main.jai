@@ -15,11 +15,37 @@ entity_pool     : Flat_Pool; // @TODO: Put this in a better location!
 
 main_menu       : Menu;
 
-the_animator : Animator;
+//the_animator : Animator;
+
+PIXEL_WIDTH     :: 2400;
+PIXEL_HEIGHT    :: 1600;
+
+DEFAULT_WINDOW_SCALE_FACTOR :: 1;
+DEFAULT_WINDOW_WIDTH    :: PIXEL_WIDTH  * DEFAULT_WINDOW_SCALE_FACTOR;
+DEFAULT_WINDOW_HEIGHT   :: PIXEL_HEIGHT * DEFAULT_WINDOW_SCALE_FACTOR;
+
+GAME_ASPECT_RATIO : float : cast(float)PIXEL_WIDTH / PIXEL_HEIGHT;
+
+Render_Context :: struct {
+    window_width  : s32 = DEFAULT_WINDOW_WIDTH;
+    window_height : s32 = DEFAULT_WINDOW_HEIGHT;
+    window_scale_factor : s32 = DEFAULT_WINDOW_SCALE_FACTOR;
+
+    viewport_width : s32 = cast(s32)(DEFAULT_WINDOW_HEIGHT * GAME_ASPECT_RATIO);
+    viewport_height: s32 = DEFAULT_WINDOW_HEIGHT;
+
+    fullscreen: bool;
+
+    using opengl_context : OpenGL_Context;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-sprites_path    :: "assets/sprites";
+text_path       :: "text";
+
+sprites_path    :: "assets/art/sprites";
+spritesheets_path :: "assets/art/spritesheets";
+
 fonts_path      :: "assets/fonts";
 music_path      :: "assets/audio/music";
 sfx_path        :: "assets/audio/sfx";
@@ -36,16 +62,36 @@ main :: () {
 
     main_menu = menu_initialize();
 
-    play_music("bach");
+    play_music("cavetine");
 
     game : Game;
-    array_add(*game.players, .{});
+    array_add(*game.spine.vignettes, 
+        .{
+            song = "concerto",
+        }
+    );
+    array_add(*game.spine.vignettes, 
+        .{
+            song = "fugue",
+        }
+    );
+    array_add(*game.spine.vignettes, 
+        .{
+            song = "cavetine",
+        }
+    );
+    array_add(*game.spine.vignettes, 
+        .{
+            song = "rhapsody",
+        }
+    );
 
     {
         success := load_entities(*game.entities, "entities.txt");
         assert(success, "Failed to load entities from a file.\n");
     }
 
+    /*
     the_animator = make_animator(
         key_frames = ...[
             .{
@@ -58,7 +104,15 @@ main :: () {
             }
         ],
     );
+    */
 
+    {
+        page_name := "0";
+        success := read_page(page_name, *game.page);
+        assert(success, "Failed to read the page %.\n", page_name);
+
+
+    }
 
 
     dt, last_frame := 0.0;
@@ -70,9 +124,7 @@ main :: () {
 
         ////////////////////////////////////////////////////////////////////////////////
         // Input
-        for * player : game.players {
-            gather_input(*player.input, *player.gamepad);
-        }
+        gather_input(*game.player.input, *game.player.gamepad);
 
         ////////////////////////////////////////////////////////////////////////////////
         // Simulate
@@ -80,25 +132,33 @@ main :: () {
             // Dispatch based on program state
             if #complete program_state.current_scene == {
                 case .TITLE;
-                    apply_input_to_title(game.players[0].input);
+                    apply_input_to_title(game.player.input);
 
                 case .GAME;
                     apply_player_inputs_to_game(*game);
                     simulate_game(*game, dt);
 
                 case .MENU;
-                    apply_input_to_menu(*main_menu, game.players[0].input);
+                    apply_input_to_menu(*main_menu, game.player.input);
 
                 case .EDITOR;
-                    apply_input_to_editor(game.players[0].input);
+                    apply_input_to_editor(game.player.input);
+
+                case .END;
+                    apply_input_to_end(game.player.input);
             }
         }
 
         // Frame Update
         {
-            update(*the_animator, dt);
+            //update(*the_animator, dt);
 
             rainbow = update_rainbow_color(dt);
+            flashing_red = update_flashing_red_color(dt);
+        }
+
+        if !program_state.running {
+            print("%\n", program_state.current_scene);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -116,9 +176,7 @@ main :: () {
         ////////////////////////////////////////////////////////////////////////////////
         // Frame Cleanup
         {
-            for * player : game.players {
-                post_frame_update(*player.input);
-            }
+            post_frame_update(*game.player.input);
 
             reset_temporary_storage();
 
@@ -169,7 +227,7 @@ ImGui :: #import "ImGui";
 #load "render.jai";
 
 // Subsystems
-#load "text.jai";
+#load "draw_text.jai";
 #load "audio.jai";
 #load "menu.jai";
 #load "editor.jai";
@@ -196,3 +254,7 @@ ImGui :: #import "ImGui";
 #load "physics_collider.jai";
 #load "physics_solid.jai";
 #load "physics_actor.jai";
+
+// Game Code
+#load "vignette.jai";
+#load "text.jai";

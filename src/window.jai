@@ -3,38 +3,6 @@
 // Alex Hartford
 // February 2024
 
-PIXEL_WIDTH     :: 240;
-PIXEL_HEIGHT    :: 160;
-
-DEFAULT_WINDOW_SCALE_FACTOR :: 8;
-DEFAULT_WINDOW_WIDTH    :: PIXEL_WIDTH  * DEFAULT_WINDOW_SCALE_FACTOR;
-DEFAULT_WINDOW_HEIGHT   :: PIXEL_HEIGHT * DEFAULT_WINDOW_SCALE_FACTOR;
-
-GAME_ASPECT_RATIO : float : cast(float)PIXEL_WIDTH / PIXEL_HEIGHT;
-
-Render_Context :: struct {
-    window_width  : s32 = DEFAULT_WINDOW_WIDTH;
-    window_height : s32 = DEFAULT_WINDOW_HEIGHT;
-    window_scale_factor : s32 = DEFAULT_WINDOW_SCALE_FACTOR;
-
-    viewport_width : s32 = cast(s32)(DEFAULT_WINDOW_HEIGHT * GAME_ASPECT_RATIO);
-    viewport_height: s32 = DEFAULT_WINDOW_HEIGHT;
-
-    fullscreen: bool;
-
-    using opengl_context : OpenGL_Context;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-mouse_game_mode :: () {
-    SDL_ShowCursor(0);
-}
-
-mouse_editor_mode :: () {
-    SDL_ShowCursor(1);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Fullscreen / Resolution
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,4 +50,14 @@ set_screen_mode_according_to_fullscreen_variable :: () {
         go_fullscreen();
     else
         go_windowed();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+mouse_game_mode :: () {
+    SDL_ShowCursor(0);
+}
+
+mouse_editor_mode :: () {
+    SDL_ShowCursor(1);
 }

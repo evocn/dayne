@@ -57,6 +57,24 @@ update_rainbow_color :: (dt: float) -> Color {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+flashing_red : Color;
+
+flashing_red_time : float;
+FLASHING_RED_OSCILLATION_SPEED :: 5.0;
+
+update_flashing_red_color :: (dt: float) -> Color {
+    flashing_red_time += dt * FLASHING_RED_OSCILLATION_SPEED;
+
+    if flashing_red_time >= 10.0 then flashing_red_time = flashing_red_time - 10.0;
+    
+    if      flashing_red_time > 5.0 then return red;
+    else if flashing_red_time > 4.0 then return gray;
+    else if flashing_red_time > 3.0 then return purple;
+    else                                 return black;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 random_color :: () -> Color {
     return random_choice(colors);
 }

@@ -17,6 +17,7 @@ Program_State :: struct {
         GAME;
         MENU;
         EDITOR;
+        END;
     }
     current_scene : Scene = .TITLE;
     prior_scene : Scene;

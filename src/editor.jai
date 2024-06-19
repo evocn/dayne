@@ -72,8 +72,6 @@ editor :: (game: *Game) {
         ImGui.Text("% FPS", program_state.framerate);
 
         ImGui.Checkbox("Draw Demo", *program_state.draw_demo);
-
-        ImGui.SliderInt("Score", xx *game.score, 0, 99);
     }
     ImGui.End();
 }

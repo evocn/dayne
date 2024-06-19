@@ -112,31 +112,48 @@ initialize_render_context :: () {
     initialize_fonts :: () {
         initialize_freetype();
 
+        // High-res fonts
+        initialize_font(*render_context.main_font,  "verdanab.ttf", xx (render_context.window_height / 16));
+        initialize_font(*render_context.big_font,   "verdanab.ttf", xx (render_context.window_height / 10));
+        initialize_font(*render_context.small_font, "verdana.ttf",  xx (render_context.window_height / 24));
+
+        // Pixel fonts
+        /*
         initialize_font(*render_context.main_font,  "bm.ttf", 9);
+        initialize_font(*render_context.big_font,   "bm.ttf", 18);
         initialize_font(*render_context.small_font, "3x5.ttf", 8);
+        */
 
         FT_Done_FreeType(ft);
     }
     initialize_fonts();
 
 
-    initialize_images :: () {
-        success : bool;
+    // Sprites
+    {
+        paths := File_Utilities.file_list(sprites_path, recursive = true, follow_symlinks = false);
+        for path : paths {
+            success := load_sprite(path);
+            assert(success);
 
-        // Sprites
-        full_path := tprint("%/sheet.png", sprites_path);
-        success = make_sprite_sheet(*render_context.spritesheet, full_path, 16, 16);
-        assert(success);
+            free(path.data);
+        }
 
-        full_path = tprint("%/haruhachi.png", sprites_path);
-        success = make_sprite(*render_context.haruhachi, full_path);
-        assert(success);
-
-        full_path = tprint("%/controls.png", sprites_path);
-        success = make_sprite(*render_context.controls, full_path);
-        assert(success);
+        array_reset(*paths);
     }
-    initialize_images();
+
+    // Spritesheets
+    {
+        paths := File_Utilities.file_list(spritesheets_path, recursive = true, follow_symlinks = false);
+        for path : paths {
+            success := load_spritesheet(path);
+            assert(success);
+
+            free(path.data);
+        }
+
+        array_reset(*paths);
+    }
 }
 
 
@@ -166,24 +183,24 @@ initialize_audio_context :: () {
 
     // SFX
     {
-        sfx_paths := File_Utilities.file_list(sfx_path, recursive = true, follow_symlinks = false);
-        for sfx_paths {
-            load_sfx(it);
-            free(it.data);
+        paths := File_Utilities.file_list(sfx_path, recursive = true, follow_symlinks = false);
+        for path : paths {
+            load_sfx(path);
+            free(path.data);
         }
 
-        array_reset(*sfx_paths);
+        array_reset(*paths);
     }
 
     // Music
     {
-        music_paths := File_Utilities.file_list(music_path, recursive = true, follow_symlinks = false);
-        for music_paths {
-            load_music(it);
-            free(it.data);
+        paths := File_Utilities.file_list(music_path, recursive = true, follow_symlinks = false);
+        for path : paths {
+            load_music(path);
+            free(path.data);
         }
 
-        array_reset(*music_paths);
+        array_reset(*paths);
     }
 }
 
@@ -195,7 +212,8 @@ initialize_audio_context :: () {
 // This is just here so we can clean house and see the real leaks if they happen when we are debugging memory.
 cleanup_for_shutdown :: (game: *Game) {
     // Cleanup Game Struct
-    array_reset(*game.players);
+    {
+    }
 
     // Audio Cleanup
     {

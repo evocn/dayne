@@ -13,7 +13,8 @@ Audio_Context :: struct {
     //
     //
 
-    sounds : [128] ma_sound;
+    MAX_SOUNDS :: 128;
+    sounds : [MAX_SOUNDS] ma_sound;
 
     sfx : Table(string, *ma_sound);
     music : Table(string, *ma_sound);
