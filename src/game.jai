@@ -3,7 +3,8 @@
 // Alex Hartford
 // February 2024
 
-// This structure defines the game's current state.
+// The State of the Game.
+
 Game :: struct {
     Player :: struct {
         state : enum {
@@ -19,11 +20,18 @@ Game :: struct {
 
     score : int;
 
-    entities : [..] *Entity;
+    entities    : [..] *Entity;
+    entity_pool : Flat_Pool;
+
+
+    // Experimentation
+    //the_animator : Animator;
 }
 
-simulate_game :: (game: *Game, dt: float) {
-    for entity : game.entities {
+simulate_game :: (using game: *Game, dt: float) {
+    for entity : entities {
         determine_entity_kind_and_update(entity, dt);
     }
+
+    //update(*the_animator, dt);
 }

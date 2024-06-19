@@ -11,13 +11,6 @@ render :: (game: Game) {
         glClearColor(black.x, black.y, black.z, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        if program_state.draw_demo {
-            draw_demo_screen();
-            //draw_credits_screen();
-        }
-
-        draw_pixel(.{50, get_value(the_animator)}, color = rainbow);
-
         if #complete program_state.current_scene == {
             case .TITLE;
                 draw_title_screen();
@@ -35,6 +28,16 @@ render :: (game: Game) {
                 draw_menu(main_menu);
                 draw_controls_display();
         }
+
+
+        // Experimentation
+
+        if program_state.draw_demo {
+            draw_demo_screen();
+            //draw_credits_screen();
+        }
+
+        //draw_pixel(.{50, get_value(game.the_animator)}, color = rainbow);
     }
 
     render_framebuffer_to_screen();
@@ -47,7 +50,6 @@ draw_game_state :: (game: Game) {
     for entity: game.entities {
         determine_entity_kind_and_draw(entity);
     }
-
 }
 
 draw_mouse_cursor :: (position : Pair, color : Color) {
@@ -95,8 +97,6 @@ draw_editor_features :: () {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Below this is the specialized code for rendering various fixtures.
-// It is all here to have centralized drawing code, separate from 
-// implementation details.
 ////////////////////////////////////////////////////////////////////////////////
 
 world_space_to_screen_pixel :: (world_space: Vector2) -> pixel: Pair {
@@ -120,7 +120,7 @@ draw_title_screen :: () {
         alignment   = Alignment.CENTER,
         progress    = -1,
         font        = .MAIN,
-        color       = red,
+        color       = white,
     );
 
     draw_text(
@@ -130,10 +130,10 @@ draw_title_screen :: () {
         alignment   = Alignment.CENTER,
         progress    = -1,
         font        = .SMALL,
-        color       = yellow,
+        color       = gray,
     );
 
-    draw_controls_display();
+    //draw_controls_display();
 
     draw_text(
         "PRESS ESC FOR SETTINGS",
@@ -152,7 +152,7 @@ draw_title_screen :: () {
         alignment   = Alignment.RIGHT,
         progress    = -1,
         font        = .SMALL,
-        color       = rainbow,
+        color       = gray,
     );
 }
 

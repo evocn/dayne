@@ -49,6 +49,7 @@ save_entities :: (entities : [..] *Entity, filename : string) -> success : bool 
     return true;
 }
 
+// Assumption is that entity pool allocator is on the context.
 load_entities :: (entities : *[..] *Entity, filename : string) -> success : bool {
     handler : Text_File_Handler;
     defer deinit(*handler);
@@ -172,6 +173,7 @@ serialize  :: (to_serialize: Entity.Kind, name : string, builder: *String_Builde
 //
 //
 
+// Assumption is that the entity pool is on the context, so we allocate everything out of that.
 get_next_entity :: (handler : *Text_File_Handler) -> entity: *Entity, success: bool {
     kind_int, is_another_entity_to_get := parse_int(handler);
     if !is_another_entity_to_get return null, false;
@@ -233,15 +235,7 @@ unserialize  :: (to_unserialize: *string, handler : *Text_File_Handler) -> succe
     str, success := parse_string(handler);
     if str == "!" then to_unserialize.* = "";
     else {
-        // @TODO: This is hack-y.
-        // Eventually, what I want is to push the entity pool onto the context
-        // while unserializing / serializing. That way we just get this behavior for free.
-        // But I hesitate to do that, since I want to see how entity management even works first.
-        entity_allocator: Allocator;
-        entity_allocator.proc = flat_pool_allocator_proc;
-        entity_allocator.data = *entity_pool;
-
-        to_unserialize.* = copy_string(str,, entity_allocator);
+        to_unserialize.* = copy_string(str);
     }
     return success;
 }

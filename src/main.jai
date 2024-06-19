@@ -7,15 +7,12 @@ DEBUG_MEMORY :: true;
 
 program_state   : Program_State;
 
-audio_context   : Audio_Context;
+audio_context   :  Audio_Context;
 render_context  : Render_Context;
 
 scratch_memory  : Flat_Pool;
-entity_pool     : Flat_Pool; // @TODO: Put this in a better location!
 
 main_menu       : Menu;
-
-the_animator : Animator;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -39,25 +36,35 @@ main :: () {
     play_music("bach");
 
     game : Game;
-    array_add(*game.players, .{});
 
+    // Make the Game.
     {
-        success := load_entities(*game.entities, "entities.txt");
-        assert(success, "Failed to load entities from a file.\n");
-    }
+        array_add(*game.players, .{});
 
-    the_animator = make_animator(
-        key_frames = ...[
-            .{
-                time  = 0.0,
-                value = 5,
-            },
-            .{
-                time  = 0.5,
-                value = 10,
-            }
-        ],
-    );
+        {
+            entity_allocator: Allocator;
+            entity_allocator.proc = flat_pool_allocator_proc;
+            entity_allocator.data = *game.entity_pool;
+
+            success := load_entities(*game.entities, "entities.txt",, entity_allocator);
+            assert(success, "Failed to load entities from a file.\n");
+        }
+
+        /*
+        game.the_animator = make_animator(
+            key_frames = ...[
+                .{
+                    time  = 0.0,
+                    value = 5,
+                },
+                .{
+                    time  = 0.5,
+                    value = 10,
+                }
+            ],
+        );
+        */
+    }
 
 
 
@@ -96,8 +103,6 @@ main :: () {
 
         // Frame Update
         {
-            update(*the_animator, dt);
-
             rainbow = update_rainbow_color(dt);
         }
 

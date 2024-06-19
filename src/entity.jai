@@ -14,8 +14,11 @@ but it should be a lot better!
 
 Most of the trouble I am having is that in order to cast from *Entity to *Sub_Entity, I always need an if..case.
 I'm pretty sure this is necessary, as the compiler has to know the type of the structure at compile time.
-I could be wrong, and be able to somehow cast to 
+I could be wrong, and be able to somehow cast things with polymorphism.
 */
+
+
+
 
 Entity :: struct {
     // @NOTE: This could also just be type : Type, but there are problems:
@@ -65,19 +68,18 @@ determine_entity_kind_and_draw :: (entity: *Entity) {
 next_entity_id : u64 = 1;
 
 // This allocates a new entity of a given type.
+
+// Assumption is that you're probably setting the allocator as you come into this function to be your pool or whatever.
+
 // @TODO: In the future, I can imagine a nice situation where it allocates from a
 // Fridge based on the type of entity, and does other good stuff.
 make_entity :: (kind : Entity.Kind) -> *Entity {
-    entity_allocator: Allocator;
-    entity_allocator.proc = flat_pool_allocator_proc;
-    entity_allocator.data = *entity_pool;
-
     entity : *Entity;
 
     if #complete kind == {
         case .UNDEFINED;        assert(false, "This entity has an undefined type. Something is wrong!");
-        case .GUY;              entity = cast(*Entity) New(Guy,, entity_allocator);
-        case .PARTICLE_SYSTEM;  entity = cast(*Entity) New(Particle_System,, entity_allocator);
+        case .GUY;              entity = cast(*Entity) New(Guy);
+        case .PARTICLE_SYSTEM;  entity = cast(*Entity) New(Particle_System);
     }
 
     entity.entity_id = next_entity_id;
