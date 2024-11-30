@@ -27,7 +27,7 @@ screen_pixel_zoom :: () -> zoom: int {
 
 draw_title_screen :: () {
     draw_text(
-        "Dayne",
+        "Dice Game",
         x = PIXEL_WIDTH / 2,
         y = 80,
         alignment   = Alignment.CENTER,
@@ -37,7 +37,7 @@ draw_title_screen :: () {
     );
 
     draw_text(
-        "Back to basics",
+        "Prototype 1",
         x = PIXEL_WIDTH / 2,
         y = 60,
         alignment   = Alignment.CENTER,
@@ -60,6 +60,34 @@ draw_version_indicator :: () {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+draw_sprite_at :: (
+    screen_pixel : Pair,
+    name: string,
+    frame := 0,
+    color := white
+)
+{
+    sprite := table_find_pointer(*graphics_context.sprites, name);
+    if !sprite {
+        log_error("Couldn't load spritesheet % for drawing.\n", name);
+        return;
+    }
+
+    scale := screen_pixel_zoom();
+
+    draw_sprite(
+        sprite,
+        frame = frame,
+        pixel = screen_pixel,
+
+        scale_factor = scale,
+
+        horizontal_flip = false,
+        use_color_override = true,
+        color_override = color,
+    );
+}
 
 draw_sprite_relative_to_collider :: (
     using collider : Collider,

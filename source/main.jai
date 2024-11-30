@@ -39,7 +39,7 @@ main :: () {
             // Dispatch Inputs based on program state
             if #complete program_state.current_scene == {
                 case .TITLE;
-                    if input.south.just_pressed {
+                    if input.east.just_pressed {
                         switch_scene(.GAME);
                     }
 

@@ -43,7 +43,7 @@ z_sort :: (entities: [..] *Entity) {
     quick_sort(entities, comparison);
 }
 
-draw_game :: (game : Game) {
+draw_overworld :: (using game: Game) {
     // Entities
     {
         z_sort(game.entities);
@@ -52,9 +52,43 @@ draw_game :: (game : Game) {
             draw(entity);
         }
     }
+}
 
+draw_game :: (using game : Game) {
+    draw_overworld(game);
+
+    if game.spine.state == {
+        case .OVERWORLD;
+
+        case .SPEC;
+            origin := Pair.{0, PIXEL_HEIGHT / 2};
+            draw_stats(hero, origin);
+
+        case .CHOOSE;
+            origin := Pair.{0, PIXEL_HEIGHT - TILE_SIZE_IN_PIXELS};
+            draw_fighter(hero, origin);
+
+            origin = Pair.{PIXEL_WIDTH / 2, PIXEL_HEIGHT - TILE_SIZE_IN_PIXELS};
+            draw_fighter(foe, origin);
+
+        case .ROLL;
+            if !result {
+                print("What the hell? You're supposed to have rolled a result, man.\n");
+            }
+
+            origin := Pair.{PIXEL_WIDTH / 2, PIXEL_HEIGHT / 2};
+            draw(result, origin);
+            draw_number(sum(result), origin + .{0, TILE_SIZE_IN_PIXELS});
+
+            /*
+            origin := Pair.{PIXEL_WIDTH / 2, PIXEL_HEIGHT / 2};
+            draw(pool, origin);
+            */
+    }
 
     // Debug Overlays
+    draw_text(tprint("%", spine.state), 0, 0);
+
     if .DEBUG == program_state.mode {
         for entity : game.entities {
             draw_debug(entity);

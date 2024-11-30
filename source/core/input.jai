@@ -81,10 +81,10 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                     if event.key.keysym.sym == SDLK_s       release(*input.down);
                     if event.key.keysym.sym == SDLK_d       release(*input.right);
 
-                    if event.key.keysym.sym == SDLK_h       release(*input.south);
-                    if event.key.keysym.sym == SDLK_j       release(*input.east);
-                    if event.key.keysym.sym == SDLK_k       release(*input.west);
-                    if event.key.keysym.sym == SDLK_l       release(*input.north);
+                    if event.key.keysym.sym == SDLK_j       release(*input.south);
+                    if event.key.keysym.sym == SDLK_l       release(*input.east);
+                    if event.key.keysym.sym == SDLK_h       release(*input.west);
+                    if event.key.keysym.sym == SDLK_k       release(*input.north);
 
                     if event.key.keysym.sym == SDLK_ESCAPE  release(*input.start);
                     if event.key.keysym.sym == SDLK_RETURN  release(*input.select);
@@ -102,10 +102,10 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                     if event.key.keysym.sym == SDLK_s       press(*input.down);
                     if event.key.keysym.sym == SDLK_d       press(*input.right);
 
-                    if event.key.keysym.sym == SDLK_h       press(*input.south);
-                    if event.key.keysym.sym == SDLK_j       press(*input.east);
-                    if event.key.keysym.sym == SDLK_k       press(*input.west);
-                    if event.key.keysym.sym == SDLK_l       press(*input.north);
+                    if event.key.keysym.sym == SDLK_j       press(*input.south);
+                    if event.key.keysym.sym == SDLK_l       press(*input.east);
+                    if event.key.keysym.sym == SDLK_h       press(*input.west);
+                    if event.key.keysym.sym == SDLK_k       press(*input.north);
 
                     if event.key.keysym.sym == SDLK_ESCAPE  press(*input.start);
                     if event.key.keysym.sym == SDLK_RETURN  press(*input.select);
