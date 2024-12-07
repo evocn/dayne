@@ -6,7 +6,7 @@ render :: (game: Game, menu: Menu) {
     // render everything in this block to the framebuffer.
     {
         glBindFramebuffer(GL_FRAMEBUFFER, graphics_context.fbo);
-        glViewport(0, 0, PIXEL_WIDTH, PIXEL_HEIGHT);
+        glViewport(0, 0, xx PIXEL_WIDTH, xx PIXEL_HEIGHT);
         glClearColor(black.x, black.y, black.z, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -31,7 +31,23 @@ render :: (game: Game, menu: Menu) {
     render_framebuffer_to_screen();
 }
 
-draw_user_interface :: (game: Game) {
+draw_user_interface :: (using game: Game) {
+    // Draw Boosts
+    {
+        max_boosts := BOOSTS;
+        boosts := p1.boosts;
+
+        i := 0;
+        while i < max_boosts {
+            if i < boosts {
+                draw_sprite_on_screen(.{PIXEL_WIDTH / 2 + TILE_SIZE * i, PIXEL_HEIGHT - TILE_SIZE}, "ui", frame = 0);
+            }
+            else {
+                draw_sprite_on_screen(.{PIXEL_WIDTH / 2 + TILE_SIZE * i, PIXEL_HEIGHT - TILE_SIZE}, "ui", frame = 1);
+            }
+            i += 1;
+        }
+    }
 }
 
 z_sort :: (entities: [..] *Entity) {
@@ -43,21 +59,27 @@ z_sort :: (entities: [..] *Entity) {
     quick_sort(entities, comparison);
 }
 
-draw_game :: (game : Game) {
+draw_game :: (using game : Game) {
     // Entities
     {
-        z_sort(game.entities);
+        z_sort(entities);
 
-        for entity : game.entities {
+        for entity : entities {
             draw(entity);
         }
     }
 
+    // Dungeon
+    {
+        draw(dungeon.rooms[dungeon.current]);
+    }
 
     // Debug Overlays
     if .DEBUG == program_state.mode {
-        for entity : game.entities {
+        for entity : entities {
             draw_debug(entity);
         }
+
+        draw(debug);
     }
 }

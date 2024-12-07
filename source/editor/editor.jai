@@ -7,7 +7,7 @@
 Editor :: struct {
 }
 
-apply_inputs :: (using input: Input, editor : *Editor) {
+apply_input :: (using editor : *Editor, input: Input) {
 }
 
 update_and_draw_editor :: (game: *Game) {

@@ -17,8 +17,9 @@ Basic :: struct {
 }
 
 initialize :: (using basic: *Basic) {
-    facing_left = false;
-    velocity = .{};
+}
+
+apply_input :: (using basic: *Basic, input: Input) {
 }
 
 update :: (using basic: *Basic, dt: float) {
@@ -32,8 +33,6 @@ update :: (using basic: *Basic, dt: float) {
 
     // Visual
     {
-        if velocity.x < 0 then facing_left = true; else facing_left = false;
-
         update(*animation, dt);
     }
 }

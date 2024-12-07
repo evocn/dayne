@@ -61,11 +61,40 @@ draw_version_indicator :: () {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+draw_sprite_on_screen :: (
+    screen_pixel : Pair,
+    name: string,
+    frame := 0,
+    facing_left := false,
+    scale := 1
+)
+{
+    sprite := table_find_pointer(*graphics_context.sprites, name);
+    if !sprite {
+        log_error("Couldn't load spritesheet % for drawing.\n", name);
+        return;
+    }
+
+    draw_sprite(
+        sprite,
+        frame = frame,
+        pixel = screen_pixel,
+
+        scale_factor = scale,
+
+        horizontal_flip = facing_left,
+
+        use_color_override = false,
+    );
+}
+
 draw_sprite_relative_to_collider :: (
     using collider : Collider,
     name: string,
     frame := 0,
-    facing_left := false
+    facing_left := false,
+    use_color_override := false,
+    color_override := white
 )
 {
     sprite := table_find_pointer(*graphics_context.sprites, name);
@@ -93,7 +122,8 @@ draw_sprite_relative_to_collider :: (
 
         horizontal_flip = facing_left,
 
-        use_color_override = false,
+        use_color_override = use_color_override,
+        color_override = color_override,
     );
 }
 

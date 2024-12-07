@@ -29,16 +29,9 @@ post_frame_update :: (input: *Input) {
     update(*input.left);
     update(*input.down);
     update(*input.right);
-    update(*input.north);
-    update(*input.south);
-    update(*input.east);
-    update(*input.west);
+    update(*input.a);
+    update(*input.b);
     update(*input.start);
-    update(*input.select);
-
-    update(*input.left_mouse);
-    update(*input.right_mouse);
-    update(*input.middle_mouse);
 }
 
 
@@ -48,19 +41,10 @@ Input :: struct {
     down    : Button;
     right   : Button;
 
-    north   : Button;
-    south   : Button;
-    east    : Button;
-    west    : Button;
+    a       : Button;
+    b       : Button;
 
     start   : Button;
-    select  : Button;
-
-    mouse_active : bool = true;
-    mouse_position : Pair;
-    left_mouse  : Button;
-    right_mouse : Button;
-    middle_mouse: Button;
 }
 
 
@@ -81,13 +65,10 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                     if event.key.keysym.sym == SDLK_s       release(*input.down);
                     if event.key.keysym.sym == SDLK_d       release(*input.right);
 
-                    if event.key.keysym.sym == SDLK_h       release(*input.south);
-                    if event.key.keysym.sym == SDLK_j       release(*input.east);
-                    if event.key.keysym.sym == SDLK_k       release(*input.west);
-                    if event.key.keysym.sym == SDLK_l       release(*input.north);
+                    if event.key.keysym.sym == SDLK_j       release(*input.a);
+                    if event.key.keysym.sym == SDLK_k       release(*input.b);
 
                     if event.key.keysym.sym == SDLK_ESCAPE  release(*input.start);
-                    if event.key.keysym.sym == SDLK_RETURN  release(*input.select);
                 }
 
             case SDL_KEYDOWN;
@@ -102,13 +83,10 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                     if event.key.keysym.sym == SDLK_s       press(*input.down);
                     if event.key.keysym.sym == SDLK_d       press(*input.right);
 
-                    if event.key.keysym.sym == SDLK_h       press(*input.south);
-                    if event.key.keysym.sym == SDLK_j       press(*input.east);
-                    if event.key.keysym.sym == SDLK_k       press(*input.west);
-                    if event.key.keysym.sym == SDLK_l       press(*input.north);
+                    if event.key.keysym.sym == SDLK_j       press(*input.a);
+                    if event.key.keysym.sym == SDLK_k       press(*input.b);
 
                     if event.key.keysym.sym == SDLK_ESCAPE  press(*input.start);
-                    if event.key.keysym.sym == SDLK_RETURN  press(*input.select);
                 }
 
                 // Development keybinds
@@ -146,28 +124,31 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                 if program_state.imgui_capturing_mouse return;
 
                 // Main Program Inputs
+                /*
                 {
                     if event.button.button == SDL_BUTTON_LEFT   press(*input.left_mouse);
                     if event.button.button == SDL_BUTTON_RIGHT  press(*input.right_mouse);
                     if event.button.button == SDL_BUTTON_MIDDLE press(*input.middle_mouse);
                 }
+                */
 
             case SDL_MOUSEBUTTONUP;
                 if program_state.imgui_capturing_mouse return;
 
                 // Main Program Inputs
+                /*
                 {
                     if event.button.button == SDL_BUTTON_LEFT   release(*input.left_mouse);
                     if event.button.button == SDL_BUTTON_RIGHT  release(*input.right_mouse);
                     if event.button.button == SDL_BUTTON_MIDDLE release(*input.middle_mouse);
                 }
-
-
+                */
 
             case SDL_MOUSEMOTION;
                 if program_state.imgui_capturing_mouse return;
 
                 // Main Program Inputs
+                /*
                 {
                     // @TODO: Review these arbitrary offsets for actual pixel correctness.
                     input.mouse_position.x = cast(int)(event.motion.x * 
@@ -177,6 +158,7 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                         (cast(float)PIXEL_HEIGHT / graphics_context.window_height)) - 1
                     ;
                 }
+                */
 
 
             JOYSTICK_DEAD_ZONE :: 8000;
@@ -186,20 +168,18 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                 // 6, 7 : select / start
                 // 8, 9 : pressing in left stick / right stick
 
-                if event.jbutton.button == 0 then press(*input.south);
-                if event.jbutton.button == 1 then press(*input.east); 
-                if event.jbutton.button == 2 then press(*input.west);
-                if event.jbutton.button == 3 then press(*input.north);
+                if event.jbutton.button == 0 then press(*input.a);
+                if event.jbutton.button == 1 then press(*input.a); 
+                if event.jbutton.button == 2 then press(*input.b);
+                if event.jbutton.button == 3 then press(*input.b);
                 if event.jbutton.button == 6 then press(*input.start);
-                if event.jbutton.button == 7 then press(*input.select);
 
             case SDL_JOYBUTTONUP;
-                if event.jbutton.button == 0 then release(*input.south);
-                if event.jbutton.button == 1 then release(*input.east); 
-                if event.jbutton.button == 2 then release(*input.west);
-                if event.jbutton.button == 3 then release(*input.north);
+                if event.jbutton.button == 0 then release(*input.a);
+                if event.jbutton.button == 1 then release(*input.a); 
+                if event.jbutton.button == 2 then release(*input.b);
+                if event.jbutton.button == 3 then release(*input.b);
                 if event.jbutton.button == 6 then release(*input.start);
-                if event.jbutton.button == 7 then release(*input.select);
 
             case SDL_JOYHATMOTION;
                 hat_state : u8;
@@ -224,22 +204,23 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                         graphics_context.window_width  = event.window.data1;
                         graphics_context.window_height = event.window.data2;
 
-                        #if GAME_ASPECT_RATIO > SCREEN_ASPECT_RATIO {
+                        aspect_ratio := cast(float)graphics_context.window_width / cast(float)graphics_context.window_height;
+                        if aspect_ratio < SCREEN_ASPECT_RATIO {
                             graphics_context.viewport_width = graphics_context.window_width;
-                            graphics_context.viewport_height  = cast(s32)(graphics_context.viewport_width / GAME_ASPECT_RATIO);
+                            graphics_context.viewport_height  = cast(s32)(graphics_context.viewport_width / SCREEN_ASPECT_RATIO);
                         }
                         else {
                             graphics_context.viewport_height = graphics_context.window_height;
-                            graphics_context.viewport_width  = cast(s32)(graphics_context.viewport_height * GAME_ASPECT_RATIO);
+                            graphics_context.viewport_width  = cast(s32)(graphics_context.viewport_height * SCREEN_ASPECT_RATIO);
                         }
                     }
 
                     case .SDL_WINDOWEVENT_ENTER; {
-                        input.mouse_active = true;
+                        //input.mouse_active = true;
                     }
 
                     case .SDL_WINDOWEVENT_LEAVE; {
-                        input.mouse_active = false;
+                        //input.mouse_active = false;
                     }
                 }
         }
