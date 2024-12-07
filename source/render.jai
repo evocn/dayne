@@ -53,9 +53,10 @@ draw_game :: (game : Game) {
         }
     }
 
-
     // Debug Overlays
     if .DEBUG == program_state.mode {
+        draw(game.debug);
+
         for entity : game.entities {
             draw_debug(entity);
         }

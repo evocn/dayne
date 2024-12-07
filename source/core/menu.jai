@@ -2,37 +2,36 @@
 // Menu
 // February 2024
 
-apply_inputs :: (using input: Input, menu: *Menu) {
-    if start.just_pressed || east.just_pressed {
+apply_input :: (using menu: *Menu, input: Input) {
+    if input.start.just_pressed || input.b.just_pressed {
         return_to_prior_scene();
         play_sfx("click");
     }
-
-    if up.just_pressed {
-        menu.element_index -= 1;
-        if menu.element_index < 0 {
-            menu.element_index += 1;
-        }
+    if input.a.just_pressed {
+        toggle_menu_element(elements[element_index]);
+    }
+    if input.left.just_pressed {
+        nudge_menu_element(elements[element_index], left=true);
         play_sfx("click");
     }
-    if down.just_pressed {
-        menu.element_index += 1;
-        if menu.element_index >= menu.elements.count {
-            menu.element_index -= 1;
-        }
-        play_sfx("click");
-    }
-    if left.just_pressed {
-        nudge_menu_element(menu.elements[menu.element_index], left=true);
-        play_sfx("click");
-    }
-    if right.just_pressed {
-        nudge_menu_element(menu.elements[menu.element_index]);
+    if input.right.just_pressed {
+        nudge_menu_element(elements[element_index]);
         play_sfx("click");
     }
 
-    if south.just_pressed {
-        toggle_menu_element(menu.elements[menu.element_index]);
+    if input.up.just_pressed {
+        element_index -= 1;
+        if element_index < 0 {
+            element_index += 1;
+        }
+        play_sfx("click");
+    }
+    if input.down.just_pressed {
+        element_index += 1;
+        if element_index >= elements.count {
+            element_index -= 1;
+        }
+        play_sfx("click");
     }
 }
 

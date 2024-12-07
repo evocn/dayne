@@ -16,7 +16,7 @@ main :: () {
     a.data = *game.arena;
     initialize(*game,, allocator=a);
 
-    song := "bach";
+    song := "secret";
     play_music(song);
 
     dt, last_frame := 0.0;
@@ -39,27 +39,27 @@ main :: () {
             // Dispatch Inputs based on program state
             if #complete program_state.current_scene == {
                 case .TITLE;
-                    if input.south.just_pressed {
+                    if input.a.just_pressed {
                         switch_scene(.GAME);
                     }
 
                 case .MENU;
-                    apply_inputs(input, *main_menu);
+                    apply_input(*main_menu, input);
 
                 case .EDITOR;
-                    apply_inputs(input, *editor);
+                    apply_input(*editor, input);
 
                 case .GAME;
                     if input.start.just_pressed {
                         switch_scene(.MENU);
                     }
 
-                    apply_inputs(input, *game);
+                    apply_input(*game, input);
             }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        // Simulate
+        // Update
         {
             if #complete program_state.current_scene == {
                 case .TITLE;
@@ -69,11 +69,11 @@ main :: () {
                     if simulation_state.paused {
                         if simulation_state.step {
                             simulation_state.step = false;
-                            simulate(*game, dt);
+                            update(*game, dt);
                         }
                     }
                     else {
-                        simulate(*game, dt);
+                        update(*game, dt);
                     }
             }
         }
@@ -91,18 +91,24 @@ main :: () {
         }
 
         SDL_GL_SwapWindow(window);
-        SDL_Delay(1);
 
         ////////////////////////////////////////////////////////////////////////////////
         // Frame Cleanup
         {
             Sound_Player.update();
 
+            reset_temporary_storage();
+
+            // Frame Timing
             current_time := cast(float32)seconds_since_init();
             dt = current_time - last_frame;
             last_frame = current_time;
+            FRAME_DURATION :: 0.0166666;
 
-            reset_temporary_storage();
+            if dt < FRAME_DURATION {
+                SDL_Delay(xx (1000 * (FRAME_DURATION - dt)));
+                dt = FRAME_DURATION;
+            }
         }
     }
 
@@ -138,6 +144,7 @@ using Sound_Player :: #import "Sound_Player";
 #load "initialize.jai";
 #load "state.jai";
 #load "render.jai";
+#load "debug.jai";
 
 // Core
 #load "core/input.jai";
