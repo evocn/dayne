@@ -201,6 +201,7 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
             case SDL_WINDOWEVENT;
                 if event.window.event == {
                     case .SDL_WINDOWEVENT_SIZE_CHANGED; {
+                        /*
                         graphics_context.window_width  = event.window.data1;
                         graphics_context.window_height = event.window.data2;
 
@@ -212,6 +213,7 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                             graphics_context.viewport_height = graphics_context.window_height;
                             graphics_context.viewport_width  = cast(s32)(graphics_context.viewport_height * GAME_ASPECT_RATIO);
                         }
+                        */
                     }
 
                     case .SDL_WINDOWEVENT_ENTER; {

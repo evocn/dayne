@@ -112,10 +112,10 @@ initialize_graphics_context :: () {
 
     // Initialize Sprites
     {
-        // This array is of sprites who we know are not TILE_SIZE_IN_PIXELS x TILE_SIZE_IN_PIXELS.
+        // This array is of sprites who we know are not TILE_SIZE x TILE_SIZE.
         size_exceptions : Table(string, Pair);
         {
-            //table_add(*size_exceptions, "Example", .{32, 16});
+            //table_add(*size_exceptions, "Example", .{8, 8});
         }
 
         sprite_paths := file_list(sprites_path, recursive = true, follow_directory_symlinks = false,, allocator=temp);
@@ -124,8 +124,8 @@ initialize_graphics_context :: () {
 
             name := basename(path);
 
-            width  := TILE_SIZE_IN_PIXELS;
-            height := TILE_SIZE_IN_PIXELS;
+            width  := TILE_SIZE;
+            height := TILE_SIZE;
             dimensions, success := table_find(*size_exceptions, name);
             if success {
                 width  = dimensions.x;

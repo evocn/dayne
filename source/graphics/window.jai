@@ -4,18 +4,18 @@
 
 using window_constants : struct {
     using viewport :: struct {
-        WIDTH :: 14;
-        HEIGHT :: 8;
+        WIDTH :: 24;
+        HEIGHT :: 13.5;
     }
 
-    TILE_SIZE_IN_PIXELS :: 16;
+    TILE_SIZE :: 16;
 
-    PIXEL_WIDTH     :: TILE_SIZE_IN_PIXELS * viewport.WIDTH;
-    PIXEL_HEIGHT    :: TILE_SIZE_IN_PIXELS * viewport.HEIGHT;
+    PIXEL_WIDTH     : u32 : cast(u32)(TILE_SIZE * viewport.WIDTH);
+    PIXEL_HEIGHT    : u32 : cast(u32)(TILE_SIZE * viewport.HEIGHT);
     WINDOW_SCALE_FACTOR :: 8;
 
-    DEFAULT_WINDOW_WIDTH    :: PIXEL_WIDTH  * WINDOW_SCALE_FACTOR;
-    DEFAULT_WINDOW_HEIGHT   :: PIXEL_HEIGHT * WINDOW_SCALE_FACTOR;
+    DEFAULT_WINDOW_WIDTH    : s32 : cast(s32)(PIXEL_WIDTH  * WINDOW_SCALE_FACTOR);
+    DEFAULT_WINDOW_HEIGHT   : s32 : cast(s32)(PIXEL_HEIGHT * WINDOW_SCALE_FACTOR);
 
       GAME_ASPECT_RATIO : float : cast(float)PIXEL_WIDTH / PIXEL_HEIGHT;
     SCREEN_ASPECT_RATIO : float : 16.0 / 9;
@@ -24,11 +24,11 @@ using window_constants : struct {
 
 Window_Context :: struct {
     // Fields
-    window_width  : s32 = DEFAULT_WINDOW_WIDTH;
-    window_height : s32 = DEFAULT_WINDOW_HEIGHT;
+    window_width    : s32 = xx DEFAULT_WINDOW_WIDTH;
+    window_height   : s32 = xx DEFAULT_WINDOW_HEIGHT;
 
-    viewport_width : s32 = cast(s32)(DEFAULT_WINDOW_HEIGHT * GAME_ASPECT_RATIO);
-    viewport_height: s32 = DEFAULT_WINDOW_HEIGHT;
+    viewport_width  : s32 = cast(s32)(DEFAULT_WINDOW_HEIGHT * GAME_ASPECT_RATIO);
+    viewport_height : s32 = xx DEFAULT_WINDOW_HEIGHT;
 
     fullscreen: bool;
 }

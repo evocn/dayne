@@ -4,8 +4,11 @@
 
 #load "entity.jai";
 #load "entities/basic.jai";
-#load "entities/platformer/guy.jai";
-#load "entities/platformer/platform.jai";
+#load "entities/guy.jai";
+#load "entities/platform.jai";
+
+#load "systems/level.jai";
+#load "systems/level-generator.jai";
 
 #load "physics/physics.jai";
 
@@ -27,6 +30,7 @@ Game :: struct {
 
         entities    : [..] *Entity;
         p1 : *Guy;
+        level : Level;
     }
 
     camera : struct {
@@ -78,14 +82,7 @@ initialize :: (using game: *Game) {
         }
 
         {
-            using platform : *Platform = xx new_entity(.PLATFORM);
-
-            width  = 64;
-            height = 16;
-
-            array_add(*simulation.solids, *platform.solid);
-
-            array_add(*entities, xx platform);
+            level = generate_level();
         }
 
         {
@@ -93,9 +90,6 @@ initialize :: (using game: *Game) {
 
             width  = 64;
             height = 16;
-
-            x = 96;
-            y = 32;
 
             array_add(*simulation.solids, *platform.solid);
 
@@ -113,7 +107,28 @@ update :: (using game: *Game, dt: float) {
         reset(*debug);
     }
 
+    // Camera
+    {
+        camera.position = get_camera_centered_on_position_within_level_extents(p1.position, level);
+    }
+
+    // Entities
     for entity : entities {
         update(entity, dt);
     }
+}
+
+get_camera_centered_on_position_within_level_extents :: (position : Pair, level : Level) -> Pair {
+    // How much leeway you get on either side of the level.
+    threshold :: PIXEL_WIDTH / 3;
+    level_extents :: Collider.{.{0, 0}, Level.ROOM_COUNT * Room.WIDTH * TILE_SIZE, Room.HEIGHT * TILE_SIZE};
+
+    result : Pair;
+
+    result.y = 0;
+    result.x = position.x - threshold;
+
+    result.x = clamp(result.x, level_extents.x, level_extents.width - PIXEL_WIDTH);
+
+    return result;
 }
