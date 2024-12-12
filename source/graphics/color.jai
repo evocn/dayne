@@ -19,6 +19,7 @@ blue    :: #run color_from_hex(0x067ab7);
 pink    :: #run color_from_hex(0xb869d3);
 teal    :: #run color_from_hex(0x1cc7d4);
 
+debug_color :: #run color_from_hex(0x0bca93);
 
 color_from_hex :: ($h: u32) -> Color {
     color : Color;
@@ -60,3 +61,16 @@ random_color :: () -> Color {
         w = 1.0,
     };
 }
+
+random_color_from_seed :: (seed: u64) -> Color {
+    state : Random_State;
+    random_seed(*state, seed);
+
+    return Color.{
+        x = random_get_zero_to_one(*state),
+        y = random_get_zero_to_one(*state),
+        z = random_get_zero_to_one(*state),
+        w = 1.0,
+    };
+}
+

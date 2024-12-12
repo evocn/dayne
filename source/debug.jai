@@ -4,6 +4,8 @@
 
 Debug :: struct {
     messages : [..] string;
+
+    collided_solids : [..] *Solid;
 }
 
 debug_print :: (s : string) {
@@ -16,15 +18,16 @@ reset :: (using debug: *Debug) {
 
 draw :: (using debug: Debug) {
     k := 0;
+    inc := 10;
     for s : messages {
         draw_text(
             s,
             1,
-            PIXEL_HEIGHT - 10 - k,
-            font = .SMALL,
-            color = white,
+            PIXEL_HEIGHT - inc - (k * inc),
+            font = .MAIN,
+            color = debug_color,
         );
 
-        k += 8;
+        k += 1;
     }
 }

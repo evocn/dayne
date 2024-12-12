@@ -40,10 +40,10 @@ draw_user_interface :: (using game: Game) {
         i := 0;
         while i < max_boosts {
             if i < boosts {
-                draw_sprite_on_screen(.{TILE_SIZE * i, PIXEL_HEIGHT - TILE_SIZE}, "ui", frame = 0);
+                draw_sprite_on_screen(.{PIXEL_WIDTH / 2 + TILE_SIZE * i, PIXEL_HEIGHT - TILE_SIZE}, "ui", frame = 0);
             }
             else {
-                draw_sprite_on_screen(.{TILE_SIZE * i, PIXEL_HEIGHT - TILE_SIZE}, "ui", frame = 1);
+                draw_sprite_on_screen(.{PIXEL_WIDTH / 2 + TILE_SIZE * i, PIXEL_HEIGHT - TILE_SIZE}, "ui", frame = 1);
             }
             i += 1;
         }
@@ -60,9 +60,9 @@ z_sort :: (entities: [..] *Entity) {
 }
 
 draw_game :: (using game : Game) {
-    // Level
+    // Dungeon
     {
-        draw(level);
+        draw(dungeon.rooms[dungeon.current]);
     }
 
     // Entities
@@ -76,12 +76,12 @@ draw_game :: (using game : Game) {
 
     // Debug Overlays
     if .DEBUG == program_state.mode {
-        draw(debug);
-
-        draw_debug(level);
+        draw_debug(dungeon.rooms[dungeon.current]);
 
         for entity : entities {
             draw_debug(entity);
         }
+
+        draw(debug);
     }
 }

@@ -196,14 +196,20 @@ update :: (using guy: *Guy, dt: float) {
 
     // Move
     {
+        debug_print(tprint("p: %", position));
         debug_print(tprint("v: %", velocity));
         debug_print(tprint("glide: %", gliding));
         debug_print(tprint("ground: %", grounded));
 
         amount_to_move := velocity * dt;
 
+        /*
+        profile_timer :
+        */
         move_x(*actor, amount_to_move.x, null);
         move_y(*actor, amount_to_move.y, null);
+
+        debug_print(tprint("p: %", position));
     }
 
     update_visuals(guy, dt);

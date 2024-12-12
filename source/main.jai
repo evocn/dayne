@@ -107,7 +107,7 @@ main :: () {
 
             if dt < FRAME_DURATION {
                 to_delay := 1000 * (FRAME_DURATION - dt);
-                print("leeway: % ms.\n", to_delay);
+                //print("leeway: % ms.\n", to_delay);
                 SDL_Delay(xx to_delay);
                 dt = FRAME_DURATION;
             }

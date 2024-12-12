@@ -3,16 +3,16 @@
 // August 2024
 
 using window_constants : struct {
-    using viewport :: struct {
-        WIDTH :: 24;
-        HEIGHT :: 13.5;
-    }
-
     TILE_SIZE :: 16;
+
+    using viewport :: struct {
+        WIDTH :: 384 / 16;
+        HEIGHT :: 216 / 16;
+    }
 
     PIXEL_WIDTH     : u32 : cast(u32)(TILE_SIZE * viewport.WIDTH);
     PIXEL_HEIGHT    : u32 : cast(u32)(TILE_SIZE * viewport.HEIGHT);
-    WINDOW_SCALE_FACTOR :: 8;
+    WINDOW_SCALE_FACTOR :: 6;
 
     DEFAULT_WINDOW_WIDTH    : s32 : cast(s32)(PIXEL_WIDTH  * WINDOW_SCALE_FACTOR);
     DEFAULT_WINDOW_HEIGHT   : s32 : cast(s32)(PIXEL_HEIGHT * WINDOW_SCALE_FACTOR);
@@ -69,7 +69,7 @@ go_windowed :: () {
     display_mode : SDL_DisplayMode;
     SDL_GetDesktopDisplayMode(0, *display_mode);
 
-    SDL_SetWindowResizable(window, SDL_TRUE);
+    SDL_SetWindowResizable(window, SDL_FALSE);
     SDL_SetWindowBordered(window, SDL_TRUE);
     SDL_SetWindowSize(window,
         DEFAULT_WINDOW_WIDTH,

@@ -7,8 +7,9 @@
 #load "entities/guy.jai";
 #load "entities/platform.jai";
 
-#load "systems/level.jai";
-#load "systems/level-generator.jai";
+#load "systems/dungeon.jai";
+#load "systems/room.jai";
+#load "systems/tile.jai";
 
 #load "physics/physics.jai";
 
@@ -30,7 +31,7 @@ Game :: struct {
 
         entities    : [..] *Entity;
         p1 : *Guy;
-        level : Level;
+        dungeon : Dungeon;
     }
 
     camera : struct {
@@ -40,25 +41,21 @@ Game :: struct {
 }
 
 initialize :: (using game: *Game) {
-    {
-        camera.position = .{};
-        camera.zoom = 1;
-    }
-
     // Create Entities
     {
-        /*
         {
             using basic : *Basic = xx new_entity(.BASIC);
 
             width  = 16;
             height = 16;
+            x = PIXEL_WIDTH - TILE_SIZE;
+            y = PIXEL_HEIGHT - TILE_SIZE;
+            facing_left = true;
 
             initialize(*animation, "Frog-Idle");
 
             array_add(*entities, xx basic);
         }
-        */
 
         {
             using guy : *Guy = xx new_entity(.GUY);
@@ -82,19 +79,22 @@ initialize :: (using game: *Game) {
         }
 
         {
-            level = generate_level();
+            using dungeon;
+
+            all_rooms := instantiate_room_data();
+            dungeon = make_dungeon(all_rooms);
+
+            register(*rooms[current]);
         }
 
-        {
-            using platform : *Platform = xx new_entity(.PLATFORM);
+    }
 
-            width  = 64;
-            height = 16;
+    // Real Initialize stuff
+    {
+        camera.position = .{};
+        camera.zoom = 1;
 
-            array_add(*simulation.solids, *platform.solid);
-
-            array_add(*entities, xx platform);
-        }
+        p1.position = dungeon.rooms[dungeon.current].spawn_point;
     }
 }
 
@@ -109,7 +109,8 @@ update :: (using game: *Game, dt: float) {
 
     // Camera
     {
-        camera.position = get_camera_centered_on_position_within_level_extents(p1.position, level);
+        //camera.position = get_camera_centered_on_position(p1.position);
+        camera.position = .{};
     }
 
     // Entities
@@ -118,17 +119,32 @@ update :: (using game: *Game, dt: float) {
     }
 }
 
-get_camera_centered_on_position_within_level_extents :: (position : Pair, level : Level) -> Pair {
-    // How much leeway you get on either side of the level.
+get_camera_centered_on_position :: (position : Pair) -> Pair {
+    from_the_left   := PIXEL_WIDTH / 2;
+    from_the_bottom := PIXEL_WIDTH / 6;
+
+    result := Pair.{
+        x = position.x - from_the_left,
+        y = position.y - from_the_bottom,
+    };
+
+    return result;
+}
+
+/*
+// For overworld
+level_extents :: Collider.{.{0, 0}, Level.width * Room.width * TILE_SIZE, Level.height * Room.height * TILE_SIZE};
+get_camera_centered_on_position_within_extents :: (position : Pair, extents: Collider) -> Pair {
+    // How much leeway you get on either side of the extents.
     threshold :: PIXEL_WIDTH / 3;
-    level_extents :: Collider.{.{0, 0}, Level.ROOM_COUNT * Room.WIDTH * TILE_SIZE, Room.HEIGHT * TILE_SIZE};
 
     result : Pair;
 
     result.y = 0;
     result.x = position.x - threshold;
 
-    result.x = clamp(result.x, level_extents.x, level_extents.width - PIXEL_WIDTH);
+    result.x = clamp(result.x, extents.x, extents.width - PIXEL_WIDTH);
 
     return result;
 }
+*/

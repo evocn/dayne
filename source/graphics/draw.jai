@@ -92,7 +92,9 @@ draw_sprite_relative_to_collider :: (
     using collider : Collider,
     name: string,
     frame := 0,
-    facing_left := false
+    facing_left := false,
+    use_color_override := false,
+    color_override := white
 )
 {
     sprite := table_find_pointer(*graphics_context.sprites, name);
@@ -120,7 +122,8 @@ draw_sprite_relative_to_collider :: (
 
         horizontal_flip = facing_left,
 
-        use_color_override = false,
+        use_color_override = use_color_override,
+        color_override = color_override,
     );
 }
 

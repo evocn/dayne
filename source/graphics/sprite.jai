@@ -53,7 +53,6 @@ draw_sprite :: (
     set_bool(shader, "horizontal_flip", horizontal_flip);
 
 
-    // @TODO?
     set_vec4(shader, "color_override", color_override);
     set_bool(shader, "use_color_override", use_color_override);
 

@@ -1,64 +1,21 @@
 // Dayne
-// Level
+// Tile
 // December 2024
-
-Level :: struct {
-    ROOM_COUNT :: 3;
-    rooms : [ROOM_COUNT] Room;
-}
-
-draw :: (using level: Level) {
-    for room : rooms {
-        draw(room);
-    }
-}
-
-draw_debug :: (using level: Level) {
-    for room : rooms {
-        draw_debug(room);
-    }
-}
-
-//
-//
-//
-
-Room :: struct {
-    WIDTH :: 10;
-    HEIGHT :: 12;
-
-    tiles : [WIDTH * HEIGHT] Tile;
-}
-
-draw :: (using room : Room) {
-    for tile : tiles {
-        draw(tile);
-    }
-}
-
-draw_debug :: (using room : Room) {
-    for tile : tiles {
-        draw_debug(tile);
-    }
-}
-
-//
-//
-//
 
 Tile :: struct {
     using solid : Solid;
     sprite_frame: int;
+    index : int;
 }
 
 draw :: (using tile: Tile) {
     draw_sprite_relative_to_collider(
-        collider, "level-sheet", sprite_frame, false,
+        collider, "level-sheet", sprite_frame, false, use_color_override = true, color_override = green
     );
 }
 
 draw_debug :: (using tile: Tile) {
-    draw(collider, color=white);
+    draw(collider, color=random_color_from_seed(xx index));
 }
 
 //
@@ -100,16 +57,15 @@ tile_templates : struct {
     };
 }
 
-tile_template_from_character :: (char: u8) -> Tile {
+tile_template_from_character :: (tile: *Tile, char: u8) {
     if char == {
-        case #char "0"; return tile_templates.empty;
-        case #char "1"; return tile_templates.block;
-        case #char "H"; return tile_templates.half;
-        case #char "L"; return tile_templates.ladder;
-        case #char "G"; return tile_templates.goal;
+        case #char "0"; tile.* = tile_templates.empty;
+        case #char "1"; tile.* = tile_templates.block;
+        case #char "H"; tile.* = tile_templates.half;
+        case #char "L"; tile.* = tile_templates.ladder;
+        case #char "G"; tile.* = tile_templates.goal;
         case; {
             print("Bad level template. %\n", char);
-            return .{};
         }
     }
 }

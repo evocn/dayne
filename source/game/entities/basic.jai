@@ -33,8 +33,6 @@ update :: (using basic: *Basic, dt: float) {
 
     // Visual
     {
-        if velocity.x < 0 then facing_left = true; else facing_left = false;
-
         update(*animation, dt);
     }
 }
