@@ -28,14 +28,10 @@ filter_irrelevant_solids :: (solids: [..] *Solid, actor: Actor) -> [] *Solid {
     result.allocator = temp;
 
     for solid : solids {
-        if solid.one_way {
-            if solid.collider.y + solid.collider.height <= actor.collider.y {
-                array_add(*result, solid);
-            }
-        }
-        else {
-            array_add(*result, solid);
-        }
+        actor_below_solid := solid.collider.y + solid.collider.height > actor.collider.y;
+        if solid.one_way && actor_below_solid then continue;
+
+        array_add(*result, solid);
     }
 
     return result;

@@ -19,16 +19,23 @@ main :: () {
     song := "secret";
     play_music(song);
 
-    dt, last_frame := 0.0;
+    dt : float;
+    dt_without_stall : float;
+    frame_start_time : float64;
     while program_state.running {
         ////////////////////////////////////////////////////////////////////////////////
         // Frame Startup
         {
+            frame_start_time = seconds_since_init();
+
             rainbow_color = update_rainbow_color(dt);
+
+            frame_reset(*debug);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         // Input
+        profiling_start_range("input");
         {
             gather_input(*input, *gamepad);
 
@@ -57,9 +64,11 @@ main :: () {
                     apply_input(*game, input);
             }
         }
+        profiling_end_range("input");
 
         ////////////////////////////////////////////////////////////////////////////////
         // Update
+        profiling_start_range("update");
         {
             if #complete program_state.current_scene == {
                 case .TITLE;
@@ -77,40 +86,60 @@ main :: () {
                     }
             }
         }
+        profiling_end_range("update");
+
+        debug_print_report(debug.profiling);
+        debug_print(tprint("ms: %", formatFloat(dt * 1000, trailing_width=1, zero_removal=.NO)));
+        debug_print(tprint("locked: %", formatFloat(dt_without_stall * 1000, trailing_width=1, zero_removal=.NO)));
 
         ////////////////////////////////////////////////////////////////////////////////
         // Render
-        render(
-            game,
-            main_menu,
-        );
+        profiling_start_range("render");
+        {
+            render(
+                game,
+                main_menu,
+            );
 
-        if program_state.current_scene == .EDITOR {
-            update_and_draw_editor(*game);
-            ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
+            if program_state.current_scene == .EDITOR {
+                update_and_draw_editor(*game);
+                ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
+            }
+
+            SDL_GL_SwapWindow(window);
         }
-
-        SDL_GL_SwapWindow(window);
+        profiling_end_range("render");
 
         ////////////////////////////////////////////////////////////////////////////////
         // Frame Cleanup
+        //profiling_start_range("cleanup");
         {
             Sound_Player.update();
 
             reset_temporary_storage();
 
             // Frame Timing
-            current_time := cast(float32)seconds_since_init();
-            dt = current_time - last_frame;
-            last_frame = current_time;
-            FRAME_DURATION :: 0.0166666;
+            frame_end_time := seconds_since_init();
+            dt_without_stall = xx (frame_end_time - frame_start_time);
 
-            if dt < FRAME_DURATION {
-                to_delay := 1000 * (FRAME_DURATION - dt);
-                //print("leeway: % ms.\n", to_delay);
-                SDL_Delay(xx to_delay);
-                dt = FRAME_DURATION;
+            if dt_without_stall <= TARGET_FRAME_DURATION {
+                to_delay := TARGET_FRAME_DURATION - dt_without_stall;
+                SDL_Delay(xx (to_delay * 1000)); // takes milliseconds
+
+                dt = TARGET_FRAME_DURATION;
             }
+            else {
+                log("We're over our frame time quota!\n");
+
+                dt = dt_without_stall;
+            }
+
+            program_state.current_frame += 1;
+        }
+        //profiling_end_range("cleanup");
+
+        if .DEBUG == program_state.mode {
+            //print_report(debug.profiling);
         }
     }
 

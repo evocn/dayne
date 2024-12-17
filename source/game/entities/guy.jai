@@ -63,6 +63,7 @@ apply_input :: (using guy: *Guy, input: Input) {
 }
 
 apply_input_to_velocity :: (using guy: *Guy, input: Input) {
+    // X Axis
     {
         left  := input.left.is_held;
         right := input.right.is_held;
@@ -90,6 +91,7 @@ apply_input_to_velocity :: (using guy: *Guy, input: Input) {
         }
     }
 
+    // Y Axis
     {
         jump :: (using guy: *Guy) {
             velocity.y = JUMP_VELOCITY;
@@ -203,13 +205,8 @@ update :: (using guy: *Guy, dt: float) {
 
         amount_to_move := velocity * dt;
 
-        /*
-        profile_timer :
-        */
         move_x(*actor, amount_to_move.x, null);
         move_y(*actor, amount_to_move.y, null);
-
-        debug_print(tprint("p: %", position));
     }
 
     update_visuals(guy, dt);

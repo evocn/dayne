@@ -22,6 +22,10 @@ operator - :: (a: Pair, b: Pair) -> Pair { return .{a.x - b.x, a.y - b.y};  }
 operator * :: (f: int, a: Pair)  -> Pair { return .{a.x * f,   a.y * f};    }
 operator - :: (p: Pair) -> Pair { return .{-p.x, -p.x}; }
 
+length :: (p: Pair) -> int {
+    return abs(p.x) + abs(p.y);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 get_random_direction_vector_on_unit_circle :: () -> Vector2 {

@@ -22,8 +22,6 @@ Game :: struct {
 
     using internals : struct {
         arena : Flat_Pool;
-
-        debug : Debug;
     }
 
     using state : struct {
@@ -103,10 +101,6 @@ apply_input :: (using game: *Game, input: Input) {
 }
 
 update :: (using game: *Game, dt: float) {
-    {
-        reset(*debug);
-    }
-
     // Camera
     {
         //camera.position = get_camera_centered_on_position(p1.position);

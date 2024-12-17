@@ -14,6 +14,8 @@ using program_state : struct {
     }
     DEBUG_MEMORY :: true;
 
+    debug : Debug;
+
     ////////////////////////////////////////////////////////////////////////////
 
     running := true;
@@ -43,6 +45,8 @@ using program_state : struct {
 
     ////////////////////////////////////////////////////////////////////////////
 
+    TARGET_FRAME_DURATION :: 1.0 / 20;
+    current_frame : int;
     framerate : float;
 
     using simulation_state : struct {
