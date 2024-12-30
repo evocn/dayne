@@ -131,7 +131,7 @@ initialize_render_context :: () {
 
     // Sprites
     {
-        paths := File_Utilities.file_list(sprites_path, recursive = true, follow_symlinks = false);
+        paths := File_Utilities.file_list(sprites_path, recursive = true);
         for path : paths {
             success := load_sprite(path);
             assert(success);
@@ -144,7 +144,7 @@ initialize_render_context :: () {
 
     // Spritesheets
     {
-        paths := File_Utilities.file_list(spritesheets_path, recursive = true, follow_symlinks = false);
+        paths := File_Utilities.file_list(spritesheets_path, recursive = true);
         for path : paths {
             success := load_spritesheet(path);
             assert(success);
@@ -183,7 +183,7 @@ initialize_audio_context :: () {
 
     // SFX
     {
-        paths := File_Utilities.file_list(sfx_path, recursive = true, follow_symlinks = false);
+        paths := File_Utilities.file_list(sfx_path, recursive = true);
         for path : paths {
             load_sfx(path);
             free(path.data);
@@ -194,7 +194,7 @@ initialize_audio_context :: () {
 
     // Music
     {
-        paths := File_Utilities.file_list(music_path, recursive = true, follow_symlinks = false);
+        paths := File_Utilities.file_list(music_path, recursive = true);
         for path : paths {
             load_music(path);
             free(path.data);
