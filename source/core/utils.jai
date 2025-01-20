@@ -2,6 +2,28 @@
 // Utils
 // August 2024
 
+world_space_to_screen_pixel :: (x: int, y: int) -> pixel: Pair {
+    pixel: Pair;
+
+    pixel.x = x;
+    pixel.y = y;
+
+    // Camera Transform
+    {
+        pixel -= game.camera.position;
+        pixel = game.camera.zoom * pixel;
+    }
+
+    return pixel;
+}
+
+screen_pixel_zoom :: () -> zoom: int {
+    return game.camera.zoom;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+
 Pair :: struct {
     x: int;
     y: int;

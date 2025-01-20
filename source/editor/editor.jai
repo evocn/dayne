@@ -19,31 +19,16 @@ update_and_draw_editor :: (game: *Game) {
     ImGui_ImplSdl_NewFrame(window);
     ImGui.NewFrame();
     {
-        editor_functions();
-
-        game_editor(game);
-
-        ImGui.ShowDemoWindow();
+        main_editor(game);
+        //ImGui.ShowDemoWindow();
     }
     ImGui.Render();
 }
 
-
-
-// Individual Editor Features
-////////////////////////////////////////////////////////////////////////////////
-
-editor_functions :: () {
+main_editor :: (using game: *Game) {
     ImGui.Begin("Editor");
     {
         ImGui.Checkbox("Debug Info", xx *program_state.show_debug_info);
-    }
-    ImGui.End();
-}
-
-game_editor :: (using game: *Game) {
-    ImGui.Begin("Game");
-    {
     }
     ImGui.End();
 }

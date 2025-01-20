@@ -34,7 +34,7 @@ reset :: (using animation : *Sprite_Animation) {
 
 update :: (using animation : *Sprite_Animation, dt: float) -> finished : bool {
     t += dt;
-    BASE_SPEED_CONSTANT :: 0.1;
+    BASE_SPEED_CONSTANT :: 0.2;
     change_time := BASE_SPEED_CONSTANT / speed;
     if t < change_time then return false;
     else {

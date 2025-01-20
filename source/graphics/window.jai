@@ -3,13 +3,10 @@
 // August 2024
 
 using window_constants : struct {
+    PIXEL_WIDTH     :: 256;
+    PIXEL_HEIGHT    :: 224;
+
     TILE_SIZE_IN_PIXELS :: 16;
-
-    VIEWPORT_WIDTH\_IN_TILES :: 16;
-    VIEWPORT_HEIGHT_IN_TILES :: 14;
-
-    PIXEL_WIDTH     :: TILE_SIZE_IN_PIXELS * VIEWPORT_WIDTH\_IN_TILES;
-    PIXEL_HEIGHT    :: TILE_SIZE_IN_PIXELS * VIEWPORT_HEIGHT_IN_TILES;
 
     GAME_ASPECT_RATIO :: cast(float)PIXEL_WIDTH / cast(float)PIXEL_HEIGHT;
 }

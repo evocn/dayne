@@ -3,8 +3,6 @@
 // November 2024
 
 #load "entity.jai";
-#load "entities/basic.jai";
-
 #load "physics/physics.jai";
 
 Game :: struct {
@@ -13,8 +11,8 @@ Game :: struct {
 
     using internals : struct {
         arena : Flat_Pool;
-
         simulation: Simulation;
+
         entities    : [..] *Entity;
     }
 
@@ -24,24 +22,36 @@ Game :: struct {
             zoom : int;
         }
 
+        gubble_one : *Gubble;
     }
 }
 
 apply_inputs :: (using input: Input, game: *Game) {
+
 }
 
 initialize :: (using game: *Game) {
     // Create Entities
     {
-        basic : *Basic = xx new_entity(.BASIC);
         {
-            using basic;
+            using gubble : *Gubble = xx new_entity(.GUBBLE);
+
+            initialize(*animation, "Gubble-Idle");
+
+            array_add(*entities, xx gubble);
+
+            gubble_one = gubble;
+        }
+
+        {
+            using basic : *Basic = xx new_entity(.BASIC);
             width  = 16;
             height = 16;
 
             initialize(*animation, "Frog-Idle");
+
+            array_add(*entities, xx basic);
         }
-        array_add(*entities, xx basic);
     }
 
     // State

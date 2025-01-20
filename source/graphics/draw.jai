@@ -2,27 +2,6 @@
 // Graphics Drawing Functions
 // November 2024
 
-world_space_to_screen_pixel :: (x: int, y: int) -> pixel: Pair {
-    pixel: Pair;
-
-    pixel.x = x;
-    pixel.y = y;
-
-    // Camera Transform
-    {
-        pixel -= game.camera.position;
-        pixel = game.camera.zoom * pixel;
-    }
-
-    return pixel;
-}
-
-screen_pixel_zoom :: () -> zoom: int {
-    return game.camera.zoom;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 // @TODO: Maybe work these out into like UI drawing, primitive drawing, etc. functions?
 
 draw_title_screen :: () {
@@ -43,7 +22,7 @@ draw_title_screen :: () {
         alignment   = Alignment.CENTER,
         progress    = -1,
         font        = .SMALL,
-        color       = white,
+        color       = gray,
     );
 }
 
