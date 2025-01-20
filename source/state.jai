@@ -44,7 +44,7 @@ using program_state : struct {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    framerate : float;
+    fixed_timestep : float = 0.01666666;
 
     using simulation_state : struct {
         frozen  : bool;

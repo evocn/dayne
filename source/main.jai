@@ -150,9 +150,30 @@ main :: () {
         {
             Sound_Player.update();
 
-            current_time := cast(float32)seconds_since_init();
-            dt = current_time - last_frame;
-            last_frame = current_time;
+            // Let it ride!
+            {
+                current_time := cast(float32)seconds_since_init();
+                dt = current_time - last_frame;
+                last_frame = current_time;
+            }
+
+            /*
+            // Fixed Timestep
+            {
+                current_time := cast(float32)seconds_since_init();
+                dt = current_time - last_frame;
+
+                if dt < fixed_timestep {
+                    SDL_Delay(xx (1000 * (fixed_timestep - dt)));
+                    dt = fixed_timestep;
+                }
+                else {
+                    print("Missed the timestep by % s.\n", dt - fixed_timestep);
+                }
+
+                last_frame = current_time;
+            }
+            */
 
             add_sample(*tracker, dt);
 

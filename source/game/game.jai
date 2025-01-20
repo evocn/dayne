@@ -26,8 +26,8 @@ Game :: struct {
     }
 }
 
-apply_inputs :: (using input: Input, game: *Game) {
-
+apply_inputs :: (using input: Input, using game: *Game) {
+    apply_inputs(input, gubble_one);
 }
 
 initialize :: (using game: *Game) {
@@ -39,6 +39,7 @@ initialize :: (using game: *Game) {
             initialize(*animation, "Gubble-Idle");
 
             array_add(*entities, xx gubble);
+            array_add(*simulation.actors, *gubble.actor);
 
             gubble_one = gubble;
         }
