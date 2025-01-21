@@ -13,6 +13,7 @@ render :: (game: Game, menu: Menu) {
         if #complete program_state.current_scene == {
             case .TITLE;
                 draw_title_screen();
+                draw_controls();
                 draw_version_indicator();
                 draw_build_type();
 
@@ -74,4 +75,13 @@ draw_game :: (game : Game) {
 
 draw_user_interface :: (game: Game) {
     //draw_mouse_cursor(input_one.mouse_position);
+    if game.state == {
+        case .DEATH;
+            draw_text(
+                "You Died.",
+                PIXEL_WIDTH / 2,
+                PIXEL_HEIGHT / 2,
+                .CENTER,
+            );
+    }
 }

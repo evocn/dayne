@@ -3,10 +3,11 @@
 // January 2025
 
 gubble_variables : struct {
-    run_speed   := 50.0;
-    jump_thrust := 100.0;
-    gravity     := -200.0;
-    terminal    := -50.0;
+    run_speed   := 100.0;
+    jump_thrust := 150.0;
+    slap_thrust := 200.0;
+    gravity     := -300.0;
+    terminal    := -300.0;
 }
 
 Gubble :: struct {
@@ -15,8 +16,8 @@ Gubble :: struct {
 
     // Properties
     using actor : Actor;
-    width  = 14;
-    height = 14;
+    width  = 16;
+    height = 16;
 
     using animation : Sprite_Animation;
 
@@ -25,6 +26,8 @@ Gubble :: struct {
     grounded    : bool;
 
     facing_left : bool;
+
+    victims : [..] *Entity;
 }
 
 initialize :: (using gubble: *Gubble) {
@@ -112,6 +115,23 @@ apply_inputs :: (using input: Input, gubble : *Gubble) {
             }
         }
     }
+
+    {
+        slap :: (using gubble: *Gubble) {
+            using gubble_variables;
+
+            velocity.y = slap_thrust;
+        }
+
+        if input.a.just_pressed {
+            if gubble.victims {
+                for victim : gubble.victims {
+                    victim.should_die = true;
+                }
+                slap(gubble);
+            }
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -122,4 +142,20 @@ move_dumb :: (using gubble: *Gubble, new_x: int, new_y: int) {
 
     actor.x_remainder = 0;
     actor.y_remainder = 0;
+}
+
+camera_follow_gubble :: (using gubble: Gubble, old_camera : Pair) -> Pair {
+    camera : Pair;
+    camera.x = 0;
+
+    MAX_SCREEN_BENEATH_GUBBLE :: PIXEL_HEIGHT / 2;
+
+    if old_camera.y + MAX_SCREEN_BENEATH_GUBBLE > gubble.y {
+        camera.y = old_camera.y;
+    }
+    else {
+        camera.y = gubble.y - PIXEL_HEIGHT + MAX_SCREEN_BENEATH_GUBBLE;
+    }
+
+    return camera;
 }

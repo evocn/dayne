@@ -26,6 +26,18 @@ draw_title_screen :: () {
     );
 }
 
+draw_controls :: () {
+    draw_text(
+        "a/d: move. j: slap.",
+        x = PIXEL_WIDTH / 2,
+        y = 20,
+        alignment   = Alignment.CENTER,
+        progress    = -1,
+        font        = .SMALL,
+        color       = gray,
+    );
+}
+
 draw_version_indicator :: () {
     draw_text(
         tprint("version %.%", VERSION.major, VERSION.minor),
