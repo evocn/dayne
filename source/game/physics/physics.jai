@@ -23,7 +23,7 @@ reset_simulation :: (simulation: *Simulation) {
 
 // Utilities
 
-filter_irrelevant_solids :: (solids: [..] *Solid, actor: *Actor) -> [] *Solid {
+filter_irrelevant_solids :: (solids: [..] *Solid, actor: Actor) -> [] *Solid {
     result : [..] *Solid;
     result.allocator = temp;
 

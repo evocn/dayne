@@ -37,7 +37,7 @@ initialize_everything :: () {
 initialize_sdl :: () {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 
-    window = SDL_CreateWindow("Dayne",
+    window = SDL_CreateWindow(program_state.program_name,
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, graphics_context.window_width, graphics_context.window_height,
         SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN);
 
@@ -124,6 +124,7 @@ initialize_graphics_context :: () {
         size_exceptions : Table(string, Pair);
         {
             table_add(*size_exceptions, "haruhachi", .{208, 256});
+            table_add(*size_exceptions, "test-platform", .{32, 8});
         }
 
         sprite_paths := file_list(sprites_path, recursive = true, follow_directory_symlinks = false,, allocator=temp);

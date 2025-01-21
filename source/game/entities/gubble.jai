@@ -1,6 +1,13 @@
-// Dayne
+// Gubble
 // Gubble (Entity)
 // January 2025
+
+gubble_variables : struct {
+    run_speed   := 50.0;
+    jump_thrust := 100.0;
+    gravity     := -200.0;
+    terminal    := -50.0;
+}
 
 Gubble :: struct {
     using #as entity : Entity;
@@ -14,8 +21,10 @@ Gubble :: struct {
     using animation : Sprite_Animation;
 
     // State
-    facing_left : bool;
     velocity    : Vector2;
+    grounded    : bool;
+
+    facing_left : bool;
 }
 
 initialize :: (using gubble: *Gubble) {
@@ -24,6 +33,12 @@ initialize :: (using gubble: *Gubble) {
 }
 
 update :: (using gubble: *Gubble, dt: float) {
+    {
+        using gubble_variables;
+        velocity.y += gravity * dt;
+        velocity.y = max(velocity.y, terminal);
+    }
+
     // Move
     {
         amount_to_move := velocity * dt;
@@ -39,6 +54,20 @@ update :: (using gubble: *Gubble, dt: float) {
 
         update(*animation, dt);
     }
+
+    // End-of-Update checks
+    {
+        // Determine new grounded state.
+        if velocity.y <= 0.0 {
+            grounded_now := check_if_grounded(actor);
+
+            if grounded_now {
+                velocity.y = 0.0;
+            }
+
+            grounded = grounded_now;
+        }
+    }
 }
 
 draw :: (using gubble: *Gubble) {
@@ -53,62 +82,36 @@ draw_debug :: (using gubble: *Gubble) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-gubble_variables : struct {
-    speed := 50.0;
-}
-
 apply_inputs :: (using input: Input, gubble : *Gubble) {
     using gubble_variables;
 
     {
         // Update Velocity based on inputs
         if right.is_held && !left.is_held {
-            gubble.velocity.x = speed;
+            gubble.velocity.x = run_speed;
         }
         else if left.is_held && !right.is_held {
-            gubble.velocity.x = -speed;
+            gubble.velocity.x = -run_speed;
         }
         else {
             gubble.velocity.x = 0;
         }
     }
 
-    /*
     {
-        jump :: (player: *Player) {
-            player.velocity.y = JUMP_VELOCITY;
-            player.grounded = false;
+        jump :: (using gubble: *Gubble) {
+            using gubble_variables;
 
-            player.coyote_time = 0.0;
+            velocity.y = jump_thrust;
+            grounded = false;
         }
 
-        // Apply Gravity
-        if player.grounded {
-            if button_was_just_pressed(input, .A) {
-                jump(player);
+        if gubble.grounded {
+            if input.a.just_pressed {
+                jump(gubble);
             }
         }
-        else {
-            if player.velocity.y >= 0 && button_is_held(input, .A) {
-                player.velocity.y -= HOLDING_GRAVITY;
-            }
-            else {
-                player.velocity.y -= FALLING_GRAVITY;
-            }
-
-            if player.velocity.y <= -TERMINAL_GLIDING_VELOCITY && button_is_held(input, .A) {
-                player.velocity.y = -TERMINAL_GLIDING_VELOCITY;
-            }
-
-
-            if player.coyote_time > 0.0 && button_was_just_pressed(input, .A) {
-                jump(player);
-            }
-        }
-
-        player.velocity.y = max(player.velocity.y, -TERMINAL_FALLING_VELOCITY);
     }
-    */
 }
 
 ////////////////////////////////////////////////////////////////////////////////

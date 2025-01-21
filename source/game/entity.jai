@@ -4,11 +4,13 @@
 
 #load "entities/basic.jai";
 #load "entities/gubble.jai";
+#load "entities/platform.jai";
 
 Entity :: struct {
     Kind :: enum {
         BASIC;
         GUBBLE;
+        PLATFORM;
     }
     kind : Kind;
 
@@ -29,6 +31,7 @@ new_entity :: (kind : Entity.Kind) -> *Entity {
     if #complete kind == {
         case .BASIC;            new_entity = xx New(Basic);
         case .GUBBLE;           new_entity = xx New(Gubble);
+        case .PLATFORM;         new_entity = xx New(Platform);
     }
 
     initialize(new_entity);
@@ -46,6 +49,7 @@ initialize :: (entity: *Entity) {
     if #complete entity.kind == {
         case .BASIC;            initialize(cast(*Basic)entity);
         case .GUBBLE;           initialize(cast(*Gubble)entity);
+        case .PLATFORM;         initialize(cast(*Platform)entity);
     }
 }
 
@@ -53,6 +57,7 @@ update :: (entity: *Entity, dt: float) {
     if #complete entity.kind == {
         case .BASIC;            update(cast(*Basic)entity, dt);
         case .GUBBLE;           update(cast(*Gubble)entity, dt);
+        case .PLATFORM;         update(cast(*Platform)entity, dt);
     }
 }
 
@@ -60,6 +65,7 @@ draw :: (entity: *Entity) {
     if #complete entity.kind == {
         case .BASIC;            draw(cast(*Basic)entity);
         case .GUBBLE;           draw(cast(*Gubble)entity);
+        case .PLATFORM;         draw(cast(*Platform)entity);
     }
 }
 
@@ -67,6 +73,7 @@ draw_debug :: (entity: *Entity) {
     if #complete entity.kind == {
         case .BASIC;            draw_debug(cast(*Basic)entity);
         case .GUBBLE;           draw_debug(cast(*Gubble)entity);
+        case .PLATFORM;         draw_debug(cast(*Platform)entity);
     }
 }
 

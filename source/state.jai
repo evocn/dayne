@@ -3,12 +3,14 @@
 // February 2024
 
 using program_state : struct {
-    RELEASE_BUILD :: #run BUILD_TYPE == .RELEASE;
+    program_name :: "Gubble";
 
     VERSION :: struct {
         major :: 0;
         minor :: 1;
     }
+
+    RELEASE_BUILD :: #run BUILD_TYPE == .RELEASE;
 
     show_debug_info : bool = false;
 

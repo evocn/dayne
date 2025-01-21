@@ -41,7 +41,7 @@ check_if_hitting_head :: (actor : *Actor) -> bool {
     return false;
 }
 
-check_if_grounded :: (actor : *Actor) -> bool {
+check_if_grounded :: (actor : Actor) -> bool {
     extended_collider := actor.collider;
     extended_collider.y -= 1;
 

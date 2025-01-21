@@ -6,7 +6,7 @@
 
 draw_title_screen :: () {
     draw_text(
-        "Dayne",
+        program_state.program_name,
         x = PIXEL_WIDTH / 2,
         y = 80,
         alignment   = Alignment.CENTER,
