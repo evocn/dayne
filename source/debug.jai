@@ -9,6 +9,8 @@ Debugging_Stuff :: struct {
     }
 
     messages : [..] Message;
+
+    solids : [..] *Solid;
 }
 debugging_stuff : Debugging_Stuff;
 
@@ -18,6 +20,7 @@ debug_print :: (s : string, color := white) {
 
 update :: (using debug: *Debugging_Stuff) {
     array_reset(*messages);
+    array_reset(*solids);
 }
 
 draw :: (using debug: Debugging_Stuff) {
@@ -33,6 +36,11 @@ draw :: (using debug: Debugging_Stuff) {
         );
 
         k += 1;
+    }
+
+    print("%\n", solids.count);
+    for solid : solids {
+        draw(solid.collider, white);
     }
 }
 

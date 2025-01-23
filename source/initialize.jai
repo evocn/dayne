@@ -124,7 +124,11 @@ initialize_graphics_context :: () {
         size_exceptions : Table(string, Pair);
         {
             table_add(*size_exceptions, "haruhachi", .{208, 256});
-            table_add(*size_exceptions, "test-platform", .{32, 8});
+            table_add(*size_exceptions, "test-platform", .{16, 16});
+            table_add(*size_exceptions, "Orange", .{8, 8});
+            table_add(*size_exceptions, "Blue", .{8, 8});
+            table_add(*size_exceptions, "Green", .{8, 8});
+            table_add(*size_exceptions, "Red", .{8, 8});
         }
 
         sprite_paths := file_list(sprites_path, recursive = true, follow_directory_symlinks = false,, allocator=temp);

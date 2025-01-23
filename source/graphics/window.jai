@@ -3,7 +3,7 @@
 // August 2024
 
 using window_constants : struct {
-    PIXEL_WIDTH     :: 256;
+    PIXEL_WIDTH     :: 192;
     PIXEL_HEIGHT    :: 224;
 
     TILE_SIZE_IN_PIXELS :: 16;

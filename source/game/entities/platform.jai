@@ -24,8 +24,11 @@ initialize :: (using platform: *Platform) {
 update :: (using platform: *Platform, dt: float) {
     // Update Velocity
     {
+        /*
+        // Sine pattern
         movement_t += dt;
         velocity.x = movement_speed * cos(movement_t);
+        */
     }
 
     // Move

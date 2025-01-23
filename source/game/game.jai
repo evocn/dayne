@@ -4,7 +4,7 @@
 
 #load "entity.jai";
 #load "physics/physics.jai";
-#load "bubble-machine.jai";
+#load "level-generator.jai";
 
 Game :: struct {
     using constants : struct {
@@ -62,7 +62,7 @@ initialize :: (using game: *Game) {
             x = 16;
             y = 16;
 
-            initialize(*animation, "Gubble-Idle");
+            initialize(*animation, "Snork-Idle");
 
             array_add(*entities, xx gubble);
             array_add(*simulation.actors, *actor);
@@ -72,23 +72,10 @@ initialize :: (using game: *Game) {
 
         {
             using platform : *Platform = xx new_entity(.PLATFORM);
-            width   = 32;
-            height  = 8;
-            x = 0;
-            y = 8;
-
-            initialize(*animation, "test-platform");
-
-            array_add(*entities, xx platform);
-            array_add(*simulation.solids, *solid);
-        }
-
-        {
-            using platform : *Platform = xx new_entity(.PLATFORM);
-            width   = 32;
-            height  = 8;
-            x = 64;
-            y = 8;
+            width   = 16;
+            height  = 16;
+            x = 16;
+            y = 0;
 
             initialize(*animation, "test-platform");
 
@@ -119,8 +106,7 @@ initialize :: (using game: *Game) {
             }
         }
 
-        //blow_bubbles(*entities);
-        generate_level(*entities);
+        generate_level(*entities, *simulation);
     }
 
     // State
@@ -170,6 +156,40 @@ simulate :: (using game: *Game, dt: float) {
         if gubble_one.y + gubble_one.height < camera.position.y {
             gubble_one.should_die = true;
             state = .DEATH;
+        }
+
+        for entity : entities {
+            if entity.kind == .ANNIE {
+                annie := cast(*Annie)(entity);
+                if collision(annie.collider, gubble_one.collider) {
+                    gubble_one.should_die = true;
+                    state = .DEATH;
+                }
+            }
+        }
+
+        for entity : entities {
+            if entity.kind == {
+                case .PLATFORM;
+                    platform := cast(*Platform)(entity);
+                    if platform.y + platform.height < camera.position.y {
+                        platform.should_die = true;
+                        array_unordered_remove_by_value(*simulation.solids, *platform.solid, stop_after_first = true);
+                    }
+
+                case .BUBBLE;
+                    bubble := cast(*Bubble)(entity);
+                    if bubble.y + bubble.height < camera.position.y {
+                        entity.should_die = true;
+                    }
+
+                case .ANNIE;
+                    annie := cast(*Annie)(entity);
+                    if annie.y + annie.height < camera.position.y {
+                        annie.should_die = true;
+                        array_unordered_remove_by_value(*simulation.actors, *annie.actor, stop_after_first = true);
+                    }
+            }
         }
     }
 

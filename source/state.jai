@@ -7,7 +7,7 @@ using program_state : struct {
 
     VERSION :: struct {
         major :: 0;
-        minor :: 1;
+        minor :: 2;
     }
 
     RELEASE_BUILD :: #run BUILD_TYPE == .RELEASE;

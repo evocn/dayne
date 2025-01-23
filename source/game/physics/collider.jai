@@ -28,7 +28,7 @@ check_collision_against_all_solids :: (collider : Collider, solids : [] *Solid) 
     return false;
 }
 
-check_if_hitting_head :: (actor : *Actor) -> bool {
+check_if_hitting_head :: (actor : Actor) -> bool {
     extended_collider := actor.collider;
     extended_collider.y += 1;
 

@@ -4,10 +4,19 @@
 
 gubble_variables : struct {
     run_speed   := 100.0;
-    jump_thrust := 150.0;
-    slap_thrust := 200.0;
-    gravity     := -300.0;
-    terminal    := -300.0;
+    jump_thrust := 300.0;
+    slap_thrust := 300.0;
+
+    gravity     := -700.0;
+    terminal    := -1000.0;
+
+    hold_gravity    := -500.0;
+    hold_terminal   := -800.0;
+
+    slap_cooldown   := 0.5;
+
+    // Powerups
+    boost_thrust:= 300.0;
 }
 
 Gubble :: struct {
@@ -24,8 +33,11 @@ Gubble :: struct {
     // State
     velocity    : Vector2;
     grounded    : bool;
+    holding     : bool;
 
     facing_left : bool;
+
+    cooldown : float;
 
     victims : [..] *Entity;
 }
@@ -36,8 +48,26 @@ initialize :: (using gubble: *Gubble) {
 }
 
 update :: (using gubble: *Gubble, dt: float) {
+    // Cooldowns
     {
-        using gubble_variables;
+        cooldown = max(cooldown - dt, 0);
+    }
+
+    // Gravity
+    {
+        gravity : float;
+        terminal: float;
+        {
+            if holding {
+                gravity = gubble_variables.hold_gravity;
+                terminal = gubble_variables.hold_terminal;
+            }
+            else {
+                gravity = gubble_variables.gravity;
+                terminal = gubble_variables.terminal;
+            }
+        }
+
         velocity.y += gravity * dt;
         velocity.y = max(velocity.y, terminal);
     }
@@ -61,14 +91,20 @@ update :: (using gubble: *Gubble, dt: float) {
     // End-of-Update checks
     {
         // Determine new grounded state.
-        if velocity.y <= 0.0 {
+        if velocity.y < 0.0 {
             grounded_now := check_if_grounded(actor);
-
             if grounded_now {
                 velocity.y = 0.0;
             }
 
             grounded = grounded_now;
+        }
+
+        if velocity.y > 0.0 {
+            hitting_head_now := check_if_hitting_head(actor);
+            if hitting_head_now {
+                velocity.y = 0.0;
+            }
         }
     }
 }
@@ -121,15 +157,26 @@ apply_inputs :: (using input: Input, gubble : *Gubble) {
             using gubble_variables;
 
             velocity.y = slap_thrust;
+            cooldown = slap_cooldown;
         }
 
-        if input.a.just_pressed {
+        if input.a.just_pressed && gubble.cooldown == 0.0 {
             if gubble.victims {
                 for victim : gubble.victims {
                     victim.should_die = true;
                 }
                 slap(gubble);
             }
+        }
+    }
+
+    // Float
+    {
+        if input.a.is_held {
+            gubble.holding = true;
+        }
+        else {
+            gubble.holding = false;
         }
     }
 }

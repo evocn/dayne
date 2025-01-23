@@ -73,9 +73,20 @@ draw_game :: (game : Game) {
     }
 }
 
-draw_user_interface :: (game: Game) {
+draw_user_interface :: (using game: Game) {
+    // Cooldown Indicator
+    {
+        ratio : float = gubble_one.cooldown / gubble_variables.slap_cooldown;
+
+        draw_colored_quad(
+            0, 0,
+            xx (ratio * PIXEL_WIDTH), 10,
+            color=teal
+        );
+    }
+
     //draw_mouse_cursor(input_one.mouse_position);
-    if game.state == {
+    if state == {
         case .DEATH;
             draw_text(
                 "You Died.",
