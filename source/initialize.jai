@@ -129,6 +129,9 @@ initialize_graphics_context :: () {
             table_add(*size_exceptions, "Blue", .{8, 8});
             table_add(*size_exceptions, "Green", .{8, 8});
             table_add(*size_exceptions, "Red", .{8, 8});
+            table_add(*size_exceptions, "Gubble", .{192, 192});
+            table_add(*size_exceptions, "Hand", .{96, 32});
+            table_add(*size_exceptions, "Wall", .{32, 960});
         }
 
         sprite_paths := file_list(sprites_path, recursive = true, follow_directory_symlinks = false,, allocator=temp);

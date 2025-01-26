@@ -98,8 +98,7 @@ generate_level :: (entities: *[..] *Entity, simulation: *Simulation) {
             }
         }
 
-        // Populate
-        {
+        add_annie :: (floor: int, entities: *[..] *Entity, simulation: *Simulation) {
             varieties := Annie.Variety.[.ORANGE, .RED, .BLUE, .GREEN];
 
             annie := make_annie(random_choice(varieties));
@@ -108,6 +107,17 @@ generate_level :: (entities: *[..] *Entity, simulation: *Simulation) {
 
             array_add(entities, annie);
             array_add(*simulation.actors, *annie.actor);
+        }
+
+        // Populate
+        if floor >= 5 {
+            add_annie(floor, entities, simulation);
+        }
+        if floor >= 15 {
+            add_annie(floor, entities, simulation);
+        }
+        if floor >= 25 {
+            add_annie(floor, entities, simulation);
         }
     }
 }
@@ -144,12 +154,12 @@ t0 :: #string DONE
 DONE
 
 t1 :: #string DONE
-------------
-BBBBBBBBBBBB
-------------
+B----------B
 ------------
 ------------
+-----BB-----
 ------------
+B----------B
 BBBBBBBBBBBB
 ------------
 DONE
@@ -179,11 +189,11 @@ DONE
 t4 :: #string DONE
 -----BB-----
 ---B----B---
+------------
+------B-----
+-----B------
 -B--------B-
------BB-----
------BB-----
--B--------B-
----B----B---
+------------
 -----BB-----
 DONE
 
@@ -192,7 +202,7 @@ t5 :: #string DONE
 ------------
 ------------
 ------------
------BB-----
+B--B----B--B
 ------------
 ------------
 -----BB-----
@@ -228,7 +238,7 @@ t8 :: #string DONE
 ------B-----
 ------------
 ------------
----BBBBBB---
+---B----B---
 DONE
 
 t9 :: #string DONE

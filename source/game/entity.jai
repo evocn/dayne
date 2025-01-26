@@ -7,6 +7,7 @@
 #load "entities/platform.jai";
 #load "entities/bubble.jai";
 #load "entities/annie.jai";
+#load "entities/god.jai";
 
 Entity :: struct {
     Kind :: enum {
@@ -15,6 +16,7 @@ Entity :: struct {
         PLATFORM;
         BUBBLE;
         ANNIE;
+        GOD;
     }
     kind : Kind;
 
@@ -38,6 +40,7 @@ new_entity :: (kind : Entity.Kind) -> *Entity {
         case .PLATFORM;         new_entity = xx New(Platform);
         case .BUBBLE;           new_entity = xx New(Bubble);
         case .ANNIE;            new_entity = xx New(Annie);
+        case .GOD;              new_entity = xx New(God);
     }
 
     initialize(new_entity);
@@ -58,6 +61,7 @@ initialize :: (entity: *Entity) {
         case .PLATFORM;         initialize(cast(*Platform)entity);
         case .BUBBLE;           initialize(cast(*Bubble)entity);
         case .ANNIE;            initialize(cast(*Annie)entity);
+        case .GOD;              initialize(cast(*God)entity);
     }
 }
 
@@ -68,6 +72,7 @@ update :: (entity: *Entity, dt: float) {
         case .PLATFORM;         update(cast(*Platform)entity, dt);
         case .BUBBLE;           update(cast(*Bubble)entity, dt);
         case .ANNIE;            update(cast(*Annie)entity, dt);
+        case .GOD;              update(cast(*God)entity, dt);
     }
 }
 
@@ -78,6 +83,7 @@ draw :: (entity: *Entity) {
         case .PLATFORM;         draw(cast(*Platform)entity);
         case .BUBBLE;           draw(cast(*Bubble)entity);
         case .ANNIE;            draw(cast(*Annie)entity);
+        case .GOD;              draw(cast(*God)entity);
     }
 }
 
@@ -88,6 +94,7 @@ draw_debug :: (entity: *Entity) {
         case .PLATFORM;         draw_debug(cast(*Platform)entity);
         case .BUBBLE;           draw_debug(cast(*Bubble)entity);
         case .ANNIE;            draw_debug(cast(*Annie)entity);
+        case .GOD;              draw_debug(cast(*God)entity);
     }
 }
 

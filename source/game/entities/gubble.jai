@@ -7,13 +7,17 @@ gubble_variables : struct {
     jump_thrust := 300.0;
     slap_thrust := 300.0;
 
-    gravity     := -700.0;
-    terminal    := -1000.0;
+    gravity     := -1200.0;
+    terminal    := -1500.0;
 
     hold_gravity    := -500.0;
-    hold_terminal   := -800.0;
+    hold_terminal   := -500.0;
 
     slap_cooldown   := 0.5;
+
+    slap_hitbox_size := 24;
+
+    pop_hitbox_size := 30;
 
     // Powerups
     boost_thrust:= 300.0;
@@ -25,10 +29,19 @@ Gubble :: struct {
 
     // Properties
     using actor : Actor;
-    width  = 16;
-    height = 16;
+    width  = 14;
+    height = 14;
 
-    using animation : Sprite_Animation;
+    using animation : *Sprite_Animation;
+    using animations : struct {
+        idle_animation : *Sprite_Animation;
+        slap_animation : *Sprite_Animation;
+    }
+
+    state : enum {
+        NEUTRAL;
+        SLAPPED;
+    }
 
     // State
     velocity    : Vector2;
@@ -40,10 +53,11 @@ Gubble :: struct {
     cooldown : float;
 
     victims : [..] *Entity;
+    pop_victims : [..] *Entity;
 }
 
 initialize :: (using gubble: *Gubble) {
-    facing_left = false;
+    facing_left = true;
     velocity = .{};
 }
 
@@ -51,6 +65,14 @@ update :: (using gubble: *Gubble, dt: float) {
     // Cooldowns
     {
         cooldown = max(cooldown - dt, 0);
+        if state == .SLAPPED {
+            if cooldown == 0 {
+                state = .NEUTRAL;
+
+                animation = idle_animation;
+                reset(animation);
+            }
+        }
     }
 
     // Gravity
@@ -82,10 +104,11 @@ update :: (using gubble: *Gubble, dt: float) {
 
     // Visual
     {
-        if velocity.x > 0 &&  facing_left then facing_left = false;
-        if velocity.x < 0 && !facing_left then facing_left = true;
+        // FLIPPED Because bryce is dumb
+        if velocity.x < 0 &&  facing_left then facing_left = false;
+        if velocity.x > 0 && !facing_left then facing_left = true;
 
-        update(*animation, dt);
+        update(animation, dt);
     }
 
     // End-of-Update checks
@@ -143,6 +166,8 @@ apply_inputs :: (using input: Input, gubble : *Gubble) {
 
             velocity.y = jump_thrust;
             grounded = false;
+
+            play_sfx("buff");
         }
 
         if gubble.grounded {
@@ -158,14 +183,34 @@ apply_inputs :: (using input: Input, gubble : *Gubble) {
 
             velocity.y = slap_thrust;
             cooldown = slap_cooldown;
+            state = .SLAPPED;
+            animation = slap_animation;
+            reset(animation);
         }
 
-        if input.a.just_pressed && gubble.cooldown == 0.0 {
+        if input.a.just_pressed && gubble.state == .NEUTRAL {
             if gubble.victims {
                 for victim : gubble.victims {
                     victim.should_die = true;
                 }
                 slap(gubble);
+            }
+        }
+    }
+
+    {
+        pop :: (using gubble: *Gubble) {
+            using gubble_variables;
+
+            cooldown = slap_cooldown;
+        }
+
+        if input.b.just_pressed && gubble.cooldown == 0.0 {
+            if gubble.victims {
+                for victim : gubble.victims {
+                    victim.should_die = true;
+                }
+                pop(gubble);
             }
         }
     }

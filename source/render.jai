@@ -85,6 +85,18 @@ draw_user_interface :: (using game: Game) {
         );
     }
 
+    screen_pixel := world_space_to_screen_pixel(
+        PIXEL_WIDTH / 2,
+        PIXEL_HEIGHT / 4,
+    );
+    draw_text(
+        "Up you go!",
+        screen_pixel.x,
+        screen_pixel.y,
+        .CENTER,
+        color = yellow,
+    );
+
     //draw_mouse_cursor(input_one.mouse_position);
     if state == {
         case .DEATH;

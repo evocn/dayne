@@ -15,7 +15,7 @@ Sprite_Animation :: struct {
 
 initialize :: (animation: *Sprite_Animation, sprite_name: string, speed := 1.0) {
     sprite := table_find_pointer(*graphics_context.sprites, sprite_name);
-    if !sprite {
+    if sprite == null {
         log_error("Couldn't load spritesheet % when loading animation.\n", sprite_name);
         return;
     }
