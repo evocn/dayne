@@ -240,7 +240,7 @@ simulate :: (using game: *Game, dt: float) {
         if gubble_one.y + gubble_one.height + 1 < camera.position.y {
             gubble_one.should_die = true;
             state = .DEATH;
-            play_sfx("shock");
+            play_sfx("Death-fall");
         }
 
         for entity : entities {
@@ -249,7 +249,7 @@ simulate :: (using game: *Game, dt: float) {
                 if collision(annie.collider, gubble_one.collider) {
                     gubble_one.should_die = true;
                     state = .DEATH;
-                    play_sfx("shock");
+                    play_sfx("Death-annie");
                 }
             }
         }

@@ -186,6 +186,9 @@ apply_inputs :: (using input: Input, gubble : *Gubble) {
             state = .SLAPPED;
             animation = slap_animation;
             reset(animation);
+
+            choices := string.["Pop-1", "Pop-2", "Pop-3"];
+            play_sfx(random_choice(choices));
         }
 
         if input.a.just_pressed && gubble.state == .NEUTRAL {

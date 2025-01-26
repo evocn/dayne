@@ -16,8 +16,11 @@ main :: () {
     a.data = *game.arena;
     initialize(*game,, allocator=a);
 
-    song := "secret";
-    play_music(song);
+    // Music
+    {
+        song := "26";
+        play_music(song);
+    }
 
     dt, last_frame := 0.0;
     tracker : Fps_Tracker;

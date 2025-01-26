@@ -113,10 +113,7 @@ generate_level :: (entities: *[..] *Entity, simulation: *Simulation) {
         if floor >= 5 {
             add_annie(floor, entities, simulation);
         }
-        if floor >= 15 {
-            add_annie(floor, entities, simulation);
-        }
-        if floor >= 25 {
+        if floor >= 20 {
             add_annie(floor, entities, simulation);
         }
     }

@@ -74,6 +74,7 @@ draw_game :: (game : Game) {
 }
 
 draw_user_interface :: (using game: Game) {
+    /*
     // Cooldown Indicator
     {
         ratio : float = gubble_one.cooldown / gubble_variables.slap_cooldown;
@@ -84,6 +85,7 @@ draw_user_interface :: (using game: Game) {
             color=teal
         );
     }
+    */
 
     screen_pixel := world_space_to_screen_pixel(
         PIXEL_WIDTH / 2,
@@ -94,7 +96,7 @@ draw_user_interface :: (using game: Game) {
         screen_pixel.x,
         screen_pixel.y,
         .CENTER,
-        color = yellow,
+        color = red,
     );
 
     //draw_mouse_cursor(input_one.mouse_position);

@@ -185,16 +185,16 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                 if event.jbutton.button == 1 then press(*input.b); 
                 if event.jbutton.button == 2 then press(*input.b);
                 if event.jbutton.button == 3 then press(*input.a);
-                if event.jbutton.button == 6 then press(*input.start);
-                if event.jbutton.button == 7 then press(*input.select);
+                if event.jbutton.button == 7 then press(*input.start);
+                if event.jbutton.button == 6 then press(*input.select);
 
             case SDL_JOYBUTTONUP;
                 if event.jbutton.button == 0 then release(*input.a);
                 if event.jbutton.button == 1 then release(*input.b); 
                 if event.jbutton.button == 2 then release(*input.b);
                 if event.jbutton.button == 3 then release(*input.a);
-                if event.jbutton.button == 6 then release(*input.start);
-                if event.jbutton.button == 7 then release(*input.select);
+                if event.jbutton.button == 7 then release(*input.start);
+                if event.jbutton.button == 6 then release(*input.select);
 
             case SDL_JOYHATMOTION;
                 hat_state : u8;

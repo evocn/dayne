@@ -5,8 +5,6 @@
 Audio_Context :: struct {
     sfx : Table(string, Sound_Data);
     music : Table(string, Sound_Data);
-
-    music_stream : *Sound_Stream;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,15 +26,12 @@ play_sfx :: (name : string, perturb := false) {
         }
     }
 
+    stream.user_volume_scale *= 0.3;
+
     start_playing(stream);
 }
 
 play_music :: (name : string) {
-    // Kill currently playing music
-    if audio_context.music_stream {
-        stop_stream_abruptly(audio_context.music_stream.entity_id);
-    }
-
     music := table_find_pointer(*audio_context.music, name);
     if !music then {
         print("Unable to play music %\n", name);
@@ -51,9 +46,6 @@ play_music :: (name : string) {
     }
 
     start_playing(stream);
-
-    // Hold onto this so you can kill the music sometimes.
-    audio_context.music_stream = stream;
 }
 
 change_playing_song_volume :: (name : string) {
