@@ -8,6 +8,7 @@ make_bubble :: () -> *Bubble {
     height  = 16;
 
     initialize(*animation, "Bubble");
+    initialize(*pop_animation, "Pop");
 
     return bubble;
 }
@@ -53,7 +54,7 @@ make_annie :: (the_variety : Annie.Variety) -> *Annie {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-floors :: 30;
+floors :: 2;
 tiles_wide :: 12;
 tiles_high :: 8;
 

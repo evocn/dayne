@@ -87,20 +87,22 @@ draw_user_interface :: (using game: Game) {
     }
     */
 
-    screen_pixel := world_space_to_screen_pixel(
-        PIXEL_WIDTH / 2,
-        PIXEL_HEIGHT / 4,
-    );
-    draw_text(
-        "Up you go!",
-        screen_pixel.x,
-        screen_pixel.y,
-        .CENTER,
-        color = red,
-    );
 
     //draw_mouse_cursor(input_one.mouse_position);
     if state == {
+        case .GAMEPLAY;
+            screen_pixel := world_space_to_screen_pixel(
+                PIXEL_WIDTH / 2,
+                PIXEL_HEIGHT / 4,
+            );
+            draw_text(
+                "Up you go!",
+                screen_pixel.x,
+                screen_pixel.y,
+                .CENTER,
+                color = red,
+            );
+
         case .DEATH;
             draw_text(
                 "You Died.",
@@ -108,5 +110,17 @@ draw_user_interface :: (using game: Game) {
                 PIXEL_HEIGHT / 2,
                 .CENTER,
             );
+
+        case .VICTORY;
+            if game.victory_time > game.VICTORY_TIME - 3 {
+                draw_text(
+                    "Ew!",
+                    PIXEL_WIDTH,
+                    PIXEL_HEIGHT / 2,
+                    .RIGHT,
+                    color = teal,
+                );
+            }
+
     }
 }

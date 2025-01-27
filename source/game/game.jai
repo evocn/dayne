@@ -29,7 +29,11 @@ Game :: struct {
     state : enum {
         GAMEPLAY;
         DEATH;
+        VICTORY;
     }
+
+    victory_time : float;
+    VICTORY_TIME := 8.0;
 }
 
 apply_inputs :: (using input: Input, using game: *Game) {
@@ -46,6 +50,8 @@ apply_inputs :: (using input: Input, using game: *Game) {
                 initialize(game,, a);
                 state = .GAMEPLAY;
             }
+
+        case .VICTORY;
     }
 
 }
@@ -105,11 +111,14 @@ initialize :: (using game: *Game) {
             initialize(*animation, "Gubble");
 
             initialize(*hand_animation, "Hand");
-            hand_collider.width = 96;
-            hand_collider.height = 32;
-            hand_collider.x = 0;
-            hand_collider.y = 0;
-            hand_collider.y = (floors + 1) * TILE_SIZE_IN_PIXELS * tiles_high;
+            hand_solid.collider.width = 96;
+            hand_solid.collider.height = 32;
+            hand_solid.collider.x = -96;
+            hand_solid.collider.y = 0;
+            hand_solid.collider.y = (floors + 1) * TILE_SIZE_IN_PIXELS * tiles_high;
+            hand_solid.collidable = false;
+
+            array_add(*simulation.solids, *hand_solid);
 
             array_add(*entities, xx god);
         }
@@ -159,12 +168,12 @@ initialize :: (using game: *Game) {
         camera.zoom = 1;
 
         state = .GAMEPLAY;
+        victory_time = 0.0;
     }
 }
 
 simulate :: (using game: *Game, dt: float) {
     if state == .DEATH then return;
-
     {
         for entity : entities {
             update(entity, dt);
@@ -175,6 +184,14 @@ simulate :: (using game: *Game, dt: float) {
         debug_print(tprint("Simulated % entities", entities.count), yellow);
         debug_print(tprint("Camera: %", camera), yellow);
         debug_print(tprint("Snork: % % %", gubble_one.state, gubble_one.animation.sprite_name, gubble_one.cooldown), teal);
+    }
+
+    if state == .VICTORY {
+        victory_time += dt;
+        if victory_time > VICTORY_TIME {
+            switch_scene(.TITLE);
+            Sound_Player.mix_levels[Sound_Category.MUSIC] = 1.0;
+        }
     }
 
     {
@@ -189,6 +206,7 @@ simulate :: (using game: *Game, dt: float) {
         for entity : entities {
             if entity.kind == .BUBBLE {
                 bubble := cast(*Bubble)entity;
+                if bubble.popped then continue;
                 slap_hitbox := Collider.{
                     .{
                         gubble_one.x - gubble_variables.slap_hitbox_size / 4,
@@ -199,7 +217,7 @@ simulate :: (using game: *Game, dt: float) {
                 };
 
                 if collision(slap_hitbox, bubble.collider) {
-                    array_add(*gubble_one.victims, entity);
+                    array_add(*gubble_one.victims, bubble);
                 }
             }
         }
@@ -236,51 +254,83 @@ simulate :: (using game: *Game, dt: float) {
 
     // Death
     {
+        if state == .GAMEPLAY {
+            if gubble_one.y + gubble_one.height + 1 < camera.position.y {
+                gubble_one.should_die = true;
+                state = .DEATH;
+                play_sfx("Death-fall");
+            }
 
-        if gubble_one.y + gubble_one.height + 1 < camera.position.y {
-            gubble_one.should_die = true;
-            state = .DEATH;
-            play_sfx("Death-fall");
-        }
-
-        for entity : entities {
-            if entity.kind == .ANNIE {
-                annie := cast(*Annie)(entity);
-                if collision(annie.collider, gubble_one.collider) {
-                    gubble_one.should_die = true;
-                    state = .DEATH;
-                    play_sfx("Death-annie");
+            for entity : entities {
+                if entity.kind == .ANNIE {
+                    annie := cast(*Annie)(entity);
+                    if collision(annie.collider, gubble_one.collider) {
+                        gubble_one.should_die = true;
+                        state = .DEATH;
+                        play_sfx("Death-annie");
+                    }
                 }
             }
-        }
 
-        for entity : entities {
-            if entity.kind == {
-                case .PLATFORM;
-                    platform := cast(*Platform)(entity);
-                    if platform.y + platform.height < camera.position.y {
-                        platform.should_die = true;
-                        array_unordered_remove_by_value(*simulation.solids, *platform.solid, stop_after_first = true);
-                    }
+            for entity : entities {
+                if entity.kind == {
+                    case .PLATFORM;
+                        platform := cast(*Platform)(entity);
+                        if platform.y + platform.height < camera.position.y {
+                            platform.should_die = true;
+                            array_unordered_remove_by_value(*simulation.solids, *platform.solid, stop_after_first = true);
+                        }
 
-                case .BUBBLE;
-                    bubble := cast(*Bubble)(entity);
-                    if bubble.y + bubble.height < camera.position.y {
-                        entity.should_die = true;
-                    }
+                    case .BUBBLE;
+                        bubble := cast(*Bubble)(entity);
+                        if bubble.y + bubble.height < camera.position.y {
+                            entity.should_die = true;
+                        }
 
-                case .ANNIE;
-                    annie := cast(*Annie)(entity);
-                    if annie.y + annie.height < camera.position.y {
-                        annie.should_die = true;
-                        array_unordered_remove_by_value(*simulation.actors, *annie.actor, stop_after_first = true);
-                    }
+                    case .ANNIE;
+                        annie := cast(*Annie)(entity);
+                        if annie.y + annie.height < camera.position.y {
+                            annie.should_die = true;
+                            array_unordered_remove_by_value(*simulation.actors, *annie.actor, stop_after_first = true);
+                        }
+                }
             }
         }
     }
 
+    // Victory
     {
-        camera.position = camera_follow_gubble(gubble_one.*, camera.position);
-        clamp(camera.position.y, 0, (floors + 1) * TILE_SIZE_IN_PIXELS * tiles_high);
+        near_the_end := camera.position.y > (floors) * TILE_SIZE_IN_PIXELS * tiles_high;
+
+        if state == .GAMEPLAY && near_the_end && gubble_one.grounded {
+            play_sfx("Enter-Gubble");
+            state = .VICTORY;
+
+            Sound_Player.mix_levels[Sound_Category.MUSIC] = 0.0;
+
+            gubble_one.velocity = .{0, 0};
+            gubble_one.facing_left = false;
+
+            for entity : entities {
+                if entity.kind == .GOD {
+                    god := cast(*God)entity;
+                    god.hand_solid.collidable = true;
+                    god.hand_solid_velocity.x = 80;
+                }
+            }
+        }
+    }
+
+    // Camera control
+    {
+        if state == .GAMEPLAY {
+            camera.position = camera_follow_gubble(gubble_one.*, camera.position);
+            clamp(camera.position.y, 0, (floors + 1) * TILE_SIZE_IN_PIXELS * tiles_high);
+        }
+        else if state == .VICTORY {
+            if camera.position.y < gubble_one.y - 16 {
+                camera.position.y += 1;
+            }
+        }
     }
 }

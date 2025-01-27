@@ -2,6 +2,8 @@
 // Main
 // September 2024
 
+music_playing := false;
+
 main :: () {
     random_seed(cast,force(u64)current_time_monotonic().low);
 
@@ -15,12 +17,6 @@ main :: () {
     a.proc = flat_pool_allocator_proc;
     a.data = *game.arena;
     initialize(*game,, allocator=a);
-
-    // Music
-    {
-        song := "26";
-        play_music(song);
-    }
 
     dt, last_frame := 0.0;
     tracker : Fps_Tracker;
@@ -59,7 +55,19 @@ main :: () {
                     }
 
                     if input_one.a.just_pressed {
+                        a: Allocator;
+                        a.proc = flat_pool_allocator_proc;
+                        a.data = *game.arena;
+                        initialize(*game,, allocator=a);
+
                         switch_scene(.GAME);
+
+                        // Music
+                        if !music_playing {
+                            song := "26";
+                            play_music(song);
+                            music_playing = true;
+                        }
                     }
 
                 case .MENU;

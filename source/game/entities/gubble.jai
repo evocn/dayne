@@ -52,8 +52,7 @@ Gubble :: struct {
 
     cooldown : float;
 
-    victims : [..] *Entity;
-    pop_victims : [..] *Entity;
+    victims : [..] *Bubble;
 }
 
 initialize :: (using gubble: *Gubble) {
@@ -194,26 +193,9 @@ apply_inputs :: (using input: Input, gubble : *Gubble) {
         if input.a.just_pressed && gubble.state == .NEUTRAL {
             if gubble.victims {
                 for victim : gubble.victims {
-                    victim.should_die = true;
+                    victim.popped = true;
                 }
                 slap(gubble);
-            }
-        }
-    }
-
-    {
-        pop :: (using gubble: *Gubble) {
-            using gubble_variables;
-
-            cooldown = slap_cooldown;
-        }
-
-        if input.b.just_pressed && gubble.cooldown == 0.0 {
-            if gubble.victims {
-                for victim : gubble.victims {
-                    victim.should_die = true;
-                }
-                pop(gubble);
             }
         }
     }

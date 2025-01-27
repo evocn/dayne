@@ -15,10 +15,31 @@ draw_title_screen :: () {
         color       = white,
     );
 
+    k := 60;
     draw_text(
-        "You reap what you sow.",
+        "Gubble is the perfect life form.",
         x = PIXEL_WIDTH / 2,
-        y = 60,
+        y = k,
+        alignment   = Alignment.CENTER,
+        progress    = -1,
+        font        = .SMALL,
+        color       = gray,
+    );
+
+    draw_text(
+        "Snork believes if he can meet this man,",
+        x = PIXEL_WIDTH / 2,
+        y = k - 10,
+        alignment   = Alignment.CENTER,
+        progress    = -1,
+        font        = .SMALL,
+        color       = gray,
+    );
+
+    draw_text(
+        "his life will finally have meaning.",
+        x = PIXEL_WIDTH / 2,
+        y = k - 20,
         alignment   = Alignment.CENTER,
         progress    = -1,
         font        = .SMALL,

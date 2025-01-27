@@ -19,6 +19,7 @@ Platform :: struct {
 
 initialize :: (using platform: *Platform) {
     velocity = .{};
+    one_way = true;
 }
 
 update :: (using platform: *Platform, dt: float) {

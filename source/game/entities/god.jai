@@ -12,7 +12,8 @@ God :: struct {
     using animation : Sprite_Animation;
 
     hand_animation : Sprite_Animation;
-    hand_collider  : Collider;
+    hand_solid : Solid;
+    hand_solid_velocity : Vector2;
 
     // State
     facing_left : bool;
@@ -23,6 +24,9 @@ initialize :: (using god: *God) {
 }
 
 update :: (using god: *God, dt: float) {
+    amount_to_move := hand_solid_velocity * dt;
+
+    move(*hand_solid, amount_to_move.x, amount_to_move.y);
 
     // Visual
     {
@@ -37,7 +41,7 @@ draw :: (using god: *God) {
     );
 
     draw_sprite_relative_to_collider(
-        hand_collider, hand_animation.sprite_name, hand_animation.frame, facing_left
+        hand_solid.collider, hand_animation.sprite_name, hand_animation.frame, facing_left
     );
 }
 
