@@ -54,7 +54,7 @@ make_annie :: (the_variety : Annie.Variety) -> *Annie {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-floors :: 2;
+floors :: 30;
 tiles_wide :: 12;
 tiles_high :: 8;
 
