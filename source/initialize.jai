@@ -37,7 +37,7 @@ initialize_everything :: () {
 initialize_sdl :: () {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 
-    window = SDL_CreateWindow("Dayne",
+    window = SDL_CreateWindow(program_title,
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, graphics_context.window_width, graphics_context.window_height,
         SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN);
 

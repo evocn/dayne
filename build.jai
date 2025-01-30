@@ -2,87 +2,93 @@
 // Build
 // Alex Hartford
 
-#import "Basic";
-#import "Compiler";
-#import "File";
-
 #import "ctags";
 
+
+// This is data which should be visible to the build program and the target program.
+shared_data :: #string DONE
+
+build_settings : struct {
+    configuration : enum {
+        DEVELOP;
+        RELEASE;
+    }
+}
+
+program_title :: "Dayne";
+
+DONE
+
+
 build :: () {
-    w := compiler_create_workspace("Main Workspace");
+    // Build program workspace
+    {
+        #run add_build_string(shared_data, w = -1);
+        set_build_options_dc(.{do_output=false});
+    }
+
+    // Create target program workspace
+    w := compiler_create_workspace("Final Program Workspace");
     if !w {
         print("Workspace creation failed.\n");
         return;
     }
-
     options := get_build_options(w);
 
-    // Check command-line arguments
-    user_build_options : struct {
-        build_type : enum {
-            DEVELOP;
-            RELEASE;
-            SMALL;
-        }
-    }
-
-    args := options.compile_time_command_line;
+    // Handle command-line arguments
     {
-        print("args is: %\n", args);
-        for arg: args {
-            if arg == {
-                case "release"; user_build_options.build_type = .RELEASE;
-                case "small";   user_build_options.build_type = .SMALL;
+        for argument: options.compile_time_command_line {
+            if argument == {
+                case "release"; build_settings.configuration = .RELEASE;
             }
         }
     }
 
     // Set build options
     {
-        options.output_executable_name = "dayne";
+        options.output_executable_name = program_title;
 
         options.output_path = "bin";
         options.intermediate_path = "bin/.build";
         options.output_type = .EXECUTABLE;
-        options.text_output_flags = 2;
 
-        if user_build_options.build_type == {
+        // Configure Compiler output printing
+        options.text_output_flags = 0;
+        //options.text_output_flags |= .OUTPUT_LINK_LINE;
+        options.text_output_flags |= .OUTPUT_TIMING_INFO;
+
+        if build_settings.configuration == {
             case .DEVELOP;  set_optimization(*options, .DEBUG);
             case .RELEASE;  set_optimization(*options, .VERY_OPTIMIZED);
-            case .SMALL;    set_optimization(*options, .OPTIMIZED_VERY_SMALL);
         }
 
         set_build_options(options, w);
-        set_build_options_dc(.{do_output=false});
     }
 
     // Ctags module options
     ctags: CTags;
-    ctags.output_filename = "tags";
-    ctags.base_path = tprint("%", #filepath);
     defer reset(*ctags);
+    ctags.output_filename = "tags";
+    ctags.base_path = sprint("%", #filepath);
+    defer free(ctags.base_path);
 
-    compiler_begin_intercept(w);
-
-    // Files to compile
+    // Start adding files to the target workspace
     {
-        add_build_file(tprint("%/source/main.jai", #filepath), w);
-    }
+        compiler_begin_intercept(w);
 
-    // User Build Options
-    {
-        build_configuration_string : string;
-        build_configuration_string = sprint("BUILD_TYPE :: build_type.%;", user_build_options.build_type);
-        add_build_string(build_configuration_string, w);
-
-        add_build_string(#string DONE
-        build_type :: enum {
-            DEVELOP;
-            RELEASE;
-            SMALL;
+        // Files to compile
+        {
+            add_build_file(tprint("%/source/main.jai", #filepath), w);
         }
-        DONE
-        , w);
+
+        // User Build Options
+        {
+            add_build_string(shared_data, w);
+
+            build_configuration_string : string;
+            build_configuration_string = tprint("BUILD_TYPE :: build_settings.configuration.%;", build_settings.configuration);
+            add_build_string(build_configuration_string, w);
+        }
     }
 
     while true {
@@ -97,25 +103,50 @@ build :: () {
     }
     compiler_end_intercept(w);
 
-    // Create a manifest and an icon file.
-    #if OS == .WINDOWS {
-        exe_name := sprint("%/%.exe", options.output_path, options.output_executable_name);
-        defer free(exe_name);
 
-        ico_data := create_ico_file_from_bitmap_filename("assets/publishing/icon.png");
-        defer free(ico_data);
+    // Publishing work
+    {
+        log("\n\nCompilation ended on the target workspace. On to publishing work!");
 
-        set_icon_by_data(exe_name, ico_data);
-        write_entire_file("assets/publishing/icon.ico", ico_data);
+        executable_path := sprint("%/%.exe", options.output_path, options.output_executable_name);
+        defer free(executable_path);
 
-        print("Icon     added: %\n", set_icon_by_filename(exe_name, "assets/publishing/icon.ico"));
+        icon_path :: "assets/publishing/icon.png";
 
-        manifest_options: Manifest_Options;
-        print("Manifest added: %\n", add_manifest_to_executable(exe_name, manifest_options));
-
-        #import "Ico_File";
-        #import "Windows_Resources";
+        create_and_apply_manifest_and_icon_files(executable_path, icon_path);
     }
 }
 
 #run build();
+
+////////////////////////////////////////////////////////////////////////////////
+
+create_and_apply_manifest_and_icon_files :: (executable_path : string, icon_path : string) {
+    #if OS == .WINDOWS {
+        #import "Ico_File";
+        #import "Windows_Resources";
+
+        ico_data := create_ico_file_from_bitmap_filename(icon_path);
+        defer free(ico_data);
+
+        ico_path := sprint("%.ico", path_strip_extension(icon_path));
+        defer free(ico_path);
+        // Save .ico back out for inspection
+        {
+            write_entire_file(ico_path, ico_data);
+        }
+
+        success := set_icon_by_data(executable_path, ico_data);
+        print("Icon     added: %\n", success);
+
+        manifest_options: Manifest_Options;
+        success = add_manifest_to_executable(executable_path, manifest_options);
+
+        print("Manifest added: %\n", success);
+    }
+}
+
+#import "Compiler";
+#import "Basic";
+#import "File";
+#import "String";
