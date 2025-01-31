@@ -151,7 +151,9 @@ toggle_menu_element :: (using element: *Menu_Element) {
             // Don't do anything.
     }
 
-    save_tweaks_file("all");
+    #if DEBUGGING_TOOLS {
+        save_tweaks_file("all");
+    }
 }
 
 
@@ -178,7 +180,9 @@ nudge_menu_element :: (using element: *Menu_Element, left := false) {
             play_sfx("click");
     }
 
-    save_tweaks_file("all");
+    #if DEBUGGING_TOOLS {
+        save_tweaks_file("all");
+    }
 }
 
 

@@ -62,15 +62,3 @@ load_tweaks_file_and_apply_results :: (file_name : string) -> file_exists: bool 
 
     return true;
 }
-
-//
-//
-
-apply_default_settings :: () {
-    graphics_context.fullscreen = false;
-    set_screen_mode_according_to_fullscreen_variable();
-
-    default_mix :: float.[1.0, 1.0, 1.0, 1.0, 1.0];
-    Sound_Player.mix_levels[Sound_Category.GENERAL_SFX] = default_mix[Sound_Category.GENERAL_SFX];
-    Sound_Player.mix_levels[Sound_Category.MUSIC]       = default_mix[Sound_Category.MUSIC];
-}

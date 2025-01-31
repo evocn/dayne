@@ -198,14 +198,13 @@ using Sound_Player :: #import "Sound_Player";
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#load "initialize.jai";
-#load "state.jai";
-#load "render.jai";
-
 // Core
-#load "core/input.jai";
-#load "core/tweaks.jai";
-#load "core/utils.jai";
+#load "state.jai";
+#load "initialize.jai";
+#load "utils.jai";
+
+#load "input.jai";
+#load "render.jai";
 
 // Subsystems
 #load "game/game.jai";
@@ -217,6 +216,7 @@ using Sound_Player :: #import "Sound_Player";
 #if DEBUGGING_TOOLS {
 #load "editor/editor.jai";
 #load "debug.jai";
+#load "tweaks.jai";
 }
 debug_print :: inline (s : string, color := white) {
     #if DEBUGGING_TOOLS {

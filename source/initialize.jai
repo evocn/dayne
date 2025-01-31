@@ -26,10 +26,18 @@ initialize_everything :: () {
     // stbi
     stbi_flip_vertically_on_write(xx true);
 
-    // Tweaks File
+    apply_default_settings :: () {
+        graphics_context.fullscreen = false;
+        set_screen_mode_according_to_fullscreen_variable();
+
+        Sound_Player.mix_levels[Sound_Category.GENERAL_SFX] = 0.5;
+        Sound_Player.mix_levels[Sound_Category.MUSIC]       = 0.5;
+    }
     apply_default_settings();
-    tweaks_file_exists := load_tweaks_file_and_apply_results("all");
+
     #if DEBUGGING_TOOLS {
+        // Tweaks File
+        tweaks_file_exists := load_tweaks_file_and_apply_results("all");
         if tweaks_file_exists then log("Applied tweaks file settings.\n");
     }
 }
