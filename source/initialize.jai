@@ -36,6 +36,15 @@ initialize_everything :: () {
         if tweaks_file_exists then log("Applied tweaks file settings.\n");
     }
 
+    // Debug console
+    #if BUILD_TYPE == .RELEASE {
+        #run {
+            #if OS == .WINDOWS {
+                WR :: #import "Windows_Resources";
+                WR.disable_runtime_console();
+            }
+        }
+    }
 
     // stbi
     stbi_flip_vertically_on_write(xx true);

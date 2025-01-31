@@ -118,7 +118,7 @@ build :: () {
 
     // Publishing work
     {
-        log("\n\nCompilation ended on the target workspace. On to publishing work!");
+        log("\nCompilation ended on the target workspace. On to publishing work!");
 
         executable_path := sprint("%/%.exe", options.output_path, options.output_executable_name);
         defer free(executable_path);
@@ -131,7 +131,10 @@ build :: () {
     // Build Program (this one) settings.
     {
         // No executable!
-        set_build_options_dc(.{do_output=false});
+        set_build_options_dc(.{
+            do_output = false,
+            write_added_strings = false
+        });
     }
 }
 

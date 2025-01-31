@@ -128,6 +128,8 @@ main :: () {
             }
         }
 
+        Sound_Player.update(dt);
+
         ////////////////////////////////////////////////////////////////////////////////
         // Render
         render(
@@ -151,8 +153,6 @@ main :: () {
             current_time := cast(float32)seconds_since_init();
             dt = current_time - last_frame;
             last_frame = current_time;
-
-            Sound_Player.update(dt);
 
             #if DEBUGGING_TOOLS {
                 add_sample(*tracker, dt);
@@ -215,7 +215,6 @@ using Sound_Player :: #import "Sound_Player";
 #load "tools/debug.jai";
 #load "tools/tweaks.jai";
 }
-
 
 // Asset Paths
 ////////////////////////////////////////////////////////////////////////////////
