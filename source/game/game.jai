@@ -49,12 +49,6 @@ initialize :: (using game: *Game) {
         camera.position = .{};
         camera.zoom = 1;
     }
-
-    // Play the starting music!
-    {
-        song := "secret";
-        play_music(song);
-    }
 }
 
 simulate :: (using game: *Game, dt: float) {

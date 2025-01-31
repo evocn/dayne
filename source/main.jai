@@ -16,6 +16,12 @@ main :: () {
     a.data = *game.arena;
     initialize(*game,, allocator=a);
 
+    // Play the starting music!
+    {
+        song := "secret";
+        play_music(song);
+    }
+
     dt, last_frame := 0.0;
     while program_state.running {
         ////////////////////////////////////////////////////////////////////////////////
