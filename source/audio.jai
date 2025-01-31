@@ -55,6 +55,3 @@ play_music :: (name : string) {
     // Hold onto this so you can kill the music sometimes.
     audio_context.music_stream = stream;
 }
-
-change_playing_song_volume :: (name : string) {
-}

@@ -16,9 +16,6 @@ main :: () {
     a.data = *game.arena;
     initialize(*game,, allocator=a);
 
-    song := "secret";
-    play_music(song);
-
     dt, last_frame := 0.0;
     while program_state.running {
         ////////////////////////////////////////////////////////////////////////////////
@@ -151,11 +148,11 @@ main :: () {
         ////////////////////////////////////////////////////////////////////////////////
         // Frame Cleanup
         {
-            Sound_Player.update();
-
             current_time := cast(float32)seconds_since_init();
             dt = current_time - last_frame;
             last_frame = current_time;
+
+            Sound_Player.update(dt);
 
             #if DEBUGGING_TOOLS {
                 add_sample(*tracker, dt);
@@ -214,14 +211,9 @@ using Sound_Player :: #import "Sound_Player";
 #load "ui/ui.jai";
 
 #if DEBUGGING_TOOLS {
-#load "editor/editor.jai";
-#load "debug.jai";
-#load "tweaks.jai";
-}
-debug_print :: inline (s : string, color := white) {
-    #if DEBUGGING_TOOLS {
-        array_add(*debugging_stuff.messages, .{s, color});
-    }
+#load "tools/editor/editor.jai";
+#load "tools/debug.jai";
+#load "tools/tweaks.jai";
 }
 
 

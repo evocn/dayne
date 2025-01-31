@@ -120,6 +120,19 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                         switch_scene(.DEMO);
                     }
 
+                    if event.key.keysym.sym == SDLK_F4 {
+                        // FREE
+                    }
+
+                    if event.key.keysym.sym == SDLK_F6 {
+                        new_song := "bach";
+                        play_music(new_song);
+                    }
+
+                    if event.key.keysym.sym == SDLK_F7 {
+                        // FREE
+                    }
+
                     if event.key.keysym.sym == SDLK_F8 {
                         show_debug_info = !show_debug_info;
                     }
@@ -134,6 +147,10 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
 
                     if event.key.keysym.sym == SDLK_F11 {
                         want_screenshot = true;
+                    }
+
+                    if event.key.keysym.sym == SDLK_F12 {
+                        // DEBUGGER TAKES THIS ONE
                     }
                 }
 

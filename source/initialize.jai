@@ -19,12 +19,7 @@ initialize_everything :: () {
     }
 
     initialize_graphics_context();
-
     initialize_audio_context();
-
-
-    // stbi
-    stbi_flip_vertically_on_write(xx true);
 
     apply_default_settings :: () {
         graphics_context.fullscreen = false;
@@ -40,6 +35,10 @@ initialize_everything :: () {
         tweaks_file_exists := load_tweaks_file_and_apply_results("all");
         if tweaks_file_exists then log("Applied tweaks file settings.\n");
     }
+
+
+    // stbi
+    stbi_flip_vertically_on_write(xx true);
 }
 
 
@@ -96,7 +95,7 @@ initialize_imgui :: () {
         //ImGui.StyleColorsLight();
 
         // @TODO: Clean up this allocation.
-        io.IniFilename = to_c_string(sprint("%/imgui.ini", path_strip_filename(get_path_of_running_executable())));
+        io.IniFilename = temp_c_string(tprint("%/imgui.ini", path_strip_filename(get_path_of_running_executable())));
     }
 }
 }
@@ -208,11 +207,8 @@ cleanup_for_shutdown :: (game: *Game, menu: *Menu) {
         reset(*game.arena, overwrite_memory=true);
     }
 
-    array_reset(*menu.elements);
-
     // Audio Cleanup
     {
-        using audio_context;
         sound_player_shutdown();
     }
 

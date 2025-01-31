@@ -2,6 +2,14 @@
 // Utils
 // August 2024
 
+debug_print :: inline (s : string, color := white) {
+    #if DEBUGGING_TOOLS {
+        array_add(*debugging_stuff.messages, .{s, color});
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 Pair :: struct {
     x: int;
     y: int;
