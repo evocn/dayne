@@ -31,14 +31,27 @@ render :: (game: Game, menu: Menu) {
                 draw_demo();
         }
 
-        if want_screenshot {
-            screenshot();
-            want_screenshot = false;
-        }
+        #if DEBUGGING_TOOLS {
+            if program_state.show_debug_info {
+                draw(debugging_stuff);
 
-        // Debug Overlays
-        if program_state.show_debug_info {
-            draw(debugging_stuff);
+                // @TODO: Interactive Profiling!
+                /*
+                config : Iprof.Config = .{};
+                Iprof.draw(
+                    sx = 0.0,
+                    sy = 0.0,
+                    full_width = 100.0,
+                    height = 100.0,
+                    config = *config
+                );
+                */
+            }
+
+            if want_screenshot {
+                screenshot();
+                want_screenshot = false;
+            }
         }
     }
 
@@ -64,10 +77,11 @@ draw_game :: (game : Game) {
         }
     }
 
-    // Debug Overlays
-    if program_state.show_debug_info {
-        for entity : game.entities {
-            draw_debug(entity);
+    #if DEBUGGING_TOOLS {
+        if program_state.show_debug_info {
+            for entity : game.entities {
+                draw_debug(entity);
+            }
         }
     }
 }

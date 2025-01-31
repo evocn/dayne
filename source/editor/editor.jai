@@ -2,8 +2,6 @@
 // Editor
 // February 2024
 
-#load "imgui-sdl-gl.jai";
-
 Editor :: struct {
 }
 
@@ -23,7 +21,7 @@ update_and_draw_editor :: (game: *Game) {
 
         game_editor(game);
 
-        ImGui.ShowDemoWindow();
+        //ImGui.ShowDemoWindow();
     }
     ImGui.Render();
 }
@@ -36,7 +34,7 @@ update_and_draw_editor :: (game: *Game) {
 editor_functions :: () {
     ImGui.Begin("Editor");
     {
-        ImGui.Checkbox("Debug Info", xx *program_state.show_debug_info);
+        ImGui.Checkbox("Debug Info (F8)", xx *program_state.show_debug_info);
     }
     ImGui.End();
 }
@@ -47,3 +45,6 @@ game_editor :: (using game: *Game) {
     }
     ImGui.End();
 }
+
+
+#load "imgui-sdl-gl.jai";

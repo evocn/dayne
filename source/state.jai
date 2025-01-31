@@ -3,14 +3,12 @@
 // February 2024
 
 using program_state : struct {
-    RELEASE_BUILD :: #run BUILD_TYPE == .RELEASE;
+    DEBUGGING_TOOLS :: #run BUILD_TYPE == .DEBUG;
 
     VERSION :: struct {
         major :: 0;
         minor :: 1;
     }
-
-    show_debug_info : bool = false;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +17,6 @@ using program_state : struct {
     prior_scene : Scene;
 
     game    : Game;
-    editor  : Editor;
 
     using inputs : struct {
         input_one : Input;
@@ -51,7 +48,18 @@ using program_state : struct {
         step    : bool;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+
+#if DEBUGGING_TOOLS {
+    show_debug_info : bool = false;
+
+    editor : Editor;
+
     want_screenshot : bool;
+
+    tracker : Fps_Tracker;
+}
+
 }
 
 

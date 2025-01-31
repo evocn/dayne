@@ -63,7 +63,7 @@ Input :: struct {
 gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
     event : SDL_Event;
     while SDL_PollEvent(*event) {
-        #if !RELEASE_BUILD then ImGui_ImplSdl_ProcessEvent(*event);
+        #if DEBUGGING_TOOLS then ImGui_ImplSdl_ProcessEvent(*event);
 
         if event.type == {
             case SDL_QUIT;
@@ -105,7 +105,7 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                 }
 
                 // Development keybinds
-                #if !RELEASE_BUILD {
+                #if DEBUGGING_TOOLS {
                     if event.key.keysym.sym == SDLK_F1 {
                         switch_scene(.GAME);
                         deactivate_mouse();

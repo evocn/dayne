@@ -12,10 +12,6 @@ Debugging_Stuff :: struct {
 }
 debugging_stuff : Debugging_Stuff;
 
-debug_print :: (s : string, color := white) {
-    array_add(*debugging_stuff.messages, .{s, color});
-}
-
 update :: (using debug: *Debugging_Stuff) {
     array_reset(*messages);
 }

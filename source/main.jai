@@ -20,22 +20,23 @@ main :: () {
     play_music(song);
 
     dt, last_frame := 0.0;
-    tracker : Fps_Tracker;
     while program_state.running {
         ////////////////////////////////////////////////////////////////////////////////
         // Frame Startup
         {
             rainbow_color = update_rainbow_color(dt);
 
-            update(*debugging_stuff);
+            #if DEBUGGING_TOOLS {
+                update(*debugging_stuff);
 
-            new_context := context;
-            push_context new_context {
-                format_float := *context.print_style.default_format_float;
-                format_float.trailing_width = 2;
-                format_float.zero_removal   = .NO;
+                new_context := context;
+                push_context new_context {
+                    format_float := *context.print_style.default_format_float;
+                    format_float.trailing_width = 2;
+                    format_float.zero_removal   = .NO;
 
-                debug_print(tprint("dt: ~% ms (% fps)", 1000.0 * get_average(tracker), 1.0 / get_average(tracker)), pink);
+                    debug_print(tprint("dt: ~% ms (% fps)", 1000.0 * get_average(tracker), 1.0 / get_average(tracker)), pink);
+                }
             }
         }
 
@@ -62,15 +63,17 @@ main :: () {
                 case .MENU;
                     apply_inputs(input_one, *main_menu);
 
-                case .EDITOR;
-                    apply_inputs(input_one, *editor);
-
                 case .GAME;
                     if input_one.start.just_pressed {
                         switch_scene(.MENU);
                     }
 
                     apply_inputs(input_one, *game);
+
+                case .EDITOR;
+                    #if DEBUGGING_TOOLS {
+                        apply_inputs(input_one, *editor);
+                    }
 
                 case .DEMO;
                     if input_one.a.just_pressed || input_one.b.just_pressed {
@@ -135,7 +138,7 @@ main :: () {
             main_menu,
         );
 
-        #if !RELEASE_BUILD {
+        #if DEBUGGING_TOOLS {
             if program_state.current_scene == .EDITOR {
                 update_and_draw_editor(*game);
                 ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
@@ -154,7 +157,9 @@ main :: () {
             dt = current_time - last_frame;
             last_frame = current_time;
 
-            add_sample(*tracker, dt);
+            #if DEBUGGING_TOOLS {
+                add_sample(*tracker, dt);
+            }
 
             reset_temporary_storage();
         }
@@ -162,7 +167,7 @@ main :: () {
 
     cleanup_for_shutdown(*game, *main_menu);
 
-    #if !RELEASE_BUILD then report_memory_leaks();
+    #if DEBUGGING_TOOLS then report_memory_leaks();
 }
 
 
@@ -186,13 +191,16 @@ using Basic_Module :: #import "Basic"()(MEMORY_DEBUGGER=true);
 ImGui :: #import "ImGui";
 using Sound_Player :: #import "Sound_Player";
 
+// @TODO: Interactive Profiling!
+//#if !RELEASE_BUILD {
+//Iprof :: #import "Iprof"(IMPORT_MODE = .CLIENT);
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 #load "initialize.jai";
 #load "state.jai";
 #load "render.jai";
-#load "debug.jai";
 
 // Core
 #load "core/input.jai";
@@ -204,9 +212,18 @@ using Sound_Player :: #import "Sound_Player";
 #load "graphics/graphics.jai";
 #load "animation/animation.jai";
 #load "audio.jai";
-#load "editor/editor.jai";
+#load "ui/ui.jai";
 
-#load "ui/menu.jai";
+#if DEBUGGING_TOOLS {
+#load "editor/editor.jai";
+#load "debug.jai";
+}
+debug_print :: inline (s : string, color := white) {
+    #if DEBUGGING_TOOLS {
+        array_add(*debugging_stuff.messages, .{s, color});
+    }
+}
+
 
 // Asset Paths
 ////////////////////////////////////////////////////////////////////////////////

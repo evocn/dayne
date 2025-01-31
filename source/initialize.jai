@@ -14,7 +14,7 @@ initialize_everything :: () {
 
     initialize_window_resolution();
 
-    #if !RELEASE_BUILD {
+    #if DEBUGGING_TOOLS {
         initialize_imgui();
     }
 
@@ -29,7 +29,9 @@ initialize_everything :: () {
     // Tweaks File
     apply_default_settings();
     tweaks_file_exists := load_tweaks_file_and_apply_results("all");
-    if tweaks_file_exists then log("Applied tweaks file settings.\n");
+    #if DEBUGGING_TOOLS {
+        if tweaks_file_exists then log("Applied tweaks file settings.\n");
+    }
 }
 
 
@@ -72,20 +74,23 @@ initialize_gl :: () {
     }
 }
 
+#if DEBUGGING_TOOLS {
 initialize_imgui :: () {
     imgui_context = ImGui.CreateContext();
     ImGui_ImplSdl_Init(window);
 
     io := ImGui.GetIO();
-    io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", graphics_context.window_height / 30.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
+    io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", graphics_context.window_height / 40.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
 
     // Settings
     {
         ImGui.StyleColorsClassic();
         //ImGui.StyleColorsLight();
 
+        // @TODO: Clean up this allocation.
         io.IniFilename = to_c_string(sprint("%/imgui.ini", path_strip_filename(get_path_of_running_executable())));
     }
+}
 }
 
 
@@ -153,7 +158,9 @@ initialize_audio_context :: () {
     using audio_context;
 
     devices := get_devices();
-    print("devices: %\n", devices);
+    #if DEBUGGING_TOOLS {
+        print("devices: %\n", devices);
+    }
 
     success := sound_player_init(.{});
     assert(success);
@@ -212,7 +219,7 @@ cleanup_for_shutdown :: (game: *Game, menu: *Menu) {
     array_reset(*menu.elements);
     reset(*scratch_memory, overwrite_memory=true);
 
-    #if !RELEASE_BUILD {
+    #if DEBUGGING_TOOLS {
         ImGui_ImplSdl_Shutdown();
         ImGui.DestroyContext(imgui_context);
     }
