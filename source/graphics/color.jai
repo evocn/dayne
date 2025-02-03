@@ -6,21 +6,38 @@ Color :: Vector4;
 Hex_Color :: u32;
 
 color_none :: Color.{};
-white   :: #run color_from_hex(0xffffff);
-black   :: #run color_from_hex(0x060608);
-gray    :: #run color_from_hex(0x7c7c7c);
+black       :: #run color_from_hex(0x000000);
+gray        :: #run color_from_hex(0x707070);
+light_gray  :: #run color_from_hex(0xc8c8c8);
+white       :: #run color_from_hex(0xffffff);
 
-brown   :: #run color_from_hex(0x642d09);
-purple  :: #run color_from_hex(0x2f256b);
-green   :: #run color_from_hex(0x0a4c06);
-blue    :: #run color_from_hex(0x067ab7);
+red         :: #run color_from_hex(0x991515);
+dark_red    :: #run color_from_hex(0x4c0000);
+pastel_red  :: #run color_from_hex(0xe03c32);
+neon_red    :: #run color_from_hex(0xe03c32);
 
-red     :: #run color_from_hex(0xd14444);
-yellow  :: #run color_from_hex(0xECA72C);
-orange  :: #run color_from_hex(0xFF7F50);
-seafoam :: #run color_from_hex(0x67ab7a);
-teal    :: #run color_from_hex(0x1cc7d4);
-pink    :: #run color_from_hex(0xb869d3);
+brown       :: #run color_from_hex(0x9f330f);
+orange      :: #run color_from_hex(0xff6d0f);
+yellow      :: #run color_from_hex(0xffa500);
+neon_yellow :: #run color_from_hex(0xe8ea4a);
+
+beige       :: #run color_from_hex(0x8a6042);
+tan         :: #run color_from_hex(0xfeb854);
+
+green       :: #run color_from_hex(0x00953b);
+dark_green  :: #run color_from_hex(0x003d10);
+light_green :: #run color_from_hex(0x67ab7a);
+neon_green  :: #run color_from_hex(0x58f5b1);
+
+dark_blue   :: #run color_from_hex(0x202040);
+blue        :: #run color_from_hex(0x006ab4);
+neon_blue   :: #run color_from_hex(0x27badb);
+
+purple      :: #run color_from_hex(0x4430ba);
+light_purple:: #run color_from_hex(0x7e57c6);
+pink        :: #run color_from_hex(0xd376d6);
+
+
 
 
 color_from_hex :: ($h: u32) -> Color {
