@@ -91,7 +91,7 @@ draw_demo :: () {
         y = PIXEL_HEIGHT - 14,
         alignment   = Alignment.LEFT,
         font        = .SMALL,
-        color       = seafoam,
+        color       = light_blue,
     );
 
     draw_text(
@@ -196,7 +196,7 @@ draw_clock_readout :: () {
             color = green;
         }
         else if hour < 15 {
-            color = teal;
+            color = seafoam;
         }
         else if hour < 18 {
             color = blue;

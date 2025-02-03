@@ -29,17 +29,19 @@ Graphics_Context :: struct {
         quad_shader     : Shader;
     }
 
-    // Primitives for drawing things
-    quad : Quad;
-
     sprites : Table(string, Sprite);
 
-    fbo : GLuint;
-    render_texture : GLuint;
-
-    // Fonts
     main_font  : Font;
     small_font : Font;
+
+    quad : Quad;
+
+    using internals : struct {
+        fbo : GLuint;
+        render_texture : GLuint;
+    }
+
+    clear_color : Color = black;
 }
 
 

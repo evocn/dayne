@@ -13,29 +13,29 @@ white       :: #run color_from_hex(0xffffff);
 
 red         :: #run color_from_hex(0x991515);
 dark_red    :: #run color_from_hex(0x4c0000);
-pastel_red  :: #run color_from_hex(0xe03c32);
-neon_red    :: #run color_from_hex(0xe03c32);
+light_red   :: #run color_from_hex(0xe03c32);
+pink        :: #run color_from_hex(0xe03c32);
 
 brown       :: #run color_from_hex(0x9f330f);
 orange      :: #run color_from_hex(0xff6d0f);
 yellow      :: #run color_from_hex(0xffa500);
-neon_yellow :: #run color_from_hex(0xe8ea4a);
+light_yellow:: #run color_from_hex(0xe8ea4a);
 
 beige       :: #run color_from_hex(0x8a6042);
-tan         :: #run color_from_hex(0xfeb854);
+light_beige :: #run color_from_hex(0xfeb854);
 
-green       :: #run color_from_hex(0x00953b);
 dark_green  :: #run color_from_hex(0x003d10);
+green       :: #run color_from_hex(0x00953b);
 light_green :: #run color_from_hex(0x67ab7a);
-neon_green  :: #run color_from_hex(0x58f5b1);
+seafoam     :: #run color_from_hex(0x58f5b1);
 
 dark_blue   :: #run color_from_hex(0x202040);
 blue        :: #run color_from_hex(0x006ab4);
-neon_blue   :: #run color_from_hex(0x27badb);
+light_blue  :: #run color_from_hex(0x27badb);
 
 purple      :: #run color_from_hex(0x4430ba);
 light_purple:: #run color_from_hex(0x7e57c6);
-pink        :: #run color_from_hex(0xd376d6);
+magenta     :: #run color_from_hex(0xd376d6);
 
 
 

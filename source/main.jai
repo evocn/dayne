@@ -93,16 +93,16 @@ main :: () {
                         graphics_context.window_width, graphics_context.window_height,
                         graphics_context.viewport_width, graphics_context.viewport_height
                     ),
-                    color = teal
+                    color = seafoam
                 );
 
                 if graphics_context.fullscreen {
-                    debug_print("Fullscreen", color = teal);
+                    debug_print("Fullscreen", color = seafoam);
                 }
                 else {
                     debug_print(
                         tprint("Pixel Scale: %", graphics_context.scale_factor),
-                        color = teal
+                        color = seafoam
                     );
                 }
             }

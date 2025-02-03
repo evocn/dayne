@@ -7,7 +7,7 @@ render :: (game: Game, menu: Menu) {
     {
         glBindFramebuffer(GL_FRAMEBUFFER, graphics_context.fbo);
         glViewport(0, 0, PIXEL_WIDTH, PIXEL_HEIGHT);
-        glClearColor(green.x, green.y, green.z, 1);
+        glClearColor(graphics_context.clear_color.x, graphics_context.clear_color.y, graphics_context.clear_color.z, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
         if #complete program_state.current_scene == {
