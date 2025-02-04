@@ -213,6 +213,7 @@ using Sound_Player :: #import "Sound_Player";
 #load "game/game.jai";
 #load "graphics/graphics.jai";
 #load "animation/animation.jai";
+#load "collision/collision.jai";
 #load "audio.jai";
 #load "ui/ui.jai";
 

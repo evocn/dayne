@@ -1,5 +1,5 @@
 // Dayne
-// Physics
+// Collision System
 // August 2024
 
 #load "collider.jai";

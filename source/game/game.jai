@@ -5,8 +5,6 @@
 #load "entity.jai";
 #load "entities/basic.jai";
 
-#load "physics/physics.jai";
-
 Game :: struct {
     using constants : struct {
     }
