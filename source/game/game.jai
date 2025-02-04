@@ -73,6 +73,8 @@ initialize :: (using game: *Game) {
                     x = it * width;
                     y = 64;
 
+                    //solid.collidable = false;
+
                     array_add(*entities, xx tester);
 
                     array_add(*simulation.solids, *solid);

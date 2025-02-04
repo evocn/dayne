@@ -3,7 +3,7 @@
 // August 2024
 
 Collider :: struct {
-    using position : Pair;
+    x, y : int;
     width, height : int;
 }
 
@@ -12,17 +12,16 @@ collision :: (a: Collider, b: Collider) -> bool {
         && a.x + a.width > b.x && a.y + a.height > b.y;
 }
 
-within :: (p: Pair, c: Collider) -> bool {
+point_within :: (p: Pair, c: Collider) -> bool {
     return p.x >= c.x && p.x < c.x + c.width
         && p.y >= c.y && p.y < c.y + c.width;
 }
 
-//
-//
+////////////////////////////////////////////////////////////////////////////////
 
 check_collision_against_all_solids :: (collider : Collider, solids : [] *Solid) -> bool {
     for solids {
-        if collision(collider, it.collider) return true;
+        if it.collidable && collision(collider, it.collider) return true;
     }
 
     return false;
@@ -54,4 +53,18 @@ check_if_grounded :: (actor : *Actor) -> bool {
     }
     
     return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+draw :: (collider: Collider, color : Color, outline_color := white) {
+    screen_pixel := world_space_to_screen_pixel(collider.x, collider.y);
+    if !on_screen(screen_pixel) then return;
+    scale := screen_pixel_zoom();
+    
+    draw_colored_quad(
+        xx screen_pixel.x, xx screen_pixel.y,
+        xx collider.width * scale, xx collider.height * scale,
+        color=color
+    );
 }

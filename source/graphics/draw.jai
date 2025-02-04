@@ -21,6 +21,13 @@ screen_pixel_zoom :: () -> zoom: int {
     return game.camera.zoom;
 }
 
+on_screen :: inline (screen_pixel: Pair) -> bool {
+    x := screen_pixel.x >= 0 && screen_pixel.x < PIXEL_WIDTH;
+    y := screen_pixel.y >= 0 && screen_pixel.y < PIXEL_HEIGHT;
+
+    return x && y;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // @TODO: Maybe work these out into like UI drawing, primitive drawing, etc. functions?
@@ -301,18 +308,5 @@ draw_sprite_at :: (
         horizontal_flip = facing_left,
 
         use_color_override = false,
-    );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-draw :: (collider: Collider, color : Color, outline_color := white) {
-    screen_position := world_space_to_screen_pixel(collider.x, collider.y);
-    scale := screen_pixel_zoom();
-    
-    draw_colored_quad(
-        xx screen_position.x, xx screen_position.y,
-        xx collider.width * scale, xx collider.height * scale,
-        color=color
     );
 }

@@ -35,11 +35,11 @@ update :: (using tester: *Solid_Tester, dt: float) {
 }
 
 draw :: (using tester: *Solid_Tester) {
-    draw(collider, color=red);
+    //draw(collider, color=red);
 }
 
 draw_debug :: (using tester: *Solid_Tester) {
-    draw(collider, color=debug.unique_color);
+    //draw(collider, color=debug.unique_color);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
