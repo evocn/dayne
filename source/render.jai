@@ -87,5 +87,5 @@ draw_game :: (game : Game) {
 }
 
 draw_user_interface :: (game: Game) {
-    draw_mouse_cursor(input_one.mouse_position);
+    //draw_mouse_cursor(input_one.mouse_position);
 }
