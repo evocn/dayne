@@ -57,3 +57,8 @@ simulate :: (using game: *Game, dt: float) {
     debug_print(tprint("Simulated % entities", entities.count), yellow);
     debug_print(tprint("Camera: %", camera), yellow);
 }
+
+finalize :: (using game: *Game) {
+    reset(*arena, overwrite_memory=true);
+    reset(*simulation);
+}

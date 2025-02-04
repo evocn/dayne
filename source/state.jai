@@ -50,16 +50,15 @@ using program_state : struct {
 
     ////////////////////////////////////////////////////////////////////////////
 
-#if DEBUGGING_TOOLS {
-    show_debug_info : bool = false;
+    #if DEBUGGING_TOOLS {
+        show_debug_info : bool = false;
 
-    editor : Editor;
+        editor : Editor;
 
-    want_screenshot : bool;
+        want_screenshot : bool;
 
-    tracker : Fps_Tracker;
-}
-
+        tracker : Fps_Tracker;
+    }
 }
 
 

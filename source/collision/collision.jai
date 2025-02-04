@@ -16,9 +16,9 @@ Simulation :: struct {
     solids : [..] *Solid;
 }
 
-reset_simulation :: (simulation: *Simulation) {
-    array_reset(*simulation.actors);
-    array_reset(*simulation.solids);
+reset :: (using simulation: *Simulation) {
+    array_reset(*actors);
+    array_reset(*solids);
 }
 
 // Utilities
@@ -39,24 +39,4 @@ filter_irrelevant_solids :: (solids: [..] *Solid, actor: *Actor) -> [] *Solid {
     }
 
     return result;
-}
-
-inside_collisions :: (extents: Collider, using actor: *Actor, velocity_to_bounce : *Vector2) {
-    collided_x := (x < extents.x)
-               || (x + width > extents.width)
-    ;
-    collided_y := (y < extents.y)
-               || (y + height > extents.height)
-    ;
-
-    if collided_x {
-        x = clamp(x, xx extents.x, xx (extents.x + extents.width - width));
-        x_remainder = 0.0;
-        velocity_to_bounce.x = -velocity_to_bounce.x;
-    }
-    if collided_y {
-        y = clamp(y, xx extents.y, xx (extents.y + extents.height - height));
-        y_remainder = 0.0;
-        velocity_to_bounce.y = -velocity_to_bounce.y;
-    }
 }

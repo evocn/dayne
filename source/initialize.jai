@@ -103,7 +103,6 @@ initialize_imgui :: () {
         ImGui.StyleColorsClassic();
         //ImGui.StyleColorsLight();
 
-        // @TODO: Clean up this allocation.
         io.IniFilename = temp_c_string(tprint("%/imgui.ini", path_strip_filename(get_path_of_running_executable())));
     }
 }
@@ -213,7 +212,7 @@ initialize_audio_context :: () {
 cleanup_for_shutdown :: (game: *Game, menu: *Menu) {
     // Game Cleanup
     {
-        reset(*game.arena, overwrite_memory=true);
+        finalize(game);
     }
 
     // Audio Cleanup
@@ -230,6 +229,7 @@ cleanup_for_shutdown :: (game: *Game, menu: *Menu) {
     }
 
     array_reset(*menu.elements);
+
     reset(*scratch_memory, overwrite_memory=true);
 
     #if DEBUGGING_TOOLS {
