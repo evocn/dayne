@@ -33,8 +33,9 @@ determine_max_scale_factor_based_on_resolution :: () -> int {
     display_mode : SDL_DisplayMode;
     SDL_GetDesktopDisplayMode(0, *display_mode);
 
-    width_max   := cast(float)display_mode.w / PIXEL_WIDTH;
-    height_max  := cast(float)display_mode.h / PIXEL_HEIGHT;
+    toolbar_height :: 100;
+    width_max   := cast(float)(display_mode.w) / PIXEL_WIDTH;
+    height_max  := cast(float)(display_mode.h - toolbar_height) / PIXEL_HEIGHT;
     max_scale_factor := cast(int)(min(width_max, height_max));
 
     return max_scale_factor;

@@ -68,7 +68,9 @@ render_framebuffer_to_screen :: () {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, xx window_width, xx window_height);
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+
+    // Tableau
+    glClearColor(graphics_context.tableau_clear_color.x, graphics_context.tableau_clear_color.y, graphics_context.tableau_clear_color.z, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 
     shader := quad_shader;

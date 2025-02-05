@@ -41,6 +41,7 @@ Graphics_Context :: struct {
         render_texture : GLuint;
     }
 
+    tableau_clear_color : Color = dark_blue;
     clear_color : Color = black;
 }
 
