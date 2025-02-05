@@ -34,6 +34,13 @@ initialize_everything :: () {
         // Tweaks File
         tweaks_file_exists := load_tweaks_file_and_apply_results("all");
         if tweaks_file_exists then log("Applied tweaks file settings.\n");
+
+        // Profiling
+        Iprof.init_runtime();
+        Iprof.update(false);
+        Iprof.zones[0].name = "Input";
+        Iprof.zones[1].name = "Simulate";
+        Iprof.zones[2].name = "Graphics";
     }
 
     // Debug console

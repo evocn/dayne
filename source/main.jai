@@ -47,6 +47,7 @@ main :: () {
         // Input
         {
             Iprof.zone_begin(0);
+            defer Iprof.zone_end();
 
             gather_input(*input_one, *gamepad);
 
@@ -113,6 +114,9 @@ main :: () {
         ////////////////////////////////////////////////////////////////////////////////
         // Simulate
         {
+            Iprof.zone_begin(1);
+            defer Iprof.zone_end();
+
             if #complete program_state.current_scene == {
                 case .TITLE;
 
@@ -134,26 +138,31 @@ main :: () {
 
                 case .DEMO;
             }
-        }
 
-        Sound_Player.update(dt);
+            Sound_Player.update(dt);
+        }
 
         ////////////////////////////////////////////////////////////////////////////////
         // Render
-        render(
-            game,
-            main_menu,
-        );
+        {
+            Iprof.zone_begin(2);
+            defer Iprof.zone_end();
 
-        #if DEBUGGING_TOOLS {
-            if program_state.current_scene == .EDITOR {
-                update_and_draw_editor(*game);
-                ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
+            render(
+                game,
+                main_menu,
+            );
+
+            #if DEBUGGING_TOOLS {
+                if program_state.current_scene == .EDITOR {
+                    update_and_draw_editor(*game);
+                    ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
+                }
             }
-        }
 
-        SDL_GL_SwapWindow(window);
-        SDL_Delay(1);
+            SDL_GL_SwapWindow(window);
+            SDL_Delay(1);
+        }
 
         ////////////////////////////////////////////////////////////////////////////////
         // Frame Cleanup
@@ -164,6 +173,8 @@ main :: () {
 
             #if DEBUGGING_TOOLS {
                 add_sample(*tracker, dt);
+
+                Iprof.update(record_data = true);
             }
 
             reset_temporary_storage();
@@ -171,8 +182,20 @@ main :: () {
     }
 
     #if DEBUGGING_TOOLS {
+        Iprof.update(record_data = true);
+
+        // Create profiling report
         report := Iprof.create_report();
+
+        log("Profiling report incoming.");
         Iprof.log_text_report(report);
+
+        directory_now_exists := make_directory_if_it_does_not_exist(profiles_path, recursive = true);
+        if !directory_now_exists then log_error("Unable to create directory at %", profiles_path);
+        filename := tprint("%/profile_%.csv", profiles_path, timestamp());
+
+        log("Saving the profiling report at %", filename);
+        Iprof.save_csv_report(report, filename);
     }
 
     cleanup_for_shutdown(*game, *main_menu);
@@ -209,7 +232,7 @@ ImGui :: #import "ImGui";
 // We'd like to put this under the DEBUGGING_TOOLS thing above, but...
 // its module parameter adds to the context, which has to happen first...
 // Whatever.
-Iprof :: #import "Iprof"(IMPORT_MODE = .CLIENT);
+Iprof :: #import "Iprof"(IMPORT_MODE = .CLIENT, MANUAL_MODE = true);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -243,5 +266,8 @@ music_path      :: "assets/music";
 sfx_path        :: "assets/sfx";
 shaders_path    :: "assets/shaders";
 
+#if DEBUGGING_TOOLS {
 tweaks_path     :: "bin";
 screenshots_path:: "screenshots";
+profiles_path   :: "profiles";
+}
