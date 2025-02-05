@@ -71,9 +71,11 @@ build :: () {
         plugin_names : [..] string;
         defer array_reset(*plugin_names);
 
+        /*
         if build_settings.configuration == .DEBUG {
             array_add(*plugin_names, "Iprof");
         }
+        */
 
         init_plugins(plugin_names, *plugins, w);
 

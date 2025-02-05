@@ -46,6 +46,8 @@ main :: () {
         ////////////////////////////////////////////////////////////////////////////////
         // Input
         {
+            Iprof.zone_begin(0);
+
             gather_input(*input_one, *gamepad);
 
             defer {
@@ -168,6 +170,11 @@ main :: () {
         }
     }
 
+    #if DEBUGGING_TOOLS {
+        report := Iprof.create_report();
+        Iprof.log_text_report(report);
+    }
+
     cleanup_for_shutdown(*game, *main_menu);
 
     #if DEBUGGING_TOOLS then report_memory_leaks();
@@ -180,24 +187,29 @@ using Basic_Module :: #import "Basic"()(MEMORY_DEBUGGER=true);
 #import "Math";
 #import "Sort";
 #import "Random";
-#import "Flat_Pool";
 #import "Hash_Table";
+#import "Flat_Pool";
+
+#import "System";
 #import "File";
 #import "File_Utilities";
-#import "System";
 #import "Text_File_Handler";
+
 #import "SDL";
 #import "GL";
 #import "stb_image";
-#import "stb_image_write";
 #import "freetype-2.12.1";
-ImGui :: #import "ImGui";
 using Sound_Player :: #import "Sound_Player";
 
-// @TODO: Interactive Profiling!
-//#if !RELEASE_BUILD {
-//Iprof :: #import "Iprof"(IMPORT_MODE = .CLIENT);
-//}
+#if DEBUGGING_TOOLS {
+#import "stb_image_write";
+ImGui :: #import "ImGui";
+}
+
+// We'd like to put this under the DEBUGGING_TOOLS thing above, but...
+// its module parameter adds to the context, which has to happen first...
+// Whatever.
+Iprof :: #import "Iprof"(IMPORT_MODE = .CLIENT);
 
 ////////////////////////////////////////////////////////////////////////////////
 
