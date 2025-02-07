@@ -31,7 +31,7 @@ render :: (game: Game, menu: Menu) {
                 draw_demo();
         }
 
-        #if DEBUGGING_TOOLS {
+        #if DEVELOPER_TOOLS {
             if program_state.show_debug_info {
                 draw(debugging_stuff);
 
@@ -77,7 +77,7 @@ draw_game :: (game : Game) {
         }
     }
 
-    #if DEBUGGING_TOOLS {
+    #if DEVELOPER_TOOLS {
         if program_state.show_debug_info {
             for entity : game.entities {
                 draw_debug(entity);

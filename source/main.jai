@@ -8,6 +8,7 @@ main :: () {
     initialize_everything();
 
     gamepad: SDL_Joystick;
+    mouse: Mouse;
 
     main_menu := menu_initialize();
 
@@ -29,7 +30,7 @@ main :: () {
         {
             rainbow_color = update_rainbow_color(dt);
 
-            #if DEBUGGING_TOOLS {
+            #if DEVELOPER_TOOLS {
                 update(*debugging_stuff);
 
                 new_context := context;
@@ -46,13 +47,17 @@ main :: () {
         ////////////////////////////////////////////////////////////////////////////////
         // Input
         {
-            Iprof.zone_begin(0);
+            /*
+            Iprof.zone_begin(1);
             defer Iprof.zone_end();
+            */
 
-            gather_input(*input_one, *gamepad);
+            gather_input(*input_one, *mouse, *gamepad);
+            //gather_input(*input_two, *mouse, *gamepad);
 
             defer {
                 post_frame_update(*input_one);
+                //post_frame_update(*input_two);
             }
 
             // Dispatch Inputs based on program state
@@ -77,7 +82,7 @@ main :: () {
                     apply_inputs(input_one, *game);
 
                 case .EDITOR;
-                    #if DEBUGGING_TOOLS {
+                    #if DEVELOPER_TOOLS {
                         apply_inputs(input_one, *editor);
                     }
 
@@ -114,8 +119,10 @@ main :: () {
         ////////////////////////////////////////////////////////////////////////////////
         // Simulate
         {
-            Iprof.zone_begin(1);
+            /*
+            Iprof.zone_begin(2);
             defer Iprof.zone_end();
+            */
 
             if #complete program_state.current_scene == {
                 case .TITLE;
@@ -145,15 +152,17 @@ main :: () {
         ////////////////////////////////////////////////////////////////////////////////
         // Render
         {
-            Iprof.zone_begin(2);
+            /*
+            Iprof.zone_begin(3);
             defer Iprof.zone_end();
+            */
 
             render(
                 game,
                 main_menu,
             );
 
-            #if DEBUGGING_TOOLS {
+            #if DEVELOPER_TOOLS {
                 if program_state.current_scene == .EDITOR {
                     update_and_draw_editor(*game);
                     ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
@@ -171,17 +180,18 @@ main :: () {
             dt = current_time - last_frame;
             last_frame = current_time;
 
-            #if DEBUGGING_TOOLS {
+            #if DEVELOPER_TOOLS {
                 add_sample(*tracker, dt);
 
-                Iprof.update(record_data = true);
+                //Iprof.update(record_data = true);
             }
 
             reset_temporary_storage();
         }
     }
 
-    #if DEBUGGING_TOOLS {
+    /*
+    #if DEVELOPER_TOOLS {
         Iprof.update(record_data = true);
 
         // Create profiling report
@@ -190,17 +200,27 @@ main :: () {
         log("Profiling report incoming.");
         Iprof.log_text_report(report);
 
-        directory_now_exists := make_directory_if_it_does_not_exist(profiles_path, recursive = true);
-        if !directory_now_exists then log_error("Unable to create directory at %", profiles_path);
-        filename := tprint("%/profile_%.csv", profiles_path, timestamp());
+        /*
+        {
+            // Save csv report
+            directory_now_exists := make_directory_if_it_does_not_exist(profiles_path, recursive = true);
+            if !directory_now_exists then log_error("Unable to create directory at %", profiles_path);
+            filename := tprint("%/profile_%.csv", profiles_path, timestamp());
 
-        log("Saving the profiling report at %", filename);
-        Iprof.save_csv_report(report, filename);
+            log("Saving the profiling report at %", filename);
+            Iprof.save_csv_report(report, filename);
+        }
+        */
     }
+    */
 
     cleanup_for_shutdown(*game, *main_menu);
 
-    #if DEBUGGING_TOOLS then report_memory_leaks();
+
+    #if DEVELOPER_TOOLS then report_memory_leaks();
+
+    // For postmortem console outputs
+    #if DEVELOPER_TOOLS then while true { SDL_Delay(100000); }
 }
 
 
@@ -224,15 +244,15 @@ using Basic_Module :: #import "Basic"()(MEMORY_DEBUGGER=true);
 #import "freetype-2.12.1";
 using Sound_Player :: #import "Sound_Player";
 
-#if DEBUGGING_TOOLS {
+#if DEVELOPER_TOOLS {
 #import "stb_image_write";
 ImGui :: #import "ImGui";
 }
 
-// We'd like to put this under the DEBUGGING_TOOLS thing above, but...
+// We'd like to put this under the DEVELOPER_TOOLS thing above, but...
 // its module parameter adds to the context, which has to happen first...
 // Whatever.
-Iprof :: #import "Iprof"(IMPORT_MODE = .CLIENT, MANUAL_MODE = true);
+//Iprof :: #import "Iprof"(IMPORT_MODE = .CLIENT, MANUAL_MODE = true);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -252,7 +272,7 @@ Iprof :: #import "Iprof"(IMPORT_MODE = .CLIENT, MANUAL_MODE = true);
 #load "collision/collision.jai";
 #load "ui/ui.jai";
 
-#if DEBUGGING_TOOLS {
+#if DEVELOPER_TOOLS {
 #load "tools/editor/editor.jai";
 #load "tools/debug.jai";
 #load "tools/tweaks.jai";
@@ -266,7 +286,7 @@ music_path      :: "assets/music";
 sfx_path        :: "assets/sfx";
 shaders_path    :: "assets/shaders";
 
-#if DEBUGGING_TOOLS {
+#if DEVELOPER_TOOLS {
 tweaks_path     :: "bin";
 screenshots_path:: "screenshots";
 profiles_path   :: "profiles";

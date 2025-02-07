@@ -71,11 +71,9 @@ build :: () {
         plugin_names : [..] string;
         defer array_reset(*plugin_names);
 
-        /*
         if build_settings.configuration == .DEBUG {
             array_add(*plugin_names, "Iprof");
         }
-        */
 
         init_plugins(plugin_names, *plugins, w);
 
@@ -100,10 +98,11 @@ build :: () {
                 add_build_file(tprint("%/source/main.jai", #filepath), w);
             }
 
-            // User Build Options
             {
+                // Add shared data to the target program.
                 add_build_string(shared_data, w);
 
+                // Also tell the target program what kind of build this is.
                 build_configuration_string : string;
                 build_configuration_string = tprint("BUILD_TYPE :: build_settings.configuration.%;", build_settings.configuration);
                 add_build_string(build_configuration_string, w);

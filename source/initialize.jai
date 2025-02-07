@@ -14,7 +14,7 @@ initialize_everything :: () {
 
     initialize_window_resolution();
 
-    #if DEBUGGING_TOOLS {
+    #if DEVELOPER_TOOLS {
         initialize_imgui();
     }
 
@@ -30,17 +30,20 @@ initialize_everything :: () {
     }
     apply_default_settings();
 
-    #if DEBUGGING_TOOLS {
+    #if DEVELOPER_TOOLS {
         // Tweaks File
         tweaks_file_exists := load_tweaks_file_and_apply_results("all");
         if tweaks_file_exists then log("Applied tweaks file settings.\n");
 
         // Profiling
+        /*
         Iprof.init_runtime();
+        Iprof.zones[1].name = "Input";
+        Iprof.zones[2].name = "Simulate";
+        Iprof.zones[3].name = "Graphics";
+
         Iprof.update(false);
-        Iprof.zones[0].name = "Input";
-        Iprof.zones[1].name = "Simulate";
-        Iprof.zones[2].name = "Graphics";
+        */
     }
 
     // Debug console
@@ -79,6 +82,14 @@ initialize_sdl :: () {
 
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, xx SDL_GL_CONTEXT_PROFILE_CORE);
     }
+
+    // Log drivers that are available, in the order of priority SDL chooses them.
+    // Useful for e.g. debugging which ones a particular build of SDL contains.
+    for 0..SDL_GetNumRenderDrivers()-1 {
+        info : SDL_RendererInfo;
+        SDL_GetRenderDriverInfo(it, *info);
+        log("%. %", it + 1, to_string(cast(*u8)info.name));
+    }
 }
 
 
@@ -97,7 +108,7 @@ initialize_gl :: () {
     }
 }
 
-#if DEBUGGING_TOOLS {
+#if DEVELOPER_TOOLS {
 initialize_imgui :: () {
     imgui_context = ImGui.CreateContext();
     ImGui_ImplSdl_Init(window);
@@ -180,7 +191,7 @@ initialize_audio_context :: () {
     using audio_context;
 
     devices := get_devices();
-    #if DEBUGGING_TOOLS {
+    #if DEVELOPER_TOOLS {
         print("devices: %\n", devices);
     }
 
@@ -239,7 +250,7 @@ cleanup_for_shutdown :: (game: *Game, menu: *Menu) {
 
     reset(*scratch_memory, overwrite_memory=true);
 
-    #if DEBUGGING_TOOLS {
+    #if DEVELOPER_TOOLS {
         ImGui_ImplSdl_Shutdown();
         ImGui.DestroyContext(imgui_context);
     }

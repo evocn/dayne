@@ -24,21 +24,7 @@ update :: (button: *Button) {
     }
 }
 
-post_frame_update :: (input: *Input) {
-    update(*input.up);
-    update(*input.left);
-    update(*input.down);
-    update(*input.right);
-    update(*input.a);
-    update(*input.b);
-    update(*input.start);
-    update(*input.select);
-
-    update(*input.left_mouse);
-    update(*input.right_mouse);
-    update(*input.middle_mouse);
-}
-
+////////////////////////////////////////////////////////////////////////////////
 
 Input :: struct {
     up      : Button;
@@ -52,18 +38,45 @@ Input :: struct {
     start   : Button;
     select  : Button;
 
-    mouse_active : bool = true;
-    mouse_position : Pair;
-    left_mouse  : Button;
-    right_mouse : Button;
-    middle_mouse: Button;
+    gamepad: SDL_Joystick;
+}
+
+post_frame_update :: (input: *Input) {
+    update(*input.up);
+    update(*input.left);
+    update(*input.down);
+    update(*input.right);
+    update(*input.a);
+    update(*input.b);
+    update(*input.start);
+    update(*input.select);
 }
 
 
-gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
+////////////////////////////////////////////////////////////////////////////////
+
+Mouse :: struct {
+    active  : bool = true;
+
+    position: Pair;
+
+    left    : Button;
+    right   : Button;
+    middle  : Button;
+}
+
+post_frame_update :: (mouse: *Mouse) {
+    update(*mouse.left);
+    update(*mouse.right);
+    update(*mouse.middle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
     event : SDL_Event;
     while SDL_PollEvent(*event) {
-        #if DEBUGGING_TOOLS then ImGui_ImplSdl_ProcessEvent(*event);
+        #if DEVELOPER_TOOLS then ImGui_ImplSdl_ProcessEvent(*event);
 
         if event.type == {
             case SDL_QUIT;
@@ -105,7 +118,7 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                 }
 
                 // Development keybinds
-                #if DEBUGGING_TOOLS {
+                #if DEVELOPER_TOOLS {
                     if event.key.keysym.sym == SDLK_F1 {
                         switch_scene(.GAME);
                         deactivate_mouse();
@@ -159,9 +172,9 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
 
                 // Main Program Inputs
                 {
-                    if event.button.button == SDL_BUTTON_LEFT   press(*input.left_mouse);
-                    if event.button.button == SDL_BUTTON_RIGHT  press(*input.right_mouse);
-                    if event.button.button == SDL_BUTTON_MIDDLE press(*input.middle_mouse);
+                    if event.button.button == SDL_BUTTON_LEFT   press(*mouse.left);
+                    if event.button.button == SDL_BUTTON_RIGHT  press(*mouse.right);
+                    if event.button.button == SDL_BUTTON_MIDDLE press(*mouse.middle);
                 }
 
             case SDL_MOUSEBUTTONUP;
@@ -169,9 +182,9 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
 
                 // Main Program Inputs
                 {
-                    if event.button.button == SDL_BUTTON_LEFT   release(*input.left_mouse);
-                    if event.button.button == SDL_BUTTON_RIGHT  release(*input.right_mouse);
-                    if event.button.button == SDL_BUTTON_MIDDLE release(*input.middle_mouse);
+                    if event.button.button == SDL_BUTTON_LEFT   release(*mouse.left);
+                    if event.button.button == SDL_BUTTON_RIGHT  release(*mouse.right);
+                    if event.button.button == SDL_BUTTON_MIDDLE release(*mouse.middle);
                 }
 
 
@@ -182,10 +195,10 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                 // Main Program Inputs
                 {
                     // @TODO: Review these arbitrary offsets for actual pixel correctness.
-                    input.mouse_position.x = cast(int)(event.motion.x * 
+                    mouse.position.x = cast(int)(event.motion.x * 
                         (cast(float)PIXEL_WIDTH  / graphics_context.window_width)) + 1
                     ;
-                    input.mouse_position.y = PIXEL_HEIGHT - cast(int)(event.motion.y * 
+                    mouse.position.y = PIXEL_HEIGHT - cast(int)(event.motion.y * 
                         (cast(float)PIXEL_HEIGHT / graphics_context.window_height)) - 1
                     ;
                 }
@@ -237,11 +250,11 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                     }
 
                     case .SDL_WINDOWEVENT_ENTER; {
-                        input.mouse_active = true;
+                        mouse.active = true;
                     }
 
                     case .SDL_WINDOWEVENT_LEAVE; {
-                        input.mouse_active = false;
+                        mouse.active = false;
                     }
                 }
         }
