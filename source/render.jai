@@ -66,6 +66,7 @@ draw_game :: (game : Game) {
     {
         z_sort(game.entities);
 
+        use_sprite_shader();
         for entity : game.entities {
             draw(entity);
         }

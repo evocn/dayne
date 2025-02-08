@@ -41,8 +41,8 @@ rainbow_color : Color;
 rainbow_color_time : float;
 RAINBOW_OSCILLATION_SPEED :: 5.0;
 
-update_rainbow_color :: (dt: float) -> Color {
-    rainbow_color_time += dt * RAINBOW_OSCILLATION_SPEED;
+update_rainbow_color :: (dt: float64) -> Color {
+    rainbow_color_time += xx (dt * RAINBOW_OSCILLATION_SPEED);
 
     if rainbow_color_time >= 6.0 then rainbow_color_time = rainbow_color_time - 6.0;
     

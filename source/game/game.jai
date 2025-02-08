@@ -63,7 +63,7 @@ initialize :: (using game: *Game) {
         }
 
         {
-            for 0..10000 {
+            for 0..100 {
                 {
                     using tester : *Solid_Tester = xx new_entity(.SOLID_TESTER);
 
@@ -74,6 +74,8 @@ initialize :: (using game: *Game) {
                     y = 64;
 
                     //solid.collidable = false;
+
+                    initialize(*animation, "Frog-Idle");
 
                     array_add(*entities, xx tester);
 

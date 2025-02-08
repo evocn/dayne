@@ -9,6 +9,8 @@ Solid_Tester :: struct {
     // Properties
     using solid : Solid;
 
+    using animation : Sprite_Animation;
+
     // State
     facing_left : bool;
     velocity    : Vector2;
@@ -31,11 +33,15 @@ update :: (using tester: *Solid_Tester, dt: float) {
     {
         if velocity.x > 0 && facing_left then facing_left = false;
         else if velocity.x < 0 && !facing_left then facing_left = true;
+
+        update(*animation, dt);
     }
 }
 
 draw :: (using tester: *Solid_Tester) {
-    draw(collider, color=red);
+    draw_sprite_relative_to_collider(
+        collider, animation.sprite_name, animation.frame, facing_left
+    );
 }
 
 draw_debug :: (using tester: *Solid_Tester) {

@@ -23,17 +23,21 @@ main :: () {
         play_music(song);
     }
 
-    dt, last_frame := 0.0;
+    dt, frame_start, frame_end : float;
     while program_state.running {
         zone_begin(.FRAME);
 
         ////////////////////////////////////////////////////////////////////////////////
         // Frame Startup
         {
+            frame_start = cast(float32)seconds_since_init();
+
             rainbow_color = update_rainbow_color(dt);
 
             #if DEVELOPER_TOOLS {
                 update(*debug_messages);
+
+                //add_sample(*tracker, dt);
 
                 /*
                 new_context := context;
@@ -45,6 +49,8 @@ main :: () {
                     debug_print(tprint("dt: ~% ms (% fps)", 1000.0 * get_average(tracker), 1.0 / get_average(tracker)), pink);
                 }
                 */
+
+                last_frame_report = profiler_flush(dt);
             }
         }
 
@@ -165,7 +171,6 @@ main :: () {
             }
 
             SDL_GL_SwapWindow(window);
-            SDL_Delay(1);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -173,20 +178,23 @@ main :: () {
         {
             zone(.IDLE);
 
-            current_time := cast(float32)seconds_since_init();
-            dt = current_time - last_frame;
-            last_frame = current_time;
-
             reset_temporary_storage();
+
+            {
+                frame_end = cast(float32)seconds_since_init();
+                dt = frame_end - frame_start;
+
+                {
+                    if dt < LOCKED_DT {
+                        idle_time := LOCKED_DT - dt;
+                        dt = LOCKED_DT;
+                        SDL_Delay(xx (1000 * idle_time)); // function takes time in ms.
+                    }
+                }
+            }
         }
 
         zone_end(.FRAME);
-
-        #if DEVELOPER_TOOLS {
-            //add_sample(*tracker, dt);
-
-            last_frame_report = profiler_flush(dt);
-        }
     }
 
     cleanup_for_shutdown(*game, *main_menu);
@@ -195,7 +203,7 @@ main :: () {
     #if DEVELOPER_TOOLS then report_memory_leaks();
 
     // For postmortem console outputs
-    #if DEVELOPER_TOOLS then while true { SDL_Delay(100000); }
+    //#if DEVELOPER_TOOLS then while true { SDL_Delay(100000); }
 }
 
 
@@ -220,7 +228,7 @@ using Basic_Module :: #import "Basic"()(MEMORY_DEBUGGER=true);
 using Sound_Player :: #import "Sound_Player";
 
 #if DEVELOPER_TOOLS {
-#import "stb_image_write";
+#import "stb_image_write"; // For Screenshots
 ImGui :: #import "ImGui";
 }
 

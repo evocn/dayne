@@ -41,7 +41,10 @@ using program_state : struct {
 
     ////////////////////////////////////////////////////////////////////////////
 
-    framerate : float;
+    using framerate : struct {
+        LOCKED_FPS :: 120;
+        LOCKED_DT  :: 1.0 / LOCKED_FPS;
+    }
 
     using simulation_state : struct {
         frozen  : bool;

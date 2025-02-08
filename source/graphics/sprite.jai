@@ -18,7 +18,8 @@ draw_sprite :: (
                 use_color_override := false, color_override := white
                )
 {
-    shader := use_sprite_shader();
+    shader := graphics_context.sprite_shader;
+    //shader := use_sprite_shader();
 
     assert(frame >= 0 && frame < (sprite.columns * sprite.rows));
 
