@@ -7,45 +7,39 @@ render :: (game: Game, menu: Menu) {
     {
         glBindFramebuffer(GL_FRAMEBUFFER, graphics_context.fbo);
         glViewport(0, 0, PIXEL_WIDTH, PIXEL_HEIGHT);
-        glClearColor(green.x, green.y, green.z, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
 
-        if #complete program_state.current_scene == {
-            case .TITLE;
-                draw_title_screen();
-                draw_version_indicator();
-                draw_build_type();
+        // Real drawing work
+        {
+            glClearColor(graphics_context.background_color.x, graphics_context.background_color.y, graphics_context.background_color.z, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
 
-            case .GAME;
-                draw_game(game);
-                draw_user_interface(game);
+            if #complete program_state.current_scene == {
+                case .TITLE;
+                    draw_title_screen();
+                    draw_version_indicator();
+                    draw_build_type();
 
-            case .MENU;
-                draw_menu(menu);
+                case .GAME;
+                    draw_game(game);
+                    draw_user_interface(game);
 
-            case .EDITOR;
-                draw_game(game);
-                // see editor.jai for editor drawing code.
+                case .MENU;
+                    draw_menu(menu);
 
-            case .DEMO;
-                draw_demo();
+                case .EDITOR;
+                    draw_game(game);
+                    // see editor.jai for editor drawing code.
+
+                case .DEMO;
+                    draw_demo();
+            }
         }
 
         #if DEVELOPER_TOOLS {
             if program_state.show_debug_info {
-                draw(debugging_stuff);
+                draw(debug_messages);
 
-                // @TODO: Interactive Profiling!
-                /*
-                config : Iprof.Config = .{};
-                Iprof.draw(
-                    sx = 0.0,
-                    sy = 0.0,
-                    full_width = 100.0,
-                    height = 100.0,
-                    config = *config
-                );
-                */
+                draw(last_frame_report);
             }
 
             if want_screenshot {

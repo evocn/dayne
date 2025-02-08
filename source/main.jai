@@ -25,14 +25,17 @@ main :: () {
 
     dt, last_frame := 0.0;
     while program_state.running {
+        zone_begin(.FRAME);
+
         ////////////////////////////////////////////////////////////////////////////////
         // Frame Startup
         {
             rainbow_color = update_rainbow_color(dt);
 
             #if DEVELOPER_TOOLS {
-                update(*debugging_stuff);
+                update(*debug_messages);
 
+                /*
                 new_context := context;
                 push_context new_context {
                     format_float := *context.print_style.default_format_float;
@@ -41,16 +44,14 @@ main :: () {
 
                     debug_print(tprint("dt: ~% ms (% fps)", 1000.0 * get_average(tracker), 1.0 / get_average(tracker)), pink);
                 }
+                */
             }
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         // Input
         {
-            /*
-            Iprof.zone_begin(1);
-            defer Iprof.zone_end();
-            */
+            zone(.INPUT);
 
             gather_input(*input_one, *mouse, *gamepad);
             //gather_input(*input_two, *mouse, *gamepad);
@@ -96,7 +97,7 @@ main :: () {
                 debug_print(tprint("Scene: %", program_state.current_scene));
 
                 debug_print(
-                    tprint("Pixels: %x%, Window: %x%, Viewport: %x%", 
+                    tprint("P: %x%, W: %x%, V: %x%", 
                         PIXEL_WIDTH, PIXEL_HEIGHT,
                         graphics_context.window_width, graphics_context.window_height,
                         graphics_context.viewport_width, graphics_context.viewport_height
@@ -119,10 +120,7 @@ main :: () {
         ////////////////////////////////////////////////////////////////////////////////
         // Simulate
         {
-            /*
-            Iprof.zone_begin(2);
-            defer Iprof.zone_end();
-            */
+            zone(.GAME);
 
             if #complete program_state.current_scene == {
                 case .TITLE;
@@ -150,12 +148,9 @@ main :: () {
         }
 
         ////////////////////////////////////////////////////////////////////////////////
-        // Render
+        // Graphics
         {
-            /*
-            Iprof.zone_begin(3);
-            defer Iprof.zone_end();
-            */
+            zone(.DRAW);
 
             render(
                 game,
@@ -176,43 +171,23 @@ main :: () {
         ////////////////////////////////////////////////////////////////////////////////
         // Frame Cleanup
         {
+            zone(.IDLE);
+
             current_time := cast(float32)seconds_since_init();
             dt = current_time - last_frame;
             last_frame = current_time;
 
-            #if DEVELOPER_TOOLS {
-                add_sample(*tracker, dt);
-
-                //Iprof.update(record_data = true);
-            }
-
             reset_temporary_storage();
         }
-    }
 
-    /*
-    #if DEVELOPER_TOOLS {
-        Iprof.update(record_data = true);
+        zone_end(.FRAME);
 
-        // Create profiling report
-        report := Iprof.create_report();
+        #if DEVELOPER_TOOLS {
+            //add_sample(*tracker, dt);
 
-        log("Profiling report incoming.");
-        Iprof.log_text_report(report);
-
-        /*
-        {
-            // Save csv report
-            directory_now_exists := make_directory_if_it_does_not_exist(profiles_path, recursive = true);
-            if !directory_now_exists then log_error("Unable to create directory at %", profiles_path);
-            filename := tprint("%/profile_%.csv", profiles_path, timestamp());
-
-            log("Saving the profiling report at %", filename);
-            Iprof.save_csv_report(report, filename);
+            last_frame_report = profiler_flush(dt);
         }
-        */
     }
-    */
 
     cleanup_for_shutdown(*game, *main_menu);
 
@@ -276,6 +251,7 @@ ImGui :: #import "ImGui";
 #load "tools/editor/editor.jai";
 #load "tools/debug.jai";
 #load "tools/tweaks.jai";
+#load "tools/profiler.jai";
 }
 
 // Asset Paths

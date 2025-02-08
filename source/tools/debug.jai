@@ -2,7 +2,7 @@
 // Debug
 // January 2025
 
-Debugging_Stuff :: struct {
+Debug_Messages :: struct {
     Message :: struct {
         text: string;
         color := white;
@@ -10,21 +10,21 @@ Debugging_Stuff :: struct {
 
     messages : [..] Message;
 }
-debugging_stuff : Debugging_Stuff;
+debug_messages : Debug_Messages;
 
-update :: (using debug: *Debugging_Stuff) {
+update :: (using debug: *Debug_Messages) {
     array_reset(*messages);
 }
 
-draw :: (using debug: Debugging_Stuff) {
+draw :: (using debug: Debug_Messages) {
     k := 0;
-    inc := 6;
+    inc := 8;
     for message : messages {
         draw_text(
             message.text,
             1,
             PIXEL_HEIGHT - inc - (k * inc),
-            font = .SMALL,
+            font = .MAIN,
             color = message.color,
         );
 

@@ -83,6 +83,7 @@ initialize_sdl :: () {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, xx SDL_GL_CONTEXT_PROFILE_CORE);
     }
 
+    /*
     // Log drivers that are available, in the order of priority SDL chooses them.
     // Useful for e.g. debugging which ones a particular build of SDL contains.
     for 0..SDL_GetNumRenderDrivers()-1 {
@@ -90,6 +91,7 @@ initialize_sdl :: () {
         SDL_GetRenderDriverInfo(it, *info);
         log("%. %", it + 1, to_string(cast(*u8)info.name));
     }
+    */
 }
 
 

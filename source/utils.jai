@@ -4,7 +4,7 @@
 
 debug_print :: inline (s : string, color := white) {
     #if DEVELOPER_TOOLS {
-        array_add(*debugging_stuff.messages, .{s, color});
+        array_add(*debug_messages.messages, .{s, color});
     }
 }
 

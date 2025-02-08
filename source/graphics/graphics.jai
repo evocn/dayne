@@ -20,26 +20,35 @@
 #load "text.jai";
 
 Graphics_Context :: struct {
-    using window_context : Window_Context;
+    using internals : struct {
+        using window_context : Window_Context;
 
-    using shaders : struct {
-        basic_shader    : Shader;
-        sprite_shader   : Shader;
-        text_shader     : Shader;
-        quad_shader     : Shader;
+        using shaders : struct {
+            basic_shader    : Shader;
+            sprite_shader   : Shader;
+            text_shader     : Shader;
+            quad_shader     : Shader;
+        }
+
+        // Primitives for drawing things
+        quad : Quad;
+
+        sprites : Table(string, Sprite);
+
+        fbo : GLuint;
+        render_texture : GLuint;
+
+        // Fonts
+        using fonts : struct {
+            main_font  : Font;
+            small_font : Font;
+        }
     }
 
-    // Primitives for drawing things
-    quad : Quad;
-
-    sprites : Table(string, Sprite);
-
-    fbo : GLuint;
-    render_texture : GLuint;
-
-    // Fonts
-    main_font  : Font;
-    small_font : Font;
+    using tweakable : struct {
+        background_color : Color = green;
+        marquee_color : Color = black;
+    }
 }
 
 

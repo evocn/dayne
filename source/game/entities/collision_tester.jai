@@ -24,18 +24,10 @@ initialize :: (using tester: *Collision_Tester) {
 update :: (using tester: *Collision_Tester, dt: float) {
     // Move
     {
-        time := current_time_monotonic();
+        amount_to_move := velocity * dt;
 
-        {
-            amount_to_move := velocity * dt;
-
-            move_x(*actor, amount_to_move.x, null);
-            move_y(*actor, amount_to_move.y, null);
-        }
-
-        interval := current_time_monotonic() - time;
-        seconds, success := to_float64_seconds(interval);
-        debug_print(tprint("Simulation: % ms\n", seconds * 1000.0));
+        move_x(*actor, amount_to_move.x, null);
+        move_y(*actor, amount_to_move.y, null);
     }
 
     // Visual
