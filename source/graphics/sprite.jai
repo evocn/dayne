@@ -19,7 +19,6 @@ draw_sprite :: (
                )
 {
     shader := graphics_context.sprite_shader;
-    //shader := use_sprite_shader();
 
     assert(frame >= 0 && frame < (sprite.columns * sprite.rows));
 

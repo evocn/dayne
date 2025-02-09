@@ -74,6 +74,12 @@ draw_game :: (game : Game) {
 
     #if DEVELOPER_TOOLS {
         if program_state.show_debug_info {
+
+            // This is dumb code, which works since most entities' "draw_debug()" just draws a dumb quad.
+            // The more full-featured solution to this (and the use_sprite_shader() above) is to do actual batching of draw calls.
+            // For now, we're cool.
+            use_basic_shader();
+
             for entity : game.entities {
                 draw_debug(entity);
             }
