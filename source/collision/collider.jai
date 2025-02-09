@@ -59,7 +59,8 @@ check_if_grounded :: (actor : *Actor) -> bool {
 
 draw :: (collider: Collider, color : Color, outline_color := white) {
     screen_pixel := world_space_to_screen_pixel(collider.x, collider.y);
-    if !on_screen(screen_pixel) then return;
+    top_right := world_space_to_screen_pixel(collider.x + collider.width, collider.y + collider.height);
+    if !on_screen(screen_pixel) && !on_screen(top_right) then return;
     scale := screen_pixel_zoom();
     
     draw_colored_quad(

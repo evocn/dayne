@@ -63,7 +63,7 @@ initialize :: (using game: *Game) {
         }
 
         {
-            for 0..100 {
+            for 0..1000 {
                 {
                     using tester : *Solid_Tester = xx new_entity(.SOLID_TESTER);
 

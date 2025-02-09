@@ -204,6 +204,12 @@ main :: () {
     // For postmortem console outputs
     // @TODO: Actually figure out a way to do this. At the moment, this fires before my profiler's defer.
     // I need a way to put a defer at the end of the list of defers!
+
+    // Update 2025 - Feb 9:
+    // I did some work to experiment with prepending to main in the build program.
+    // It was nearly working, but it was such a damn hassle...
+    // I'll ask the discord at some point.
+
     //#if DEVELOPER_TOOLS then defer while true { SDL_Delay(100000); }
 }
 
@@ -232,11 +238,6 @@ using Sound_Player :: #import "Sound_Player";
 #import "stb_image_write"; // For Screenshots
 ImGui :: #import "ImGui";
 }
-
-// We'd like to put this under the DEVELOPER_TOOLS thing above, but...
-// its module parameter adds to the context, which has to happen first...
-// Whatever.
-//Iprof :: #import "Iprof"(IMPORT_MODE = .CLIENT, MANUAL_MODE = true);
 
 ////////////////////////////////////////////////////////////////////////////////
 
