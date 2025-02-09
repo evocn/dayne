@@ -35,18 +35,11 @@ initialize_everything :: () {
         tweaks_file_exists := load_tweaks_file_and_apply_results("all");
         if tweaks_file_exists then log("Applied tweaks file settings.\n");
 
-        // Profiling
-        /*
-        Iprof.init_runtime();
-        Iprof.zones[1].name = "Input";
-        Iprof.zones[2].name = "Simulate";
-        Iprof.zones[3].name = "Graphics";
-
-        Iprof.update(false);
-        */
+        // stbi
+        stbi_flip_vertically_on_write(xx true);
     }
 
-    // Debug console
+    // Disable the debug console in Release builds.
     #if BUILD_TYPE == .RELEASE {
         #run {
             #if OS == .WINDOWS {
@@ -55,9 +48,6 @@ initialize_everything :: () {
             }
         }
     }
-
-    // stbi
-    stbi_flip_vertically_on_write(xx true);
 }
 
 
@@ -112,7 +102,7 @@ initialize_gl :: () {
 
 #if DEVELOPER_TOOLS {
 initialize_imgui :: () {
-    imgui_context = ImGui.CreateContext();
+    program_state.editor.imgui_state.imgui_context = ImGui.CreateContext();
     ImGui_ImplSdl_Init(window);
 
     io := ImGui.GetIO();
@@ -254,7 +244,7 @@ cleanup_for_shutdown :: (game: *Game, menu: *Menu) {
 
     #if DEVELOPER_TOOLS {
         ImGui_ImplSdl_Shutdown();
-        ImGui.DestroyContext(imgui_context);
+        ImGui.DestroyContext(program_state.editor.imgui_state.imgui_context);
     }
 
     SDL_GL_DeleteContext(gl_context);

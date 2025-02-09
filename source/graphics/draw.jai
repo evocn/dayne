@@ -33,28 +33,33 @@ on_screen :: inline (screen_pixel: Pair) -> bool {
 // @TODO: Maybe work these out into like UI drawing, primitive drawing, etc. functions?
 
 draw_title_screen :: () {
-    draw_text(
-        program_title,
-        x = PIXEL_WIDTH / 2,
-        y = 80,
-        alignment   = Alignment.CENTER,
-        progress    = -1,
-        font        = .MAIN,
-        color       = white,
-    );
+    {
+        use_text_shader();
+        draw_text(
+            program_title,
+            x = PIXEL_WIDTH / 2,
+            y = 80,
+            alignment   = Alignment.CENTER,
+            progress    = -1,
+            font        = .MAIN,
+            color       = white,
+        );
 
-    draw_text(
-        "You reap what you sow.",
-        x = PIXEL_WIDTH / 2,
-        y = 60,
-        alignment   = Alignment.CENTER,
-        progress    = -1,
-        font        = .SMALL,
-        color       = white,
-    );
+        draw_text(
+            "You reap what you sow.",
+            x = PIXEL_WIDTH / 2,
+            y = 60,
+            alignment   = Alignment.CENTER,
+            progress    = -1,
+            font        = .SMALL,
+            color       = white,
+        );
+    }
 }
 
 draw_version_indicator :: () {
+    use_text_shader();
+
     draw_text(
         tprint("version %.%", VERSION.major, VERSION.minor),
         x = 1,
@@ -67,6 +72,8 @@ draw_version_indicator :: () {
 }
 
 draw_build_type :: () {
+    use_text_shader();
+
     draw_text(
         tprint("%", BUILD_TYPE),
         x = 1,
@@ -81,43 +88,49 @@ draw_build_type :: () {
 ////////////////////////////////////////////////////////////////////////////////
 
 draw_demo :: () {
-    draw_sprite_at(.{0, 0}, "haruhachi");
+    {
+        use_sprite_shader();
+        draw_sprite_at(.{0, 0}, "haruhachi");
+    }
 
-    draw_text(
-        "the quick brown fox",
-        x = 1,
-        y = PIXEL_HEIGHT - 7,
-        alignment   = Alignment.LEFT,
-        font        = .SMALL,
-        color       = red,
-    );
+    {
+        use_text_shader();
+        draw_text(
+            "the quick brown fox",
+            x = 1,
+            y = PIXEL_HEIGHT - 7,
+            alignment   = Alignment.LEFT,
+            font        = .SMALL,
+            color       = red,
+        );
 
-    draw_text(
-        "jumps over the lazy dog.",
-        x = 1,
-        y = PIXEL_HEIGHT - 14,
-        alignment   = Alignment.LEFT,
-        font        = .SMALL,
-        color       = seafoam,
-    );
+        draw_text(
+            "jumps over the lazy dog.",
+            x = 1,
+            y = PIXEL_HEIGHT - 14,
+            alignment   = Alignment.LEFT,
+            font        = .SMALL,
+            color       = seafoam,
+        );
 
-    draw_text(
-        "the quick brown fox",
-        x = PIXEL_WIDTH - 1,
-        y = PIXEL_HEIGHT - 20,
-        alignment   = Alignment.RIGHT,
-        font        = .MAIN,
-        color       = blue,
-    );
+        draw_text(
+            "the quick brown fox",
+            x = PIXEL_WIDTH - 1,
+            y = PIXEL_HEIGHT - 20,
+            alignment   = Alignment.RIGHT,
+            font        = .MAIN,
+            color       = blue,
+        );
 
-    draw_text(
-        "jumps over the lazy dog.",
-        x = PIXEL_WIDTH - 1,
-        y = PIXEL_HEIGHT - 28,
-        alignment   = Alignment.RIGHT,
-        font        = .MAIN,
-        color       = yellow,
-    );
+        draw_text(
+            "jumps over the lazy dog.",
+            x = PIXEL_WIDTH - 1,
+            y = PIXEL_HEIGHT - 28,
+            alignment   = Alignment.RIGHT,
+            font        = .MAIN,
+            color       = yellow,
+        );
+    }
 
     draw_clock_readout();
 }
@@ -125,6 +138,8 @@ draw_demo :: () {
 ////////////////////////////////////////////////////////////////////////////////
 
 draw_menu :: (using menu: Menu) {
+    use_text_shader();
+
     k := 10;
     total_height := k * elements.count + 2;
 
@@ -227,21 +242,25 @@ draw_clock_readout :: () {
         color  = black,
     );
 
-    draw_text(
-        clock_readout, 
-        x = 1,
-        y = 1,
-        alignment   = Alignment.LEFT,
-        progress    = -1,
-        font        = .SMALL,
-        color       = color,
-    );
+    {
+        use_text_shader();
+        draw_text(
+            clock_readout, 
+            x = 1,
+            y = 1,
+            alignment   = Alignment.LEFT,
+            progress    = -1,
+            font        = .SMALL,
+            color       = color,
+        );
+    }
 }
 
 draw_mouse_cursor :: (
     position: Pair
 )
 {
+    use_sprite_shader();
     draw_sprite_at(position - .{0, 16}, "cursor", frame = 0);
 }
 

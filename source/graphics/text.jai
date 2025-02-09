@@ -10,7 +10,8 @@ draw_text :: (text: string, x: int, y: int,
               color := white
              )
 {
-    shader := use_text_shader();
+    //shader := use_text_shader();
+    shader := graphics_context.text_shader;
 
     set_vec4(shader, "color", color);
 

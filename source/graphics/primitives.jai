@@ -115,7 +115,7 @@ draw_quad :: (using quad: Quad) {
 }
 
 draw_colored_quad :: (x: int, y: int, width: int, height: int, color := white) {
-    shader := use_basic_shader();
+    shader := graphics_context.basic_shader;
 
     model := Matrix4_Identity;
     translation_vector := Vector3.{cast(float)x / PIXEL_WIDTH, cast(float)y / PIXEL_HEIGHT, 0.0};

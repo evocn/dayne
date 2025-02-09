@@ -3,15 +3,22 @@
 // February 2024
 
 Editor :: struct {
+    imgui_state : struct {
+        imgui_context : *ImGui.ImGuiContext;
+        capturing_mouse    := false;
+        capturing_keyboard := false;
+    }
 }
 
 apply_inputs :: (using input: Input, editor : *Editor) {
 }
 
 update_and_draw_editor :: (game: *Game) {
+    using program_state.editor;
+
     io := ImGui.GetIO();
-    program_state.imgui_capturing_mouse     = io.WantCaptureMouse;
-    program_state.imgui_capturing_keyboard  = io.WantCaptureKeyboard;
+    imgui_state.capturing_mouse     = io.WantCaptureMouse;
+    imgui_state.capturing_keyboard  = io.WantCaptureKeyboard;
 
     ImGui_ImplSdl_NewFrame(window);
     ImGui.NewFrame();

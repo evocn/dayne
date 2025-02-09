@@ -95,6 +95,8 @@ draw :: (report: Report) {
 
     // Draw bars
     {
+        use_basic_shader();
+
         x := 0;
         for section, index : report {
             if index == xx Zone.Kind.FRAME then continue;
@@ -115,6 +117,8 @@ draw :: (report: Report) {
 
     // Draw Legend
     {
+        use_text_shader();
+
         x := 0;
         for section, index : report {
             draw_text(

@@ -37,20 +37,15 @@ main :: () {
             #if DEVELOPER_TOOLS {
                 update(*debug_messages);
 
-                //add_sample(*tracker, dt);
+                ms  := 1000.0 * get_average(tracker);
+                fps := cast(int)(1.0 / get_average(tracker));
+                debug_print(tprint("dt: ~% ms (% fps)", 
+                    formatFloat(ms, trailing_width = 1, zero_removal = .NO),
+                    fps,
+                    pink
+                ));
 
-                /*
-                new_context := context;
-                push_context new_context {
-                    format_float := *context.print_style.default_format_float;
-                    format_float.trailing_width = 2;
-                    format_float.zero_removal   = .NO;
-
-                    debug_print(tprint("dt: ~% ms (% fps)", 1000.0 * get_average(tracker), 1.0 / get_average(tracker)), pink);
-                }
-                */
-
-                last_frame_report = profiler_flush(dt);
+                add_sample(*tracker, dt);
             }
         }
 
@@ -180,10 +175,12 @@ main :: () {
 
             reset_temporary_storage();
 
+            // Frame timing
             {
                 frame_end = cast(float32)seconds_since_init();
                 dt = frame_end - frame_start;
 
+                // Fixed Framerate
                 {
                     if dt < LOCKED_DT {
                         idle_time := LOCKED_DT - dt;
@@ -195,6 +192,8 @@ main :: () {
         }
 
         zone_end(.FRAME);
+
+        last_frame_report = profiler_flush(dt);
     }
 
     cleanup_for_shutdown(*game, *main_menu);
@@ -203,7 +202,9 @@ main :: () {
     #if DEVELOPER_TOOLS then report_memory_leaks();
 
     // For postmortem console outputs
-    //#if DEVELOPER_TOOLS then while true { SDL_Delay(100000); }
+    // @TODO: Actually figure out a way to do this. At the moment, this fires before my profiler's defer.
+    // I need a way to put a defer at the end of the list of defers!
+    //#if DEVELOPER_TOOLS then defer while true { SDL_Delay(100000); }
 }
 
 
@@ -255,11 +256,13 @@ ImGui :: #import "ImGui";
 #load "collision/collision.jai";
 #load "ui/ui.jai";
 
-#if DEVELOPER_TOOLS {
-#load "tools/editor/editor.jai";
-#load "tools/debug.jai";
-#load "tools/tweaks.jai";
+// Tools
 #load "tools/profiler.jai";
+#if DEVELOPER_TOOLS {
+    #load "tools/editor/editor.jai";
+    #load "tools/debug.jai";
+    #load "tools/tweaks.jai";
+    #load "tools/screenshot.jai";
 }
 
 // Asset Paths

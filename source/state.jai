@@ -31,10 +31,6 @@ using program_state : struct {
     using external_components : struct {
         window          : *SDL_Window;
         gl_context      : *SDL_GLContext;
-        imgui_context   : *ImGui.ImGuiContext;
-
-        imgui_capturing_mouse    := false;
-        imgui_capturing_keyboard := false;
     }
 
     scratch_memory  : Flat_Pool;

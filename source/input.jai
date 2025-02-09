@@ -37,8 +37,6 @@ Input :: struct {
 
     start   : Button;
     select  : Button;
-
-    gamepad: SDL_Joystick;
 }
 
 post_frame_update :: (input: *Input) {
@@ -83,7 +81,7 @@ gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
                 program_state.running = false;
 
             case SDL_KEYUP;
-                if program_state.imgui_capturing_keyboard return;
+                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_keyboard return;
 
                 {
                     if event.key.keysym.sym == SDLK_w       release(*input.up);
@@ -99,7 +97,7 @@ gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
                 }
 
             case SDL_KEYDOWN;
-                if program_state.imgui_capturing_keyboard return;
+                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_keyboard return;
 
                 // Main Program Inputs
                 {
@@ -168,7 +166,7 @@ gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
                 }
 
             case SDL_MOUSEBUTTONDOWN;
-                if program_state.imgui_capturing_mouse return;
+                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_mouse return;
 
                 // Main Program Inputs
                 {
@@ -178,7 +176,7 @@ gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
                 }
 
             case SDL_MOUSEBUTTONUP;
-                if program_state.imgui_capturing_mouse return;
+                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_mouse return;
 
                 // Main Program Inputs
                 {
@@ -190,7 +188,7 @@ gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
 
 
             case SDL_MOUSEMOTION;
-                if program_state.imgui_capturing_mouse return;
+                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_mouse return;
 
                 // Main Program Inputs
                 {

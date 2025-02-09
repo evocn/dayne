@@ -17,6 +17,8 @@ update :: (using debug: *Debug_Messages) {
 }
 
 draw :: (using debug: Debug_Messages) {
+    use_text_shader();
+
     k := 0;
     inc := 8;
     for message : messages {
