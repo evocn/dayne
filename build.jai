@@ -33,8 +33,9 @@ build :: () {
 
 
     // Handle command-line arguments / plugins
+    arguments := options.compile_time_command_line;
     {
-        for argument: options.compile_time_command_line {
+        for argument: arguments {
             if argument == {
                 case "release"; {
                     build_settings.configuration = .RELEASE;
@@ -77,8 +78,14 @@ build :: () {
 
         init_plugins(plugin_names, *plugins, w);
 
-        for plugins {
-            //if it.log_help then it.log_help(it);
+        // Handle plugin arguments
+        {
+            cursor := 0;
+            for plugins {
+                //if it.log_help then it.log_help(it);
+
+                cursor = handle_one_option(it, arguments, cursor);
+            }
         }
     }
 

@@ -202,15 +202,9 @@ main :: () {
     #if DEVELOPER_TOOLS then report_memory_leaks();
 
     // For postmortem console outputs
-    // @TODO: Actually figure out a way to do this. At the moment, this fires before my profiler's defer.
-    // I need a way to put a defer at the end of the list of defers!
-
-    // Update 2025 - Feb 9:
-    // I did some work to experiment with prepending to main in the build program.
-    // It was nearly working, but it was such a damn hassle...
-    // I'll ask the discord at some point.
-
-    //#if DEVELOPER_TOOLS then defer while true { SDL_Delay(100000); }
+    #if DEVELOPER_TOOLS {
+        defer while true { SDL_Delay(100000); }
+    }
 }
 
 
