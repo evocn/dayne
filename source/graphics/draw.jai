@@ -46,7 +46,7 @@ draw_title_screen :: () {
         );
 
         draw_text(
-            "You reap what you sow.",
+            "Be receptive!",
             x = PIXEL_WIDTH / 2,
             y = 60,
             alignment   = Alignment.CENTER,

@@ -19,7 +19,7 @@ main :: () {
 
     // Play the starting music!
     {
-        song := "secret";
+        song := "lento";
         play_music(song);
     }
 

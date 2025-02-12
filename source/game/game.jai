@@ -20,19 +20,15 @@ Game :: struct {
             position : Pair;
             zoom : int;
         }
-
-        input_guy : *Collision_Tester;
     }
 }
 
 apply_inputs :: (using input: Input, game: *Game) {
-    apply_inputs(input, game.input_guy);
 }
 
 initialize :: (using game: *Game) {
     // Create Entities
     {
-        /*
         {
             using basic : *Basic = xx new_entity(.BASIC);
 
@@ -44,44 +40,6 @@ initialize :: (using game: *Game) {
             initialize(*animation, "Frog-Idle");
 
             array_add(*entities, xx basic);
-        }
-        */
-
-        {
-            using tester : *Collision_Tester = xx new_entity(.COLLISION_TESTER);
-
-            width   = 16;
-            height  = 16;
-
-            initialize(*animation, "Frog-Walk");
-
-            array_add(*entities, xx tester);
-
-            array_add(*simulation.actors, *actor);
-
-            input_guy = tester;
-        }
-
-        {
-            for 0..1000 {
-                {
-                    using tester : *Solid_Tester = xx new_entity(.SOLID_TESTER);
-
-                    width   = 16;
-                    height  = 16;
-
-                    x = it * width;
-                    y = 64;
-
-                    //solid.collidable = false;
-
-                    initialize(*animation, "Frog-Idle");
-
-                    array_add(*entities, xx tester);
-
-                    array_add(*simulation.solids, *solid);
-                }
-            }
         }
     }
 

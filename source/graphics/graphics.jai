@@ -46,7 +46,7 @@ Graphics_Context :: struct {
     }
 
     using tweakable : struct {
-        background_color : Color = green;
+        background_color : Color = black;
         marquee_color : Color = black;
     }
 }
