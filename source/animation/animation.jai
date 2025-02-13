@@ -3,3 +3,4 @@
 // November 2024
 
 #load "sprite-animation.jai";
+#load "animator.jai";

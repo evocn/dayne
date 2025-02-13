@@ -20,15 +20,19 @@ Game :: struct {
             position : Pair;
             zoom : int;
         }
+
+        the_hero : *Hero;
     }
 }
 
 apply_inputs :: (using input: Input, game: *Game) {
+    apply_inputs(input, game.the_hero);
 }
 
 initialize :: (using game: *Game) {
     // Create Entities
     {
+        /*
         {
             using basic : *Basic = xx new_entity(.BASIC);
 
@@ -40,6 +44,45 @@ initialize :: (using game: *Game) {
             initialize(*animation, "Frog-Idle");
 
             array_add(*entities, xx basic);
+        }
+        */
+
+        // @TODO: Make a "Prop" entity.
+        {
+            using basic : *Basic = xx new_entity(.BASIC);
+
+            width  = 16;
+            height = 128;
+
+            x = 32;
+
+            initialize(*animation, "Monolith");
+
+            array_add(*entities, xx basic);
+        }
+
+        {
+            using hero : *Hero = xx new_entity(.HERO);
+
+            width  = 16;
+            height = 32;
+
+            x = PIXEL_WIDTH / 2 - width;
+
+            idle := table_add(*animations, "idle", .{});
+            initialize(idle, "Monk-Idle", speed = 0.2);
+
+            walk := table_add(*animations, "walk", .{});
+            initialize(walk, "Monk-Walk", speed = 0.6);
+
+            point := table_add(*animations, "point", .{});
+            initialize(point, "Monk-Point", speed = 1.0);
+
+            animation = idle;
+
+            array_add(*entities, xx hero);
+
+            the_hero = hero;
         }
     }
 

@@ -154,6 +154,15 @@ initialize_graphics_context :: () {
         size_exceptions : Table(string, Pair);
         {
             table_add(*size_exceptions, "haruhachi", .{208, 256});
+            table_add(*size_exceptions, "cursor",    .{16, 16});
+            table_add(*size_exceptions, "Frog-Idle", .{16, 16});
+            table_add(*size_exceptions, "Frog-Walk", .{16, 16});
+
+            table_add(*size_exceptions, "Monk-Walk", .{48, 48});
+            table_add(*size_exceptions, "Monk-Idle", .{48, 48});
+            table_add(*size_exceptions, "Monk-Point", .{48, 48});
+
+            table_add(*size_exceptions, "Monolith", .{64, 128});
         }
 
         sprite_paths := file_list(sprites_path, recursive = true, follow_directory_symlinks = false,, allocator=temp);
@@ -175,6 +184,11 @@ initialize_graphics_context :: () {
         }
 
         deinit(*size_exceptions);
+
+        log("Sprites we loaded:");
+        for sprites {
+            log("%", it_index);
+        }
     }
 }
 
