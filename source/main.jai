@@ -81,7 +81,7 @@ main :: () {
                         switch_scene(.MENU);
                     }
 
-                    apply_inputs(input_one, *game);
+                    apply_inputs(*game, input_one);
 
                 case .EDITOR;
                     #if DEVELOPER_TOOLS {

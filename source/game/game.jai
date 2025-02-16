@@ -4,6 +4,8 @@
 
 #load "entity.jai";
 
+#load "systems/decision.jai";
+
 Game :: struct {
     using constants : struct {
     }
@@ -15,6 +17,9 @@ Game :: struct {
         entities    : [..] *Entity;
     }
 
+    using spine : struct {
+    }
+
     using state : struct {
         camera : struct {
             position : Pair;
@@ -22,34 +27,81 @@ Game :: struct {
         }
 
         the_hero : *Hero;
+
+        stage : enum {
+            WALKING;
+            DECISION;
+        }
+
+        // Walking-specific state
+
+        // Decision-specific state
+        decision : *Decision;
     }
 }
 
-apply_inputs :: (using input: Input, game: *Game) {
-    apply_inputs(input, game.the_hero);
+apply_inputs :: (using game: *Game, input: Input) {
+    if #complete stage == {
+        case .WALKING;
+            apply_inputs(input, the_hero);
+
+        case .DECISION;
+            apply_inputs(decision, input);
+    }
+}
+
+simulate :: (using game: *Game, dt: float) {
+    debug_print(tprint("Stage: %", stage), yellow);
+
+    // Check for systems state.
+    if #complete stage == {
+        case .WALKING;
+
+            for entity : entities {
+                update(entity, dt);
+            }
+
+            debug_print(tprint("Simulated % entities", entities.count), yellow);
+            debug_print(tprint("Camera: %", camera), yellow);
+
+
+            for entity : entities {
+                if entity.kind == .ARTIFACT {
+                    artifact := cast(*Artifact)entity;
+                    if artifact.decision.locked_in then continue;
+                    if collision(the_hero.collider, artifact.collider) && !artifact.decision.locked_in {
+                        decision = *artifact.decision;
+                        stage = .DECISION;
+                        break;
+                    }
+                }
+            }
+
+        case .DECISION;
+            if decision.locked_in {
+                consequence := decision.choices[decision.selected].consequence;
+                if consequence {
+                    consequence(game);
+                }
+
+                decision.locked_in = false;
+                decision = null;
+                stage = .WALKING;
+            }
+
+        for entities {
+            if it.should_die then remove it;
+        }
+    }
 }
 
 initialize :: (using game: *Game) {
     // Create Entities
     {
-        /*
         {
-            using basic : *Basic = xx new_entity(.BASIC);
+            using obelisk : *Artifact = xx new_entity(.ARTIFACT);
 
-            width  = 16;
-            height = 16;
-
-            y = PIXEL_HEIGHT - height;
-
-            initialize(*animation, "Frog-Idle");
-
-            array_add(*entities, xx basic);
-        }
-        */
-
-        // @TODO: Make a "Prop" entity.
-        {
-            using basic : *Basic = xx new_entity(.BASIC);
+            name = "Obelisk";
 
             width  = 16;
             height = 128;
@@ -58,7 +110,41 @@ initialize :: (using game: *Game) {
 
             initialize(*animation, "Monolith");
 
-            array_add(*entities, xx basic);
+            {
+                decision.question = "Destroy the Accursed Obelisk?";
+
+                destroy_obelisk :: (game: *Game) {
+                    for game.entities {
+                        if it.kind == .ARTIFACT {
+                            artifact := cast(*Artifact)it;
+                            if artifact.name == "Obelisk" then artifact.should_die = true;
+                            play_sfx("thunder");
+                            break;
+                        }
+                    }
+
+                    {
+                        using broken_obelisk : *Artifact = xx new_entity(.ARTIFACT);
+
+                        name = "Broken Obelisk";
+
+                        width  = 16;
+                        height = 128;
+
+                        x = 32;
+
+                        decision.locked_in = true;
+
+                        initialize(*animation, "Monolith-Broken");
+                        array_add(*game.entities, xx broken_obelisk);
+                    }
+                }
+
+                array_add(*decision.choices, .{text = "no"});
+                array_add(*decision.choices, .{text = "yes", consequence = destroy_obelisk});
+            }
+
+            array_add(*entities, xx obelisk);
         }
 
         {
@@ -91,15 +177,6 @@ initialize :: (using game: *Game) {
         camera.position = .{};
         camera.zoom = 1;
     }
-}
-
-simulate :: (using game: *Game, dt: float) {
-    for entity : entities {
-        update(entity, dt);
-    }
-
-    debug_print(tprint("Simulated % entities", entities.count), yellow);
-    debug_print(tprint("Camera: %", camera), yellow);
 }
 
 finalize :: (using game: *Game) {

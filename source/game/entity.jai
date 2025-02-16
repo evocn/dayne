@@ -4,11 +4,13 @@
 
 #load "entities/basic.jai";
 #load "entities/hero.jai";
+#load "entities/artifact.jai";
 
 Entity :: struct {
     Kind :: enum {
         BASIC;
         HERO;
+        ARTIFACT;
     }
     kind : Kind;
 
@@ -29,6 +31,7 @@ new_entity :: (kind : Entity.Kind) -> *Entity {
     if #complete kind == {
         case .BASIC;            new_entity = xx New(Basic);
         case .HERO;             new_entity = xx New(Hero);
+        case .ARTIFACT;         new_entity = xx New(Artifact);
     }
 
     initialize(new_entity);
@@ -46,6 +49,7 @@ initialize :: (entity: *Entity) {
     if #complete entity.kind == {
         case .BASIC;            initialize(cast(*Basic)entity);
         case .HERO;             initialize(cast(*Hero)entity);
+        case .ARTIFACT;         initialize(cast(*Artifact)entity);
     }
 }
 
@@ -53,6 +57,7 @@ update :: (entity: *Entity, dt: float) {
     if #complete entity.kind == {
         case .BASIC;            update(cast(*Basic)entity, dt);
         case .HERO;             update(cast(*Hero)entity, dt);
+        case .ARTIFACT;         update(cast(*Artifact)entity, dt);
     }
 }
 
@@ -60,6 +65,7 @@ draw :: (entity: *Entity) {
     if #complete entity.kind == {
         case .BASIC;            draw(cast(*Basic)entity);
         case .HERO;             draw(cast(*Hero)entity);
+        case .ARTIFACT;         draw(cast(*Artifact)entity);
     }
 }
 
@@ -67,6 +73,7 @@ draw_debug :: (entity: *Entity) {
     if #complete entity.kind == {
         case .BASIC;            draw_debug(cast(*Basic)entity);
         case .HERO;             draw_debug(cast(*Hero)entity);
+        case .ARTIFACT;         draw_debug(cast(*Artifact)entity);
     }
 }
 

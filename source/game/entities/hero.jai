@@ -12,7 +12,7 @@ Hero :: struct {
     using animator : Animator;
 
     using constants : struct {
-        SPEED :: 15;
+        SPEED :: 40;
     }
 
     // State

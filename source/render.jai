@@ -62,13 +62,21 @@ z_sort :: (entities: [..] *Entity) {
 }
 
 draw_game :: (game : Game) {
-    // Entities
-    {
-        z_sort(game.entities);
 
-        use_sprite_shader();
-        for entity : game.entities {
-            draw(entity);
+    if #complete game.stage == {
+        case .WALKING; {
+            // Entities
+            {
+                z_sort(game.entities);
+
+                use_sprite_shader();
+                for entity : game.entities {
+                    draw(entity);
+                }
+            }
+        }
+        case .DECISION; {
+            draw(game.decision);
         }
     }
 
