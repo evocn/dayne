@@ -164,7 +164,7 @@ initialize_graphics_context :: () {
 
             width  := TILE_SIZE_IN_PIXELS;
             height := TILE_SIZE_IN_PIXELS;
-            dimensions, success := table_find(*size_exceptions, name);
+            success, dimensions := table_find_new(*size_exceptions, name);
             if success {
                 width  = dimensions.x;
                 height = dimensions.y;

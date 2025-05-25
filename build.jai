@@ -69,24 +69,9 @@ build :: () {
 
     // Init plugins
     {
-        plugin_names : [..] string;
-        defer array_reset(*plugin_names);
+        success, plugins_to_create := parse_plugin_arguments(arguments);
 
-        if build_settings.configuration == .DEBUG {
-            array_add(*plugin_names, "Iprof");
-        }
-
-        init_plugins(plugin_names, *plugins, w);
-
-        // Handle plugin arguments
-        {
-            cursor := 0;
-            for plugins {
-                //if it.log_help then it.log_help(it);
-
-                cursor = handle_one_option(it, arguments, cursor);
-            }
-        }
+        init_plugins(plugins_to_create, *plugins, w);
     }
 
     {

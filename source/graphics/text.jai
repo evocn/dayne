@@ -71,7 +71,7 @@ render_text :: (font : Font, text : string, x : float, y : float, alignment : Al
     total_width : float;
     if alignment == .CENTER || alignment == .RIGHT {
         for cast([] u8)text {
-            glyph, found := table_find(*font.characters, it);
+            found, glyph := table_find_new(*font.characters, it);
             assert(found);
 
             total_width += glyph.advance >> 6;
@@ -83,7 +83,7 @@ render_text :: (font : Font, text : string, x : float, y : float, alignment : Al
             break;
         }
 
-        glyph, found := table_find(*font.characters, char);
+        found, glyph := table_find_new(*font.characters, char);
         assert(found);
 
         xpos : float;

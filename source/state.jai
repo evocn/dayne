@@ -82,5 +82,5 @@ switch_scene :: (new_scene: Scene) {
 return_to_prior_scene :: () {
     using program_state;
 
-    current_scene, prior_scene = swap(current_scene, prior_scene);
+    current_scene, prior_scene = prior_scene, current_scene;
 }

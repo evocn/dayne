@@ -1,5 +1,3 @@
-// This file is copied from the jai beta. It handles a bunch of the low-level nonsense you need with Imgui/SDL/GL.
-// Just ignore this for the most part!
 
 // Data
 g_Time: u64 = 0;
@@ -75,8 +73,7 @@ ImGui_ImplSdl_RenderDrawLists :: (draw_data: *ImGui.ImDrawData) #c_call {
     // Setup viewport, orthographic projection matrix
     glViewport(0, 0, xx fb_width, xx fb_height);
 
-    new_context: Context;
-    push_context new_context {
+    push_context {
         ortho_projection := orthographic_projection_matrix(0, io.DisplaySize.x, io.DisplaySize.y, 0, 0, 1);
         ortho_projection = transpose(ortho_projection);
 

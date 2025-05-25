@@ -53,4 +53,4 @@ game_editor :: (using game: *Game) {
 }
 
 
-#load "imgui-sdl-gl.jai";
+#load "imgui_sdl_gl.jai";
