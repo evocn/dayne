@@ -17,16 +17,26 @@ build_settings : struct {
 
 program_title :: "Dayne";
 
+program_version :: struct {
+    major :: 0;
+    minor :: 1;
+    patch :: 0;
+}
+
 DONE
 #run add_build_string(shared_data, w = -1);
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// For some reason, #filepath has a trailing "/". I do this to work around it.
+root := #filepath;
+#run root.count -= 1;
+
 build :: () {
     // Create target program workspace
     w := compiler_create_workspace("Final Program");
     if !w {
-        print("Workspace creation failed.\n");
+        log_error("Workspace creation failed.");
         return;
     }
     options := get_build_options(w);
@@ -87,7 +97,7 @@ build :: () {
 
             // Files to compile
             {
-                add_build_file(tprint("%/source/main.jai", #filepath), w);
+                add_build_file(tprint("%/source/main.jai", root), w);
             }
 
             {
@@ -111,14 +121,23 @@ build :: () {
 
     // Publishing work
     {
-        log("\nCompilation ended on the target workspace. On to publishing work!");
+        log("Compilation ended on the target workspace. On to publishing work!");
 
         executable_path := sprint("%/%.exe", options.output_path, options.output_executable_name);
         defer free(executable_path);
 
-        icon_path :: "assets/publishing/icon.png";
+        icon_path :: "publishing/icon.png";
 
-        create_and_apply_manifest_and_icon_files(executable_path, icon_path);
+        #if OS == .WINDOWS {
+            log("\n---\n");
+            create_and_apply_manifest_and_icon_files(executable_path, icon_path);
+        }
+
+        if build_settings.configuration == .RELEASE {
+            log("\n---\n");
+            package_name := tprint("%-%.%.%", program_title, program_version.major, program_version.minor, program_version.patch);
+            package(package_name);
+        }
     }
 
     // Build Program (this one) settings.
@@ -141,7 +160,7 @@ message_loop :: (w: Workspace) {
     ctags: CTags;
     defer reset(*ctags);
     ctags.output_filename = "tags";
-    ctags.base_path = sprint("%", #filepath);
+    ctags.base_path = sprint("%", root);
     defer free(ctags.base_path);
 
     while true {
@@ -160,29 +179,106 @@ message_loop :: (w: Workspace) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#if OS == .WINDOWS {
 create_and_apply_manifest_and_icon_files :: (executable_path : string, icon_path : string) {
-    #if OS == .WINDOWS {
-        #import "Ico_File";
-        #import "Windows_Resources";
+    #import "Ico_File";
+    #import "Windows_Resources";
 
-        ico_data := create_ico_file_from_bitmap_filename(icon_path);
-        defer free(ico_data);
+    log("Creating an icon and manifest file for Windows from the icon at %.", icon_path);
 
-        ico_path := sprint("%.ico", path_strip_extension(icon_path));
-        defer free(ico_path);
-        // Save .ico back out for inspection
-        {
-            write_entire_file(ico_path, ico_data);
-        }
+    ico_data := create_ico_file_from_bitmap_filename(icon_path);
+    defer free(ico_data);
 
-        success := set_icon_by_data(executable_path, ico_data);
-        print("Icon     added: %\n", success);
-
-        manifest_options: Manifest_Options;
-        success = add_manifest_to_executable(executable_path, manifest_options);
-
-        print("Manifest added: %\n", success);
+    ico_path := sprint("%.ico", path_strip_extension(icon_path));
+    defer free(ico_path);
+    // Save .ico back out for inspection
+    {
+        write_entire_file(ico_path, ico_data);
     }
+
+    success := set_icon_by_data(executable_path, ico_data);
+    log("Icon     added: %\n", success);
+
+    manifest_options: Manifest_Options;
+    success = add_manifest_to_executable(executable_path, manifest_options);
+
+    log("Manifest added: %\n", success);
+}
+}
+
+packages_path :: "bin/packages";
+
+package :: (package_name: string) {
+    #import "File_Utilities";
+
+    package_path := tprint("%/%/%", root, packages_path, package_name);
+
+    log("Building a package for % at %.", package_name, package_path);
+
+    // Delete existing package (if one exists)
+    preexisting_package := file_exists(package_path);
+    if preexisting_package {
+        directory_deleted := delete_directory(package_path);
+        assert(directory_deleted, "Unable to delete the directory %", package_path);
+    }
+
+    // Create a directory for the package
+    directory_now_exists := make_directory_if_it_does_not_exist(package_path, recursive=true);
+    assert(directory_now_exists, "Unable to create the directory %", package_path);
+
+    // @TODO: If things get too big here, then I'd switch to this abstraction:
+    /*
+    copy_to_package :: (relative_path: string) -> bool {
+    }
+    */
+
+    // Executables and DLLs
+    {
+        binaries_path :: "bin";
+        package_binaries_path := tprint("%/%", package_path, binaries_path);
+
+        // Create a directory for the binaries
+        directory_now_exists := make_directory_if_it_does_not_exist(package_binaries_path, recursive=true);
+        assert(directory_now_exists, "Unable to create the directory %", package_binaries_path);
+
+        binaries_to_copy := string.[
+            "Dayne.exe",
+            "SDL2.dll",
+        ];
+
+        for binaries_to_copy {
+            source := tprint("%/%/%", root, binaries_path, it);
+            destination := tprint("%/%/%", package_path, binaries_path, it);
+
+            log("  % -> %", source, destination);
+
+            success := copy_file(source, destination);
+            assert(success, "Unable to copy % to %", source, destination);
+        }
+    }
+
+    // Assets
+    {
+        assets_path :: "assets";
+
+        {
+            source := tprint("%/%", root, assets_path);
+            destination := tprint("%/%", package_path, assets_path);
+
+            log("  % -> %", source, destination);
+
+            // ... The File_Utilities copy_directory function doesn't report failure...
+            // @TODO: Hand-roll our own thing here?
+            /*
+            success := copy_directory(source, destination);
+            assert(success, "Unable to copy % to %", source, destination);
+            */
+
+            copy_directory(source, destination);
+        }
+    }
+
+    log("Package successfully created at %.", package_path);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -193,11 +289,11 @@ create_and_apply_manifest_and_icon_files :: (executable_path : string, icon_path
 #import "String";
 #import "File";
 
+// Local Project Modules
+#import "ctags";
+
 // Plugins
 #import "Metaprogram_Plugins";
 #import "Iprof";
 
 plugins: [..] *Metaprogram_Plugin;
-
-// Local Project Modules
-#import "ctags";

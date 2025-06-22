@@ -61,7 +61,7 @@ draw_version_indicator :: () {
     use_text_shader();
 
     draw_text(
-        tprint("version %.%", VERSION.major, VERSION.minor),
+        tprint("version %.%.%", program_version.major, program_version.minor, program_version.patch),
         x = 1,
         y = 1,
         alignment = Alignment.LEFT,

@@ -270,6 +270,6 @@ shaders_path    :: "assets/shaders";
 
 #if DEVELOPER_TOOLS {
 tweaks_path     :: "bin";
-screenshots_path:: "screenshots";
-profiles_path   :: "profiles";
+screenshots_path:: "bin/screenshots";
+profiles_path   :: "bin/profiles";
 }

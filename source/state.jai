@@ -5,11 +5,6 @@
 using program_state : struct {
     DEVELOPER_TOOLS :: #run BUILD_TYPE == .DEBUG;
 
-    VERSION :: struct {
-        major :: 0;
-        minor :: 1;
-    }
-
     ////////////////////////////////////////////////////////////////////////////
 
     running := true;
