@@ -33,6 +33,25 @@ root := #filepath;
 #run root.count -= 1;
 
 build :: () {
+    // Verify that we are building with a specific version of the compiler.
+    // This is important since the compiler is still in beta and changing a lot.
+    {
+        operator == :: (a: Version_Info, b: Version_Info) -> bool {
+            return a.major == b.major && a.minor == b.minor && a.micro == b.micro;
+        }
+
+        MANDATORY_COMPILER_VERSION :: Version_Info.{0, 2, 14};
+
+        queried_version_info : Version_Info;
+        version_info_string := compiler_get_version_info(*queried_version_info);
+        log("Compiling the target program with %\n", version_info_string);
+
+        if queried_version_info != MANDATORY_COMPILER_VERSION {
+            log_error("Compile this with version % instead.", MANDATORY_COMPILER_VERSION);
+            return;
+        }
+    }
+
     // Create target program workspace
     w := compiler_create_workspace("Final Program");
     if !w {
@@ -42,16 +61,26 @@ build :: () {
     options := get_build_options(w);
 
 
-    // Handle command-line arguments / plugins
+    // Handle command-line arguments
     arguments := options.compile_time_command_line;
     {
         for argument: arguments {
+            if argument == "build.jai" then continue;
             if argument == {
-                case "release"; {
+                case "-debug"; {
+                    build_settings.configuration = .DEBUG;
+                }
+                case "-release"; {
                     build_settings.configuration = .RELEASE;
+                }
+                case; {
+                    log_error("Unknown argument %.\n Exiting.", argument);
+                    return;
                 }
             }
         }
+
+        log("Build settings: %\n", build_settings);
     }
 
 
@@ -73,18 +102,21 @@ build :: () {
             case .RELEASE;  set_optimization(*options, .VERY_OPTIMIZED);
         }
 
+        //log("%\n", options);
         set_build_options(options, w);
     }
-
 
     // Init plugins
     {
         success, plugins_to_create := parse_plugin_arguments(arguments);
-
         init_plugins(plugins_to_create, *plugins, w);
     }
 
+
+    // Compile
     {
+        log("Starting compilation now!\n");
+
         // Interception begins
         intercept_flags: Intercept_Flags;
         for plugins if it.before_intercept it.before_intercept(it, *intercept_flags);
@@ -111,7 +143,28 @@ build :: () {
             }
         }
 
-        message_loop(w);
+        // Message loop
+        {
+            // Ctags module setup
+            ctags: CTags;
+            defer reset(*ctags);
+            ctags.output_filename = "tags";
+            ctags.base_path = sprint("%", root);
+            defer free(ctags.base_path);
+
+            while true {
+                message := compiler_wait_for_message();
+                if !message continue;
+
+                if message.workspace == w {
+                    process_message(*ctags, message);
+
+                    for plugin : plugins if plugin.message plugin.message(plugin, message);
+                }
+
+                if message.kind == .COMPLETE return;
+            }
+        }
 
         compiler_end_intercept(w);
 
@@ -126,7 +179,7 @@ build :: () {
         executable_path := sprint("%/%.exe", options.output_path, options.output_executable_name);
         defer free(executable_path);
 
-        icon_path :: "publishing/icon.png";
+        icon_path :: "bin/publishing/icon.png";
 
         #if OS == .WINDOWS {
             log("\n---\n");
@@ -154,37 +207,20 @@ build :: () {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-message_loop :: (w: Workspace) {
-
-    // Ctags module setup
-    ctags: CTags;
-    defer reset(*ctags);
-    ctags.output_filename = "tags";
-    ctags.base_path = sprint("%", root);
-    defer free(ctags.base_path);
-
-    while true {
-        message := compiler_wait_for_message();
-        if !message continue;
-
-        if message.workspace == w {
-            process_message(*ctags, message);
-
-            for plugin : plugins if plugin.message plugin.message(plugin, message);
-        }
-
-        if message.kind == .COMPLETE return;
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 #if OS == .WINDOWS {
 create_and_apply_manifest_and_icon_files :: (executable_path : string, icon_path : string) {
     #import "Ico_File";
     #import "Windows_Resources";
 
-    log("Creating an icon and manifest file for Windows from the icon at %.", icon_path);
+    log("Creating manifest file for Windows and an icon from the file at %.", icon_path);
+
+    success : bool;
+
+    manifest_options: Manifest_Options;
+
+    success = add_manifest_to_executable(executable_path, manifest_options);
+
+    log("Manifest added: %\n", success);
 
     ico_data := create_ico_file_from_bitmap_filename(icon_path);
     defer free(ico_data);
@@ -196,13 +232,8 @@ create_and_apply_manifest_and_icon_files :: (executable_path : string, icon_path
         write_entire_file(ico_path, ico_data);
     }
 
-    success := set_icon_by_data(executable_path, ico_data);
+    success = set_icon_by_data(executable_path, ico_data);
     log("Icon     added: %\n", success);
-
-    manifest_options: Manifest_Options;
-    success = add_manifest_to_executable(executable_path, manifest_options);
-
-    log("Manifest added: %\n", success);
 }
 }
 
@@ -294,6 +325,5 @@ package :: (package_name: string) {
 
 // Plugins
 #import "Metaprogram_Plugins";
-#import "Iprof";
 
 plugins: [..] *Metaprogram_Plugin;

@@ -268,8 +268,8 @@ music_path      :: "assets/music";
 sfx_path        :: "assets/sfx";
 shaders_path    :: "assets/shaders";
 
+profiles_path   :: "bin/profiles";
 #if DEVELOPER_TOOLS {
 tweaks_path     :: "bin";
 screenshots_path:: "bin/screenshots";
-profiles_path   :: "bin/profiles";
 }
