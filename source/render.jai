@@ -1,6 +1,6 @@
-// Dayne
-// Render
-// August 2024
+
+// The core rendering loop
+////////////////////////////////////////////////////////////////////////////////
 
 render :: (game: Game, menu: Menu) {
     // render everything in this block to the framebuffer.

@@ -1,6 +1,6 @@
-// Dayne
+
 // Screenshot
-// February 2025
+////////////////////////////////////////////////////////////////////////////////
 
 // Screenshots the currently bound framebuffer.
 // Currently hardcoded to be simple RGB.

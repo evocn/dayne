@@ -1,6 +1,6 @@
-// Dayne
+
 // Graphics Drawing Functions
-// November 2024
+////////////////////////////////////////////////////////////////////////////////
 
 world_space_to_screen_pixel :: (x: int, y: int) -> pixel: Pair {
     pixel: Pair;

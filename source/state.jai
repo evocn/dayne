@@ -1,6 +1,6 @@
-// Dayne
-// State
-// February 2024
+
+// Program State
+////////////////////////////////////////////////////////////////////////////
 
 using program_state : struct {
     DEVELOPER_TOOLS :: #run BUILD_TYPE == .DEBUG;

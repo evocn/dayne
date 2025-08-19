@@ -1,7 +1,6 @@
-// Dayne
+
 // Text Rendering
-// Alex Hartford
-// February 2024
+////////////////////////////////////////////////////////////////////////////////
 
 draw_text :: (text: string, x: int, y: int, 
               alignment := Alignment.LEFT,

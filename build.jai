@@ -1,9 +1,5 @@
-// Dayne
-// Build
-// Alex Hartford
 
 // This file contains a metaprogram whose objective is to build the target program contained in source/.
-
 
 // Shared between the build program and the target program.
 shared_data :: #string DONE

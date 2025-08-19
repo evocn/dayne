@@ -1,6 +1,6 @@
-// Dayne
+
 // Collision Tester (Entity)
-// February 2025
+////////////////////////////////////////////////////////////////////////////////
 
 Collision_Tester :: struct {
     using #as entity : Entity;

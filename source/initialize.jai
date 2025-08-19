@@ -1,6 +1,6 @@
-// Dayne
+
 // Initialize
-// February 2024
+////////////////////////////////////////////////////////////////////////////////
 
 initialize_everything :: () {
     set_working_directory_to_base_folder :: () {

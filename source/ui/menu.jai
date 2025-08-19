@@ -1,6 +1,6 @@
-// Dayne
-// Menu
-// February 2024
+
+// Menu (simple, for the pause screen, mostly)
+////////////////////////////////////////////////////////////////////////////////
 
 apply_inputs :: (using input: Input, menu: *Menu) {
     if start.just_pressed || b.just_pressed {

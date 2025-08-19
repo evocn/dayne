@@ -1,6 +1,5 @@
-// Dayne
+
 // Graphics Rendering
-// August 2024
 
 // This set of files governs drawing stuff to the screen.
 // * Window sizing / context
@@ -8,6 +7,8 @@
 // * Textures
 // * Primitives
 // * Text
+
+////////////////////////////////////////////////////////////////////////////////
 
 #load "window.jai";
 #load "draw.jai";

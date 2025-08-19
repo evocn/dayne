@@ -1,6 +1,6 @@
-// Dayne
+
 // Main
-// September 2024
+////////////////////////////////////////////////////////////////////////////////
 
 main :: () {
     random_seed(cast,force(u64)current_time_monotonic().low);
@@ -249,7 +249,6 @@ ImGui :: #import "ImGui";
 #load "audio.jai";
 #load "animation/animation.jai";
 #load "collision/collision.jai";
-#load "ui/ui.jai";
 
 // Tools
 #load "tools/profiler.jai";

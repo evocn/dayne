@@ -1,6 +1,6 @@
-// Dayne
+
 // Tweaks
-// February 2024
+////////////////////////////////////////////////////////////////////////////////
 
 save_tweaks_file :: (file_name : string) {
     builder : String_Builder;

@@ -1,7 +1,6 @@
-// Dayne
+
 // OpenGL Shaders
-// Alex Hartford
-// February 2024
+////////////////////////////////////////////////////////////////////////////////
 
 use_sprite_shader :: () -> Shader {
     shader := graphics_context.sprite_shader;

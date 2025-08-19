@@ -1,6 +1,6 @@
-// Dayne
-// Utils
-// August 2024
+
+// Utilities
+////////////////////////////////////////////////////////////////////////////////
 
 debug_print :: inline (s : string, color := white) {
     #if DEVELOPER_TOOLS {

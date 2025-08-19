@@ -1,6 +1,11 @@
-// Dayne
+
 // Game
-// November 2024
+
+// This set of files is where gameplay data is kept.
+// There is a base "Game" primitive, which stores all the internal data for the game.
+// In addition, "Entity" is next door, and under entities/, the types of the game are defined.
+
+////////////////////////////////////////////////////////////////////////////////
 
 #load "entity.jai";
 
