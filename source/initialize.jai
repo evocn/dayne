@@ -110,10 +110,8 @@ initialize_imgui :: () {
 
     // Settings
     {
-        ImGui.StyleColorsClassic();
-        //ImGui.StyleColorsLight();
-
-        io.IniFilename = temp_c_string(tprint("%/imgui.ini", path_strip_filename(get_path_of_running_executable())));
+        //ImGui.StyleColorsClassic();
+        ImGui.StyleColorsLight();
     }
 }
 }

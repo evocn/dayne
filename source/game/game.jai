@@ -37,7 +37,6 @@ apply_inputs :: (using input: Input, game: *Game) {
 initialize :: (using game: *Game) {
     // Create Entities
     {
-        /*
         {
             using basic : *Basic = xx new_entity(.BASIC);
 
@@ -50,7 +49,6 @@ initialize :: (using game: *Game) {
 
             array_add(*entities, xx basic);
         }
-        */
 
         {
             using tester : *Collision_Tester = xx new_entity(.COLLISION_TESTER);
@@ -68,14 +66,14 @@ initialize :: (using game: *Game) {
         }
 
         {
-            for 0..1000 {
+            for 0..5 {
                 {
                     using tester : *Solid_Tester = xx new_entity(.SOLID_TESTER);
 
                     width   = 16;
                     height  = 16;
 
-                    x = it * width;
+                    x = cast(int, 2.5 * it * width);
                     y = 64;
 
                     //solid.collidable = false;

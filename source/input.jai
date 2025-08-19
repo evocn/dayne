@@ -27,16 +27,20 @@ update :: (button: *Button) {
 ////////////////////////////////////////////////////////////////////////////////
 
 Input :: struct {
-    up      : Button;
-    left    : Button;
-    down    : Button;
-    right   : Button;
+    using button_inputs : struct {
+        up      : Button;
+        left    : Button;
+        down    : Button;
+        right   : Button;
 
-    a       : Button;
-    b       : Button;
+        a       : Button;
+        b       : Button;
 
-    start   : Button;
-    select  : Button;
+        start   : Button;
+        select  : Button;
+    }
+
+    mouse : Mouse;
 }
 
 post_frame_update :: (input: *Input) {
@@ -49,9 +53,6 @@ post_frame_update :: (input: *Input) {
     update(*input.start);
     update(*input.select);
 }
-
-
-////////////////////////////////////////////////////////////////////////////////
 
 Mouse :: struct {
     active  : bool = true;
@@ -71,7 +72,7 @@ post_frame_update :: (mouse: *Mouse) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
+gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
     event : SDL_Event;
     while SDL_PollEvent(*event) {
         #if DEVELOPER_TOOLS then ImGui_ImplSdl_ProcessEvent(*event);
@@ -81,7 +82,7 @@ gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
                 program_state.running = false;
 
             case SDL_KEYUP;
-                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_keyboard return;
+                #if DEVELOPER_TOOLS then if program_state.editor.active && program_state.editor.imgui_state.capturing_keyboard return;
 
                 {
                     if event.key.keysym.sym == SDLK_w       release(*input.up);
@@ -97,7 +98,7 @@ gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
                 }
 
             case SDL_KEYDOWN;
-                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_keyboard return;
+                #if DEVELOPER_TOOLS then if program_state.editor.active && program_state.editor.imgui_state.capturing_keyboard return;
 
                 // Main Program Inputs
                 {
@@ -118,30 +119,36 @@ gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
                 // Development keybinds
                 #if DEVELOPER_TOOLS {
                     if event.key.keysym.sym == SDLK_F1 {
-                        switch_scene(.GAME);
-                        deactivate_mouse();
+                        switch_scene(.TITLE);
                     }
 
                     if event.key.keysym.sym == SDLK_F2 {
-                        switch_scene(.EDITOR);
-                        activate_mouse();
+                        switch_scene(.GAME);
                     }
 
                     if event.key.keysym.sym == SDLK_F3 {
-                        switch_scene(.DEMO);
+                        switch_scene(.MENU);
                     }
 
                     if event.key.keysym.sym == SDLK_F4 {
+                        switch_scene(.DEMO);
+                    }
+
+                    if event.key.keysym.sym == SDLK_F5 {
                         // FREE
                     }
 
                     if event.key.keysym.sym == SDLK_F6 {
-                        new_song := "bach";
-                        play_music(new_song);
+                        // FREE
                     }
 
                     if event.key.keysym.sym == SDLK_F7 {
-                        // FREE
+                        if editor.active {
+                            deactivate(*editor);
+                        }
+                        else {
+                            activate(*editor);
+                        }
                     }
 
                     if event.key.keysym.sym == SDLK_F8 {
@@ -166,37 +173,37 @@ gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
                 }
 
             case SDL_MOUSEBUTTONDOWN;
-                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_mouse return;
+                #if DEVELOPER_TOOLS then if program_state.editor.active && program_state.editor.imgui_state.capturing_mouse return;
 
                 // Main Program Inputs
                 {
-                    if event.button.button == SDL_BUTTON_LEFT   press(*mouse.left);
-                    if event.button.button == SDL_BUTTON_RIGHT  press(*mouse.right);
-                    if event.button.button == SDL_BUTTON_MIDDLE press(*mouse.middle);
+                    if event.button.button == SDL_BUTTON_LEFT   press(*input.mouse.left);
+                    if event.button.button == SDL_BUTTON_RIGHT  press(*input.mouse.right);
+                    if event.button.button == SDL_BUTTON_MIDDLE press(*input.mouse.middle);
                 }
 
             case SDL_MOUSEBUTTONUP;
-                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_mouse return;
+                #if DEVELOPER_TOOLS then if program_state.editor.active && program_state.editor.imgui_state.capturing_mouse return;
 
                 // Main Program Inputs
                 {
-                    if event.button.button == SDL_BUTTON_LEFT   release(*mouse.left);
-                    if event.button.button == SDL_BUTTON_RIGHT  release(*mouse.right);
-                    if event.button.button == SDL_BUTTON_MIDDLE release(*mouse.middle);
+                    if event.button.button == SDL_BUTTON_LEFT   release(*input.mouse.left);
+                    if event.button.button == SDL_BUTTON_RIGHT  release(*input.mouse.right);
+                    if event.button.button == SDL_BUTTON_MIDDLE release(*input.mouse.middle);
                 }
 
 
 
             case SDL_MOUSEMOTION;
-                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_mouse return;
+                #if DEVELOPER_TOOLS then if program_state.editor.active && program_state.editor.imgui_state.capturing_mouse return;
 
                 // Main Program Inputs
                 {
                     // @TODO: Review these arbitrary offsets for actual pixel correctness.
-                    mouse.position.x = cast(int)(event.motion.x * 
+                    input.mouse.position.x = cast(int)(event.motion.x * 
                         (cast(float)PIXEL_WIDTH  / graphics_context.window_width)) + 1
                     ;
-                    mouse.position.y = PIXEL_HEIGHT - cast(int)(event.motion.y * 
+                    input.mouse.position.y = PIXEL_HEIGHT - cast(int)(event.motion.y * 
                         (cast(float)PIXEL_HEIGHT / graphics_context.window_height)) - 1
                     ;
                 }
@@ -248,11 +255,11 @@ gather_input :: (input: *Input, mouse: *Mouse, gamepad: *SDL_Joystick) {
                     }
 
                     case .SDL_WINDOWEVENT_ENTER; {
-                        mouse.active = true;
+                        input.mouse.active = true;
                     }
 
                     case .SDL_WINDOWEVENT_LEAVE; {
-                        mouse.active = false;
+                        input.mouse.active = false;
                     }
                 }
         }

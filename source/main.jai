@@ -8,7 +8,6 @@ main :: () {
     initialize_everything();
 
     gamepad: SDL_Joystick;
-    mouse: Mouse;
 
     main_menu := menu_initialize();
 
@@ -54,12 +53,19 @@ main :: () {
         {
             zone(.INPUT);
 
-            gather_input(*input_one, *mouse, *gamepad);
-            //gather_input(*input_two, *mouse, *gamepad);
+            gather_input(*input_one, *gamepad);
+            //gather_input(*input_two, *gamepad);
 
             defer {
                 post_frame_update(*input_one);
                 //post_frame_update(*input_two);
+            }
+
+
+            #if DEVELOPER_TOOLS {
+                if editor.active {
+                    apply_inputs(input_one, *editor);
+                }
             }
 
             // Dispatch Inputs based on program state
@@ -82,11 +88,6 @@ main :: () {
                     }
 
                     apply_inputs(input_one, *game);
-
-                case .EDITOR;
-                    #if DEVELOPER_TOOLS {
-                        apply_inputs(input_one, *editor);
-                    }
 
                 case .DEMO;
                     if input_one.a.just_pressed || input_one.b.just_pressed {
@@ -140,7 +141,6 @@ main :: () {
                     }
 
                 case .MENU;
-                case .EDITOR;
 
                 case .DEMO;
             }
@@ -159,7 +159,7 @@ main :: () {
             );
 
             #if DEVELOPER_TOOLS {
-                if program_state.current_scene == .EDITOR {
+                if editor.active {
                     update_and_draw_editor(*game);
                     ImGui_ImplSdl_RenderDrawLists(ImGui.GetDrawData());
                 }
@@ -198,13 +198,13 @@ main :: () {
 
     cleanup_for_shutdown(*game, *main_menu);
 
-
-    #if DEVELOPER_TOOLS then report_memory_leaks();
-
-    // For postmortem console outputs
+    // Uncomment this for memory debugging
+    /*
     #if DEVELOPER_TOOLS {
+        report_memory_leaks();
         defer while true { SDL_Delay(100000); }
     }
+    */
 }
 
 
@@ -229,8 +229,8 @@ using Basic_Module :: #import "Basic"()(MEMORY_DEBUGGER=true);
 using Sound_Player :: #import "Sound_Player";
 
 #if DEVELOPER_TOOLS {
-#import "stb_image_write"; // For Screenshots
 ImGui :: #import "ImGui";
+#import "stb_image_write"; // For Screenshots
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -246,17 +246,18 @@ ImGui :: #import "ImGui";
 // Subsystems
 #load "game/game.jai";
 #load "graphics/graphics.jai";
-#load "audio.jai";
+#load "audio/audio.jai";
 #load "animation/animation.jai";
 #load "collision/collision.jai";
+#load "menu/menu.jai";
 
 // Tools
 #load "tools/profiler.jai";
 #if DEVELOPER_TOOLS {
-    #load "tools/editor/editor.jai";
-    #load "tools/debug.jai";
-    #load "tools/tweaks.jai";
-    #load "tools/screenshot.jai";
+#load "tools/editor/editor.jai";
+#load "tools/debug.jai";
+#load "tools/tweaks.jai";
+#load "tools/screenshot.jai";
 }
 
 // Asset Paths

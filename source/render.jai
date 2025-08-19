@@ -26,10 +26,6 @@ render :: (game: Game, menu: Menu) {
                 case .MENU;
                     draw_menu(menu);
 
-                case .EDITOR;
-                    draw_game(game);
-                    // see editor.jai for editor drawing code.
-
                 case .DEMO;
                     draw_demo();
             }
@@ -88,5 +84,13 @@ draw_game :: (game : Game) {
 }
 
 draw_user_interface :: (game: Game) {
-    //draw_mouse_cursor(input_one.mouse_position);
+    #if DEVELOPER_TOOLS {
+        // For now, we'll just not draw these elements when we're editing.
+        if program_state.editor.active {
+            return;
+        }
+    }
+
+    draw_mouse_cursor(input_one.mouse.position);
+
 }
