@@ -36,14 +36,6 @@ main :: () {
             #if DEVELOPER_TOOLS {
                 update(*debug_messages);
 
-                ms  := 1000.0 * get_average(tracker);
-                fps := cast(int)(1.0 / get_average(tracker));
-                debug_print(tprint("dt: ~% ms (% fps)", 
-                    formatFloat(ms, trailing_width = 1, zero_removal = .NO),
-                    fps,
-                    pink
-                ));
-
                 add_sample(*tracker, dt);
             }
         }
@@ -99,7 +91,7 @@ main :: () {
                 debug_print(tprint("Scene: %", program_state.current_scene));
 
                 debug_print(
-                    tprint("P: %x%, W: %x%, V: %x%", 
+                    tprint("P: %x%, W: %x%, V: %x%",
                         PIXEL_WIDTH, PIXEL_HEIGHT,
                         graphics_context.window_width, graphics_context.window_height,
                         graphics_context.viewport_width, graphics_context.viewport_height

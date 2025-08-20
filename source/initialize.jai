@@ -106,7 +106,7 @@ initialize_imgui :: () {
     ImGui_ImplSdl_Init(window);
 
     io := ImGui.GetIO();
-    io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", graphics_context.window_height / 40.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
+    //io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", graphics_context.window_height / 40.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
 
     // Settings
     {
