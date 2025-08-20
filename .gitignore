@@ -1,8 +1,8 @@
+tags
 bin/screenshots/
 bin/profiles/
 bin/packages/
 *.ini
-tags
 *.tweaks
 *.exe
 *.pdb

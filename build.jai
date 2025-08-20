@@ -167,7 +167,7 @@ build :: () {
                     for plugin : plugins if plugin.message plugin.message(plugin, message);
                 }
 
-                if message.kind == .COMPLETE return;
+                if message.kind == .COMPLETE break;
             }
         }
 

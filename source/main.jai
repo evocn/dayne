@@ -3,7 +3,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 main :: () {
-    random_seed(cast,force(u64)current_time_monotonic().low);
+    // Seed the random number generator.
+    {
+        random_seed(cast,force(u64)current_time_monotonic().low);
+    }
+
+    // Set working directory to the base folder (this executable is in bin/*.exe. We want all paths to be relative to the root of the package.)
+    {
+        set_working_directory_to_base_folder :: () {
+            executable_path := path_strip_filename(get_path_of_running_executable());
+            set_working_directory(tprint("%/../", executable_path));
+        }
+        set_working_directory_to_base_folder();
+    }
 
     initialize_everything();
 
@@ -16,7 +28,7 @@ main :: () {
     a.data = *game.arena;
     initialize(*game,, allocator=a);
 
-    // Play the starting music!
+    // Play the starting music! (this shouldn't actually go here in a real game)
     {
         song := "secret";
         play_music(song);

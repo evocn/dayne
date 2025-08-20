@@ -3,12 +3,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 initialize_everything :: () {
-    set_working_directory_to_base_folder :: () {
-        executable_path := path_strip_filename(get_path_of_running_executable());
-        set_working_directory(tprint("%/../", executable_path));
-    }
-    set_working_directory_to_base_folder();
-
     initialize_sdl();
     initialize_gl();
 
@@ -106,6 +100,7 @@ initialize_imgui :: () {
     ImGui_ImplSdl_Init(window);
 
     io := ImGui.GetIO();
+    io.IniFilename = "bin/imgui.ini";
     //io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", graphics_context.window_height / 40.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
 
     // Settings
