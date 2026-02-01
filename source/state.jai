@@ -21,6 +21,7 @@ using program_state : struct {
     window_context  : Window_Context;
     graphics_context: Graphics_Context;
     audio_context   : Audio_Context;
+    ui_context      : UI_Context;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +35,7 @@ using program_state : struct {
     ////////////////////////////////////////////////////////////////////////////
 
     using framerate : struct {
-        LOCKED_FPS :: 60;
+        LOCKED_FPS :: 144;
         LOCKED_DT  :: 1.0 / LOCKED_FPS;
     }
 

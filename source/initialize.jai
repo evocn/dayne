@@ -13,6 +13,7 @@ initialize_everything :: () {
     initialize_window_context();
     initialize_graphics_context();
     initialize_audio_context();
+    initialize_ui_context();
 
     apply_default_settings :: () {
         window_context.fullscreen = false;
@@ -206,6 +207,10 @@ initialize_audio_context :: () {
     }
 }
 
+initialize_ui_context :: () {
+    initialize(*ui_context);
+}
+
 //
 // Shutdown ////////////////////////////////////////////////////////////////////
 //
@@ -216,6 +221,11 @@ cleanup_for_shutdown :: (game: *Game, menu: *Menu) {
     // Game Cleanup
     {
         finalize(game);
+    }
+
+    // UI Cleanup
+    {
+        finalize(*ui_context);
     }
 
     // Audio Cleanup

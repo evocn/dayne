@@ -50,6 +50,8 @@ main :: () {
                 add_sample(*tracker, dt);
             }
 
+            new_frame(*ui_context);
+
             debug_print(tprint("Mode: %", program_state.current_mode));
             debug_print(window_context);
         }
@@ -103,12 +105,16 @@ main :: () {
                         return_to_prior_mode();
                     }
             }
+
+            apply_inputs(input_one, *ui_context);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         // Simulate
         {
             zone(.GAME);
+
+            update(*ui_context);
 
             if #complete program_state.current_mode == {
                 case .TITLE;
@@ -240,6 +246,7 @@ ImGui :: #import "ImGui";
 #load "game/game.jai";
 #load "graphics/graphics.jai";
 #load "audio/audio.jai";
+#load "ui/ui.jai";
 #load "animation/animation.jai";
 #load "collision/collision.jai";
 #load "menu/menu.jai";

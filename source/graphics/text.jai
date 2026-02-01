@@ -6,9 +6,11 @@ draw_text :: (text: string, x: int, y: int,
               alignment := Alignment.LEFT,
               progress := -1,
               font : Font_Kind = .MAIN,
-              color := white
+              color := white,
+              separation := 0
              )
 {
+    use_text_shader();
     shader := graphics_context.text_shader;
 
     set_vec4(shader, "color", color);
@@ -24,7 +26,7 @@ draw_text :: (text: string, x: int, y: int,
         render_text(
             the_font, it,
             cast(float)(x),
-            cast(float)(y - (it_index * (the_font.height - 4))),
+            cast(float)(y - (it_index * (the_font.height - separation))),
             alignment = alignment,
             progress = progress,
         );

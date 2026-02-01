@@ -2,30 +2,18 @@
 // Graphics Drawing Functions
 ////////////////////////////////////////////////////////////////////////////////
 
-world_space_to_screen_pixel :: (x: int, y: int) -> pixel: Pair {
-    pixel: Pair;
+// @TODO: Maybe work these out into like UI drawing, primitive drawing, etc. functions?
 
-    pixel.x = x;
-    pixel.y = y;
+draw_game_over :: () {
+    box := Box.{PIXEL_WIDTH / 2 - 60, PIXEL_HEIGHT / 2 - 20, 120, 40};
+    draw(box, black);
 
-    // Camera Transform
-    {
-        pixel -= game.camera.position;
-        pixel = game.camera.zoom * pixel;
-    }
-
-    return pixel;
-}
-
-screen_pixel_zoom :: () -> zoom: int {
-    return game.camera.zoom;
-}
-
-on_screen :: inline (screen_pixel: Pair) -> bool {
-    x := screen_pixel.x >= 0 && screen_pixel.x < PIXEL_WIDTH;
-    y := screen_pixel.y >= 0 && screen_pixel.y < PIXEL_HEIGHT;
-
-    return x && y;
+    draw_text(
+        "Game Over",
+        PIXEL_WIDTH / 2, PIXEL_HEIGHT / 2,
+        alignment = .CENTER,
+        color = white,
+    );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -257,11 +245,20 @@ draw_clock_readout :: () {
 }
 
 draw_mouse_cursor :: (
-    position: Pair
+    position: Pair,
+    frame := 0
 )
 {
     use_sprite_shader();
-    draw_sprite_at(position - .{0, 16}, "cursor", frame = 0);
+
+    x_offset_for_sprite := -6;
+    y_offset_for_sprite := -10;
+
+    draw_sprite_at(
+        position + .{x_offset_for_sprite, y_offset_for_sprite},
+        "cursor",
+        frame = frame,
+    );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -328,4 +325,90 @@ draw_sprite_at :: (
 
         use_color_override = false,
     );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Pip_Visuals :: struct {
+    SIZE :: 8;
+    SEPARATION :: 4;
+    PIPS_PER_GROUP :: 4;
+
+    Direction :: enum {
+        LEFT;
+        RIGHT;
+        UP;
+        DOWN;
+    }
+    DIRECTION :: Direction.RIGHT;
+}
+
+draw_pip :: (x: int, y: int, size := Pip_Visuals.SIZE, color := yellow, outline_color := white)
+{
+    box := Box.{x, y, size, size};
+    draw(box, color, outline_color);
+}
+
+draw_pips :: (
+    x: int, y: int,
+    count : int,
+    filled := -1,
+    pip_size := Pip_Visuals.SIZE,
+    pip_separation := Pip_Visuals.SEPARATION,
+    pips_per_group := Pip_Visuals.PIPS_PER_GROUP,
+    direction := Pip_Visuals.DIRECTION,
+    color := yellow,
+    empty_color := gray,
+    outline_color := white
+)
+{
+    offset := pip_size + pip_separation;
+
+    cursor := Pair.{x, y};
+    origin := Pair.{x, y};
+    next_in_this_group : Pair;
+    next_group : Pair;
+
+    if direction == {
+        case .LEFT; {
+            next_in_this_group = .{-offset, 0};
+            next_group = .{0, -offset};
+        }
+        case .RIGHT; {
+            next_in_this_group = .{offset, 0};
+            next_group = .{0, -offset};
+        }
+        case .UP; {
+            next_in_this_group = .{0, offset};
+            next_group = .{offset, 0};
+        }
+        case .DOWN; {
+            next_in_this_group = .{0, -offset};
+            next_group = .{offset, 0};
+        }
+    }
+
+    for 0..count-1 {
+        {
+            c := color;
+            if it >= filled {
+                c = empty_color;
+            }
+
+            draw_pip(cursor.x, cursor.y, pip_size, c, outline_color);
+        }
+
+        // @TODO: Apparently this is broken...
+        {
+            next_group_time := it != 0 && it % pips_per_group == 0;
+            if next_group_time {
+                group_index := it / pips_per_group;
+                cursor = origin;
+                cursor += (next_group * group_index);
+            }
+            else {
+                cursor += next_in_this_group;
+            }
+        }
+    }
 }

@@ -21,7 +21,6 @@ render :: (game: Game, menu: Menu) {
 
                 case .GAME;
                     draw_game(game);
-                    draw_user_interface(game);
 
                 case .MENU;
                     draw_menu(menu);
@@ -29,6 +28,8 @@ render :: (game: Game, menu: Menu) {
                 case .DEMO;
                     draw_demo();
             }
+
+            draw(*ui_context);
         }
 
         #if DEVELOPER_TOOLS {
@@ -46,51 +47,4 @@ render :: (game: Game, menu: Menu) {
     }
 
     render_framebuffer_to_screen();
-}
-
-z_sort :: (entities: [..] *Entity) {
-    comparison :: (a: *Entity, b: *Entity) -> int { 
-        if a.z_index > b.z_index        return 1;
-        else if a.z_index < b.z_index   return -1;
-        else return b.id - a.id;
-    }
-    quick_sort(entities, comparison);
-}
-
-draw_game :: (game : Game) {
-    // Entities
-    {
-        z_sort(game.entities);
-
-        use_sprite_shader();
-        for entity : game.entities {
-            draw(entity);
-        }
-    }
-
-    #if DEVELOPER_TOOLS {
-        if program_state.show_debug_info {
-
-            // This is dumb code, which works since most entities' "draw_debug()" just draws a dumb quad.
-            // The more full-featured solution to this (and the use_sprite_shader() above) is to do actual batching of draw calls.
-            // For now, we're cool.
-            use_basic_shader();
-
-            for entity : game.entities {
-                draw_debug(entity);
-            }
-        }
-    }
-}
-
-draw_user_interface :: (game: Game) {
-    #if DEVELOPER_TOOLS {
-        // For now, we'll just not draw these elements when we're editing.
-        if program_state.editor.active {
-            return;
-        }
-    }
-
-    draw_mouse_cursor(input_one.mouse.position);
-
 }

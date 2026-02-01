@@ -96,6 +96,13 @@ initialize :: (using game: *Game) {
     }
 }
 
+finalize :: (using game: *Game) {
+    reset(*arena, overwrite_memory=true);
+    reset(*simulation);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 simulate :: (using game: *Game, dt: float) {
     for entity : entities {
         update(entity, dt);
@@ -103,9 +110,48 @@ simulate :: (using game: *Game, dt: float) {
 
     debug_print(tprint("Simulated % entities", entities.count), yellow);
     debug_print(tprint("Camera: %", camera), yellow);
+
+    {
+        box := Box.{10, 10, 40, 20};
+        if button(box, "Click!") {
+            play_sfx("click");
+        }
+    }
 }
 
-finalize :: (using game: *Game) {
-    reset(*arena, overwrite_memory=true);
-    reset(*simulation);
+////////////////////////////////////////////////////////////////////////////////
+
+draw_game :: (game : Game) {
+    z_sort :: (entities: [..] *Entity) {
+        comparison :: (a: *Entity, b: *Entity) -> int { 
+            if a.z_index > b.z_index        return 1;
+            else if a.z_index < b.z_index   return -1;
+            else return b.id - a.id;
+        }
+        quick_sort(entities, comparison);
+    }
+
+    // Entities
+    {
+        z_sort(game.entities);
+
+        use_sprite_shader();
+        for entity : game.entities {
+            draw(entity);
+        }
+    }
+
+    #if DEVELOPER_TOOLS {
+        if program_state.show_debug_info {
+
+            // This is dumb code, which works since most entities' "draw_debug()" just draws a dumb quad.
+            // The more full-featured solution to this (and the use_sprite_shader() above) is to do actual batching of draw calls.
+            // For now, we're cool.
+            use_basic_shader();
+
+            for entity : game.entities {
+                draw_debug(entity);
+            }
+        }
+    }
 }
