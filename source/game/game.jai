@@ -15,6 +15,7 @@ Game :: struct {
 
     using internals : struct {
         arena : Flat_Pool;
+        allocator : Allocator;
 
         simulation: Simulation;
         entities    : [..] *Entity;

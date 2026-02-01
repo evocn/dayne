@@ -13,7 +13,7 @@ render :: (game: Game, menu: Menu) {
             glClearColor(graphics_context.background_color.x, graphics_context.background_color.y, graphics_context.background_color.z, 1);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            if #complete program_state.current_scene == {
+            if #complete program_state.current_mode == {
                 case .TITLE;
                     draw_title_screen();
                     draw_version_indicator();

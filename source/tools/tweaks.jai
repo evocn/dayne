@@ -10,7 +10,7 @@ save_tweaks_file :: (file_name : string) {
     {
         append(*builder, "# Tweaks file\n\n");
 
-        print_to_builder(*builder, "fullscreen %\n", graphics_context.fullscreen);
+        print_to_builder(*builder, "fullscreen %\n", window_context.fullscreen);
 
         print_to_builder(*builder, "sfx %\n", Sound_Player.mix_levels[Sound_Category.GENERAL_SFX]);
         print_to_builder(*builder, "music %\n", Sound_Player.mix_levels[Sound_Category.MUSIC]);
@@ -42,7 +42,7 @@ load_tweaks_file_and_apply_results :: (file_name : string) -> file_exists: bool 
             successfully_parsed : bool;
             if left == {
                 case "fullscreen";
-                    graphics_context.fullscreen, successfully_parsed = parse_bool(*right);
+                    window_context.fullscreen, successfully_parsed = parse_bool(*right);
                     set_screen_mode_according_to_fullscreen_variable();
 
                 case "sfx";

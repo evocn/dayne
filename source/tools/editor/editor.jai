@@ -36,12 +36,12 @@ update_and_draw_editor :: (game: *Game) {
 
 activate :: (using editor: *Editor) {
     active = true;
-    activate_mouse();
+    SDL_ShowCursor(1);
 }
 
 deactivate :: (using editor: *Editor) {
     active = false;
-    deactivate_mouse();
+    SDL_ShowCursor(0);
 }
 
 // Individual Editor Features
@@ -50,18 +50,18 @@ deactivate :: (using editor: *Editor) {
 editor_functions :: () {
     ImGui.Begin("Functions");
     {
-        ImGui.Text("Scenes:");
-        if ImGui.RadioButton("Title (F1)", program_state.current_scene == .TITLE) {
-            switch_scene(.TITLE);
+        ImGui.Text("Modes:");
+        if ImGui.RadioButton("Title (F1)", program_state.current_mode == .TITLE) {
+            switch_mode(.TITLE);
         }
-        if ImGui.RadioButton("Game (F2)", program_state.current_scene == .GAME) {
-            switch_scene(.GAME);
+        if ImGui.RadioButton("Game (F2)", program_state.current_mode == .GAME) {
+            switch_mode(.GAME);
         }
-        if ImGui.RadioButton("Menu (F3)", program_state.current_scene == .MENU) {
-            switch_scene(.MENU);
+        if ImGui.RadioButton("Menu (F3)", program_state.current_mode == .MENU) {
+            switch_mode(.MENU);
         }
-        if ImGui.RadioButton("Demo (F4)", program_state.current_scene == .DEMO) {
-            switch_scene(.DEMO);
+        if ImGui.RadioButton("Demo (F4)", program_state.current_mode == .DEMO) {
+            switch_mode(.DEMO);
         }
 
         ImGui.Checkbox("Debug Info (F8)", xx *program_state.show_debug_info);

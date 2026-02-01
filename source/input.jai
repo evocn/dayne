@@ -2,25 +2,29 @@
 // Input
 ////////////////////////////////////////////////////////////////////////////////
 
-Button :: struct {
-    just_pressed : bool;
+Input_Button :: struct {
+    just_pressed    : bool;
+    just_released   : bool;
     is_held : bool;
 }
 
-press :: (button: *Button) {
+press :: (button: *Input_Button) {
     button.just_pressed = true;
     button.is_held = true;
 }
 
-release :: (button: *Button) {
-    button.just_pressed = false;
+release :: (button: *Input_Button) {
+    button.just_released = true;
     button.is_held = false;
 }
 
-update :: (button: *Button) {
+update :: (button: *Input_Button) {
     if button.just_pressed {
         button.just_pressed = false;
-        button.is_held = true;
+    }
+
+    if button.just_released {
+        button.just_released = false;
     }
 }
 
@@ -28,16 +32,16 @@ update :: (button: *Button) {
 
 Input :: struct {
     using button_inputs : struct {
-        up      : Button;
-        left    : Button;
-        down    : Button;
-        right   : Button;
+        up      : Input_Button;
+        left    : Input_Button;
+        down    : Input_Button;
+        right   : Input_Button;
 
-        a       : Button;
-        b       : Button;
+        a       : Input_Button;
+        b       : Input_Button;
 
-        start   : Button;
-        select  : Button;
+        start   : Input_Button;
+        select  : Input_Button;
     }
 
     mouse : Mouse;
@@ -52,6 +56,8 @@ post_frame_update :: (input: *Input) {
     update(*input.b);
     update(*input.start);
     update(*input.select);
+
+    post_frame_update(*input.mouse);
 }
 
 Mouse :: struct {
@@ -59,9 +65,9 @@ Mouse :: struct {
 
     position: Pair;
 
-    left    : Button;
-    right   : Button;
-    middle  : Button;
+    left    : Input_Button;
+    right   : Input_Button;
+    middle  : Input_Button;
 }
 
 post_frame_update :: (mouse: *Mouse) {
@@ -73,16 +79,22 @@ post_frame_update :: (mouse: *Mouse) {
 ////////////////////////////////////////////////////////////////////////////////
 
 gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
+    #if DEVELOPER_TOOLS {
+        if program_state.editor.active {
+            debug_print(tprint("imgui got the mouse: %", program_state.editor.imgui_state.capturing_mouse));
+        }
+    }
+
     event : SDL_Event;
     while SDL_PollEvent(*event) {
-        #if DEVELOPER_TOOLS then ImGui_ImplSdl_ProcessEvent(*event);
+        #if DEVELOPER_TOOLS then if program_state.editor.active then ImGui_ImplSdl_ProcessEvent(*event);
 
         if event.type == {
             case SDL_QUIT;
                 program_state.running = false;
 
             case SDL_KEYUP;
-                #if DEVELOPER_TOOLS then if program_state.editor.active && program_state.editor.imgui_state.capturing_keyboard return;
+                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_keyboard return;
 
                 {
                     if event.key.keysym.sym == SDLK_w       release(*input.up);
@@ -98,7 +110,7 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                 }
 
             case SDL_KEYDOWN;
-                #if DEVELOPER_TOOLS then if program_state.editor.active && program_state.editor.imgui_state.capturing_keyboard return;
+                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_keyboard return;
 
                 // Main Program Inputs
                 {
@@ -119,19 +131,19 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                 // Development keybinds
                 #if DEVELOPER_TOOLS {
                     if event.key.keysym.sym == SDLK_F1 {
-                        switch_scene(.TITLE);
+                        switch_mode(.TITLE);
                     }
 
                     if event.key.keysym.sym == SDLK_F2 {
-                        switch_scene(.GAME);
+                        switch_mode(.GAME);
                     }
 
                     if event.key.keysym.sym == SDLK_F3 {
-                        switch_scene(.MENU);
+                        switch_mode(.MENU);
                     }
 
                     if event.key.keysym.sym == SDLK_F4 {
-                        switch_scene(.DEMO);
+                        switch_mode(.DEMO);
                     }
 
                     if event.key.keysym.sym == SDLK_F5 {
@@ -173,7 +185,7 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                 }
 
             case SDL_MOUSEBUTTONDOWN;
-                #if DEVELOPER_TOOLS then if program_state.editor.active && program_state.editor.imgui_state.capturing_mouse return;
+                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_mouse return;
 
                 // Main Program Inputs
                 {
@@ -183,7 +195,7 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
                 }
 
             case SDL_MOUSEBUTTONUP;
-                #if DEVELOPER_TOOLS then if program_state.editor.active && program_state.editor.imgui_state.capturing_mouse return;
+                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_mouse return;
 
                 // Main Program Inputs
                 {
@@ -195,16 +207,16 @@ gather_input :: (input: *Input, gamepad: *SDL_Joystick) {
 
 
             case SDL_MOUSEMOTION;
-                #if DEVELOPER_TOOLS then if program_state.editor.active && program_state.editor.imgui_state.capturing_mouse return;
+                #if DEVELOPER_TOOLS then if program_state.editor.imgui_state.capturing_mouse return;
 
                 // Main Program Inputs
                 {
                     // @TODO: Review these arbitrary offsets for actual pixel correctness.
                     input.mouse.position.x = cast(int)(event.motion.x * 
-                        (cast(float)PIXEL_WIDTH  / graphics_context.window_width)) + 1
+                        (cast(float)PIXEL_WIDTH  / window_context.window_width)) + 1
                     ;
                     input.mouse.position.y = PIXEL_HEIGHT - cast(int)(event.motion.y * 
-                        (cast(float)PIXEL_HEIGHT / graphics_context.window_height)) - 1
+                        (cast(float)PIXEL_HEIGHT / window_context.window_height)) - 1
                     ;
                 }
 

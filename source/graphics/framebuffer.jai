@@ -34,8 +34,8 @@ initialize_framebuffer :: () {
 draw_screen_quad :: (shader: Shader) {
     using graphics_context;
 
-    viewport_portion_of_the_screen_in_x := cast(float)viewport_height / window_height;
-    viewport_portion_of_the_screen_in_y := cast(float)viewport_width / window_width;
+    viewport_portion_of_the_screen_in_x := cast(float)window_context.viewport_height / window_context.window_height;
+    viewport_portion_of_the_screen_in_y := cast(float)window_context.viewport_width / window_context.window_width;
 
     model := Matrix4_Identity;
         // Scale
@@ -66,7 +66,7 @@ render_framebuffer_to_screen :: () {
     using graphics_context;
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, xx window_width, xx window_height);
+    glViewport(0, 0, xx window_context.window_width, xx window_context.window_height);
 
     glClearColor(graphics_context.marquee_color.x, graphics_context.marquee_color.y, graphics_context.marquee_color.z, 1);
     glClear(GL_COLOR_BUFFER_BIT);

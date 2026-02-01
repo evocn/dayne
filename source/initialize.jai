@@ -6,17 +6,16 @@ initialize_everything :: () {
     initialize_sdl();
     initialize_gl();
 
-    initialize_window_resolution();
-
     #if DEVELOPER_TOOLS {
         initialize_imgui();
     }
 
+    initialize_window_context();
     initialize_graphics_context();
     initialize_audio_context();
 
     apply_default_settings :: () {
-        graphics_context.fullscreen = false;
+        window_context.fullscreen = false;
         set_screen_mode_according_to_fullscreen_variable();
 
         Sound_Player.mix_levels[Sound_Category.GENERAL_SFX] = 0.5;
@@ -50,7 +49,7 @@ initialize_sdl :: () {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 
     window = SDL_CreateWindow(program_title,
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, graphics_context.window_width, graphics_context.window_height,
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_context.window_width, window_context.window_height,
         SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN);
 
     if !window {
@@ -101,12 +100,11 @@ initialize_imgui :: () {
 
     io := ImGui.GetIO();
     io.IniFilename = "bin/imgui.ini";
-    //io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/verdanab.ttf", graphics_context.window_height / 40.0, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
 
     // Settings
     {
-        //ImGui.StyleColorsClassic();
-        ImGui.StyleColorsLight();
+        ImGui.StyleColorsClassic();
+        //ImGui.StyleColorsLight();
     }
 }
 }
@@ -143,6 +141,8 @@ initialize_graphics_context :: () {
 
     // Initialize Sprites
     {
+        TILE_SIZE_IN_PIXELS :: 16;
+
         // This array is of sprites who we know are not TILE_SIZE_IN_PIXELS x TILE_SIZE_IN_PIXELS.
         size_exceptions : Table(string, Pair);
         {

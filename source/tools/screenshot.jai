@@ -12,7 +12,9 @@ screenshot :: () {
     stride      :: channels * width;
     total_bytes :: stride * height;
 
-    image : [total_bytes] GLubyte;
+    image := New([total_bytes] GLubyte);
+    defer free(image);
+
     glReadPixels(
         0,
         0,

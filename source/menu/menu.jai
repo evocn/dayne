@@ -4,7 +4,7 @@
 
 apply_inputs :: (using input: Input, menu: *Menu) {
     if start.just_pressed || b.just_pressed {
-        return_to_prior_scene();
+        return_to_prior_mode();
         play_sfx("click");
     }
 
@@ -56,7 +56,7 @@ menu_initialize :: () -> Menu {
         screen_mode := New(Menu_Element_Checkbox,, a);
         screen_mode.name = "Fullscreen";
         screen_mode.callback = set_screen_mode_according_to_fullscreen_variable;
-        screen_mode.value = *graphics_context.fullscreen;
+        screen_mode.value = *window_context.fullscreen;
         array_add(*elements, cast(*Menu_Element)screen_mode);
 
         sfx := New(Menu_Element_Slider,, a);
@@ -188,7 +188,7 @@ nudge_menu_element :: (using element: *Menu_Element, left := false) {
 
 // Callbacks for Menu Elements
 resume_game :: () {
-    return_to_prior_scene();
+    return_to_prior_mode();
 }
 
 quit_game :: () {
@@ -196,5 +196,5 @@ quit_game :: () {
 }
 
 go_to_settings :: () {
-    switch_scene(.MENU);
+    switch_mode(.MENU);
 }

@@ -2,7 +2,6 @@
 // Graphics Rendering
 
 // This set of files governs drawing stuff to the screen.
-// * Window sizing / context
 // * Shaders
 // * Textures
 // * Primitives
@@ -10,7 +9,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#load "window.jai";
 #load "draw.jai";
 #load "primitives.jai";
 #load "shader.jai";
@@ -22,8 +20,6 @@
 
 Graphics_Context :: struct {
     using internals : struct {
-        using window_context : Window_Context;
-
         using shaders : struct {
             basic_shader    : Shader;
             sprite_shader   : Shader;

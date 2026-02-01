@@ -23,10 +23,9 @@ main :: () {
 
     main_menu := menu_initialize();
 
-    a: Allocator;
-    a.proc = flat_pool_allocator_proc;
-    a.data = *game.arena;
-    initialize(*game,, allocator=a);
+    game.allocator.proc = flat_pool_allocator_proc;
+    game.allocator.data = *game.arena;
+    initialize(*game,, allocator=game.allocator);
 
     // Play the starting music! (this shouldn't actually go here in a real game)
     {
@@ -50,6 +49,9 @@ main :: () {
 
                 add_sample(*tracker, dt);
             }
+
+            debug_print(tprint("Mode: %", program_state.current_mode));
+            debug_print(window_context);
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +67,6 @@ main :: () {
                 //post_frame_update(*input_two);
             }
 
-
             #if DEVELOPER_TOOLS {
                 if editor.active {
                     apply_inputs(input_one, *editor);
@@ -73,14 +74,18 @@ main :: () {
             }
 
             // Dispatch Inputs based on program state
-            if #complete program_state.current_scene == {
+            if #complete program_state.current_mode == {
                 case .TITLE;
                     if input_one.start.just_pressed {
-                        switch_scene(.MENU);
+                        switch_mode(.MENU);
                     }
 
                     if input_one.a.just_pressed {
-                        switch_scene(.GAME);
+                        switch_mode(.GAME);
+                    }
+
+                    if input_one.mouse.left.just_pressed {
+                        switch_mode(.GAME);
                     }
 
                 case .MENU;
@@ -88,38 +93,15 @@ main :: () {
 
                 case .GAME;
                     if input_one.start.just_pressed {
-                        switch_scene(.MENU);
+                        switch_mode(.MENU);
                     }
 
                     apply_inputs(input_one, *game);
 
                 case .DEMO;
                     if input_one.a.just_pressed || input_one.b.just_pressed {
-                        return_to_prior_scene();
+                        return_to_prior_mode();
                     }
-            }
-
-            {
-                debug_print(tprint("Scene: %", program_state.current_scene));
-
-                debug_print(
-                    tprint("P: %x%, W: %x%, V: %x%",
-                        PIXEL_WIDTH, PIXEL_HEIGHT,
-                        graphics_context.window_width, graphics_context.window_height,
-                        graphics_context.viewport_width, graphics_context.viewport_height
-                    ),
-                    color = teal
-                );
-
-                if graphics_context.fullscreen {
-                    debug_print("Fullscreen", color = teal);
-                }
-                else {
-                    debug_print(
-                        tprint("Pixel Scale: %", graphics_context.scale_factor),
-                        color = teal
-                    );
-                }
             }
         }
 
@@ -128,7 +110,7 @@ main :: () {
         {
             zone(.GAME);
 
-            if #complete program_state.current_scene == {
+            if #complete program_state.current_mode == {
                 case .TITLE;
 
                 case .GAME;
@@ -202,13 +184,13 @@ main :: () {
 
     cleanup_for_shutdown(*game, *main_menu);
 
-    // Uncomment this for memory debugging
-    /*
-    #if DEVELOPER_TOOLS {
-        report_memory_leaks();
-        defer while true { SDL_Delay(100000); }
+    // Activate this for memory debugging of the whole program at close time.
+    #if 0 {
+        #if DEVELOPER_TOOLS {
+            report_memory_leaks();
+            defer while true { SDL_Delay(100000); }
+        }
     }
-    */
 }
 
 
@@ -216,9 +198,12 @@ main :: () {
 using Basic_Module :: #import "Basic"()(MEMORY_DEBUGGER=true);
 #import "String";
 #import "Math";
-#import "Sort";
 #import "Random";
+#import "Sort";
+#import "Hash";
+
 #import "Hash_Table";
+#import "Bucket_Array";
 #import "Flat_Pool";
 
 #import "System";
@@ -237,6 +222,9 @@ ImGui :: #import "ImGui";
 #import "stb_image_write"; // For Screenshots
 }
 
+// Local Project Modules
+#import "Enumerated_Array";
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Core
@@ -244,6 +232,7 @@ ImGui :: #import "ImGui";
 #load "initialize.jai";
 #load "utils.jai";
 
+#load "window.jai";
 #load "input.jai";
 #load "render.jai";
 

@@ -8,8 +8,8 @@ using program_state : struct {
     ////////////////////////////////////////////////////////////////////////////
 
     running := true;
-    current_scene : Scene = .TITLE;
-    prior_scene : Scene;
+    current_mode : Mode = .TITLE;
+    prior_mode : Mode;
 
     game : Game;
 
@@ -18,6 +18,7 @@ using program_state : struct {
         input_two : Input;
     }
 
+    window_context  : Window_Context;
     graphics_context: Graphics_Context;
     audio_context   : Audio_Context;
 
@@ -55,10 +56,10 @@ using program_state : struct {
 }
 
 
-// Scenes
+// Modes
 ////////////////////////////////////////////////////////////////////////////////
 
-Scene :: enum {
+Mode :: enum {
     TITLE;
     GAME;
     MENU;
@@ -66,15 +67,15 @@ Scene :: enum {
     DEMO;
 }
 
-switch_scene :: (new_scene: Scene) {
+switch_mode :: (new_mode: Mode) {
     using program_state;
 
-    prior_scene = current_scene;
-    current_scene = new_scene;
+    prior_mode = current_mode;
+    current_mode = new_mode;
 }
 
-return_to_prior_scene :: () {
+return_to_prior_mode :: () {
     using program_state;
 
-    current_scene, prior_scene = prior_scene, current_scene;
+    current_mode, prior_mode = prior_mode, current_mode;
 }
