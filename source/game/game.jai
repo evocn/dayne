@@ -112,7 +112,8 @@ simulate :: (using game: *Game, dt: float) {
     debug_print(tprint("Camera: %", camera), yellow);
 
     {
-        box := Box.{10, 10, 40, 20};
+        margin :: 10;
+        box := Box.{margin, PIXEL_WIDTH - 20 - margin, 40, 20};
         if button(box, "Click!") {
             play_sfx("click");
         }

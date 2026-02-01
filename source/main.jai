@@ -135,6 +135,7 @@ main :: () {
                 case .MENU;
 
                 case .DEMO;
+                    simulate_demo(dt);
             }
 
             Sound_Player.update(dt);
@@ -249,6 +250,7 @@ ImGui :: #import "ImGui";
 #load "ui/ui.jai";
 #load "animation/animation.jai";
 #load "collision/collision.jai";
+#load "demo/demo.jai";
 #load "menu/menu.jai";
 
 // Tools
