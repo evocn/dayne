@@ -119,6 +119,18 @@ activate_mouse :: () {
     SDL_WarpMouseInWindow(window, window_context.window_width / 2, window_context.window_height / 2);
 }
 
+// @TODO: When you switch from fullscreen to windowed or vice versa, most applications keep your mouse in the same relative location on the screen.
+// We should do that too!
+// Right now, it's just kind of wonky.
+warp_mouse_in_preparation_for_next_mode :: (next_mode_is_fullscreen : bool) {
+    x, y: int;
+
+    if next_mode_is_fullscreen {
+    }
+
+    SDL_WarpMouseInWindow(window, x, y);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 debug_print :: (window_context: Window_Context)

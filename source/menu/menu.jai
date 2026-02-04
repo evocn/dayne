@@ -198,3 +198,40 @@ quit_game :: () {
 go_to_settings :: () {
     switch_mode(.MENU);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+draw_menu :: (using menu: Menu) {
+    use_text_shader();
+
+    k := 10;
+    total_height := k * elements.count + 2;
+
+    for elements {
+        draw_menu_element(it, total_height - (it_index + 1) * k, color=it.usual_color);
+    }
+
+    // Draw selected element over it.
+    if elements.count {
+        hovering := *elements[element_index];
+        draw_menu_element(hovering.*, total_height - (element_index + 1) * k + 1, color=hovering.*.hover_color);
+    }
+}
+
+draw_menu_element :: (using element: *Menu_Element, height : int, color := white) {
+    if kind == {
+        case .GO;
+            using cast(*Menu_Element_Go)element;
+            draw_text(name, 1, height, color=color);
+
+        case .CHECKBOX;
+            using cast(*Menu_Element_Checkbox)element;
+            str := "Off";
+            if value.* then str = "On";
+            draw_text(tprint("% - %", name, str), 1, height, color=color);
+
+        case .SLIDER;
+            using cast(*Menu_Element_Slider)element;
+            draw_text(tprint("% - %", name, value.*), 1, height, color=color);
+    }
+}

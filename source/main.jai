@@ -92,6 +92,7 @@ main :: () {
 
                 case .MENU;
                     apply_inputs(input_one, *main_menu);
+                    menu_ui();
 
                 case .GAME;
                     if input_one.start.just_pressed {
@@ -251,7 +252,9 @@ ImGui :: #import "ImGui";
 #load "animation/animation.jai";
 #load "collision/collision.jai";
 #load "demo/demo.jai";
+
 #load "menu/menu.jai";
+#load "menu/menu-ui.jai";
 
 // Tools
 #load "tools/profiler.jai";

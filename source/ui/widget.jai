@@ -21,6 +21,16 @@ get_widget_id :: (text: string) -> Widget_Id {
     return cast(Widget_Id, hash);
 }
 
+// An Imgui-like method of indicating unique IDs without changing strings. (Also for empty text UI elements)
+get_widget_text :: (text: string) -> view: string {
+    view := text;
+
+    index := find_index_from_right(text, #char "&");
+    if index != -1 then view.count = index;
+
+    return view;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 Widget_Identifier :: struct {

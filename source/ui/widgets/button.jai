@@ -3,23 +3,90 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 Button_Visuals :: struct {
-    COLORS :: struct {
-        BOX :: struct {
-            NEUTRAL     :: black;
-            HOVERED     :: red;
-            CLICKED     :: blue;
-            DISABLED    :: gray;
+    colors : struct {
+        box : struct {
+            neutral : Color;
+            hovered : Color;
+            clicked : Color;
+            disabled : Color; 
         }
-        OUTLINE :: struct {
-            NEUTRAL     :: white;
-            HOVERED     :: gray;
-            CLICKED     :: blue;
-            DISABLED    :: black;
+        outline : struct {
+            neutral : Color;
+            hovered : Color;
+            clicked : Color;
+            disabled : Color;
         }
+        text : struct {
+            neutral : Color;
+            hovered : Color;
+            clicked : Color;
+            disabled : Color;
+        }
+    }
+
+    text : struct {
+        font_kind : Font_Kind;
+        alignment : Alignment;
     }
 }
 
-button :: (box: Box, text: string, disabled := false) -> (clicked: bool, hovered: bool, draw_call: *Button_Draw_Call)
+Button_Visuals_Default :: Button_Visuals.{
+    colors = .{
+        box = .{
+            neutral = black,
+            hovered = red,
+            clicked = blue,
+            disabled = gray,
+        },
+        outline = .{
+            neutral = white,
+            hovered = gray,
+            clicked = blue,
+            disabled = black,
+        },
+        text = .{
+            neutral = white,
+            hovered = black,
+            clicked = white,
+            disabled = black,
+        }
+    },
+
+    text = .{
+        font_kind = .MAIN,
+        alignment = .CENTER,
+    },
+};
+
+Button_Visuals_Transparent :: Button_Visuals.{
+    colors = .{
+        box = .{
+            neutral = color_none,
+            hovered = color_none,
+            clicked = color_none,
+            disabled = color_none,
+        },
+        outline = .{
+            neutral = color_none,
+            hovered = color_none,
+            clicked = color_none,
+            disabled = color_none,
+        },
+        text = .{
+            neutral = white,
+            hovered = blue,
+            clicked = black,
+            disabled = gray,
+        }
+    },
+
+    text = .{
+        font_kind = .MAIN,
+        alignment = .CENTER,
+    },
+};
+
+button :: (box: Box, text: string, disabled := false, visuals := Button_Visuals_Default) -> (clicked: bool, hovered: bool, draw_call: *Button_Draw_Call)
 {
     id := get_widget_id(text);
 
@@ -61,27 +128,39 @@ button :: (box: Box, text: string, disabled := false) -> (clicked: bool, hovered
         draw_call.box   = box;
         draw_call.text  = text;
 
+        draw_call.font_kind = visuals.text.font_kind;
+        draw_call.text_alignment = visuals.text.alignment;
+
+        // Color
         {
             if is_active(id) {
-                draw_call.box_color     = Button_Visuals.COLORS.BOX.CLICKED;
-                draw_call.outline_color = Button_Visuals.COLORS.OUTLINE.CLICKED;
+                draw_call.box_color     = visuals.colors.box.clicked;
+                draw_call.outline_color = visuals.colors.outline.clicked;
+                draw_call.text_color    = visuals.colors.text.clicked;
             }
             else if is_hot(id) {
-                draw_call.box_color     = Button_Visuals.COLORS.BOX.HOVERED;
-                draw_call.outline_color = Button_Visuals.COLORS.OUTLINE.HOVERED;
+                draw_call.box_color     = visuals.colors.box.hovered;
+                draw_call.outline_color = visuals.colors.outline.hovered;
+                draw_call.text_color    = visuals.colors.text.hovered;
             }
             else {
-                draw_call.box_color     = Button_Visuals.COLORS.BOX.NEUTRAL;
-                draw_call.outline_color = Button_Visuals.COLORS.OUTLINE.NEUTRAL;
+                draw_call.box_color     = visuals.colors.box.neutral;
+                draw_call.outline_color = visuals.colors.outline.neutral;
+                draw_call.text_color    = visuals.colors.text.neutral;
             }
 
             if disabled {
-                draw_call.box_color     = Button_Visuals.COLORS.BOX.DISABLED;
-                draw_call.outline_color = Button_Visuals.COLORS.OUTLINE.DISABLED;
+                draw_call.box_color     = visuals.colors.box.disabled;
+                draw_call.outline_color = visuals.colors.outline.disabled;
+                draw_call.text_color    = visuals.colors.text.disabled;
             }
         }
 
         array_add(*ui_context.draw_calls, cast(*Widget_Draw_Call, draw_call));
+    }
+
+    if clicked {
+        play_sfx("click");
     }
 
     return clicked, within, draw_call;
@@ -94,24 +173,38 @@ Button_Draw_Call :: struct {
     box         : Box;
     text        : string;
 
+    font_kind : Font_Kind;
+    text_alignment : Alignment;
+
     using colors : struct {
-        box_color   : Color;
-        outline_color : Color;
+        box_color       : Color;
+        outline_color   : Color;
+        text_color      : Color;
     }
 }
 
 button_draw :: (using draw_call: Button_Draw_Call) {
+    margin :: 1;
+    left   := box.x + margin;
+    right  := box.x + box.width - margin;
+    middle := box.x + box.width / 2;
+    bottom := box.y + margin;
+
     draw(box, box_color, outline_color);
 
-    middle := box.x + box.width / 2;
-    bottom := box.y + 2;
+    x : int;
+    if text_alignment == {
+        case .LEFT;     x = left;
+        case .CENTER;   x = middle;
+        case .RIGHT;    x = right;
+    }
 
     draw_text(
-        text,
-        x = middle,
+        get_widget_text(text),
+        x = x,
         y = bottom,
-        alignment   = Alignment.CENTER,
-        font        = .MAIN,
-        color       = white,
+        alignment   = text_alignment,
+        font        = font_kind,
+        color       = text_color,
     );
 }

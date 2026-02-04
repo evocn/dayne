@@ -90,7 +90,7 @@ draw :: (box: Box, color : Color,
         doing_outline   := outline_color != color_none;
 
         if !doing_fill && !doing_outline {
-            log_error("What are we doing here? lol");
+            //log_error("What are we doing here? lol");
             return;
         }
         else if doing_fill && !doing_outline {

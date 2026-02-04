@@ -112,11 +112,19 @@ simulate :: (using game: *Game, dt: float) {
     debug_print(tprint("Camera: %", camera), yellow);
 
     {
+        visuals := Button_Visuals_Default;
+        visuals.colors.box.neutral = color_none;
+        visuals.colors.outline.neutral = color_none;
+
         margin :: 10;
-        box := Box.{margin, PIXEL_WIDTH - 20 - margin, 40, 20};
-        if button(box, "Click!") {
-            play_sfx("click");
+        box := Box.{PIXEL_WIDTH - 40 - margin, margin, 10, 10};
+        if button(box, "<&1", visuals = visuals) {
         }
+        box.x += 12;
+
+        if button(box, ">&1", visuals = visuals) {
+        }
+        box.x += 12;
     }
 }
 
