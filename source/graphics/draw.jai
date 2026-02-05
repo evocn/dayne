@@ -163,7 +163,7 @@ draw_mouse_cursor :: (
     use_sprite_shader();
 
     x_offset_for_sprite := -6;
-    y_offset_for_sprite := -10;
+    y_offset_for_sprite := -13;
 
     draw_sprite_at(
         position + .{x_offset_for_sprite, y_offset_for_sprite},

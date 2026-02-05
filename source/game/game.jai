@@ -125,6 +125,13 @@ simulate :: (using game: *Game, dt: float) {
         if button(box, ">&1", visuals = visuals) {
         }
         box.x += 12;
+
+        {
+            box := Box.{0, 0, 40, 14};
+            tooltip(box, "right", ">&1");
+
+            tooltip(box, "left", "<&1");
+        }
     }
 }
 

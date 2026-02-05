@@ -33,8 +33,7 @@ draw_text :: (text: string, x: int, y: int,
     }
 }
 
-//
-//
+////////////////////////////////////////////////////////////////////////////////
 
 Font_Kind :: enum #complete {
     MAIN;
@@ -121,8 +120,7 @@ render_text :: (font : Font, text : string, x : float, y : float, alignment : Al
     }
 }
 
-//
-//
+////////////////////////////////////////////////////////////////////////////////
 
 Character_Glyph :: struct {
     id      : GLuint;

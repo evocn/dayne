@@ -73,10 +73,10 @@ switch_mode :: (new_mode: Mode) {
 
     prior_mode = current_mode;
     current_mode = new_mode;
+    reset(*ui_context);
 }
 
 return_to_prior_mode :: () {
     using program_state;
-
-    current_mode, prior_mode = prior_mode, current_mode;
+    switch_mode(prior_mode);
 }

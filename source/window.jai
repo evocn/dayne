@@ -48,6 +48,16 @@ initialize_window_context :: () {
 }
 
 go_fullscreen :: () {
+    mouse_ratio_relative_to_window : Vector2;
+    {
+        old_window  : SDL_Point;
+        old_mouse   : SDL_Point;
+        SDL_GetWindowSize(window, *old_window.x, *old_window.y);
+        SDL_GetMouseState(*old_mouse.x, *old_mouse.y);
+        mouse_ratio_relative_to_window.x = cast(float, old_mouse.x) / old_window.x;
+        mouse_ratio_relative_to_window.y = cast(float, old_mouse.y) / old_window.y;
+    }
+
     display_mode : SDL_DisplayMode;
     SDL_GetDesktopDisplayMode(0, *display_mode);
 
@@ -57,9 +67,27 @@ go_fullscreen :: () {
     SDL_SetWindowSize(window, display_mode.w, display_mode.h);
 
     SDL_GetWindowDisplayMode(window, *display_mode);
+
+    {
+        new_window  : SDL_Point;
+        SDL_GetWindowSize(window, *new_window.x, *new_window.y);
+        x := cast(s32, new_window.x * mouse_ratio_relative_to_window.x);
+        y := cast(s32, new_window.y * mouse_ratio_relative_to_window.y);
+        SDL_WarpMouseInWindow(window, x, y);
+    }
 }
 
 go_windowed :: () {
+    mouse_ratio_relative_to_window : Vector2;
+    {
+        old_window  : SDL_Point;
+        old_mouse   : SDL_Point;
+        SDL_GetWindowSize(window, *old_window.x, *old_window.y);
+        SDL_GetMouseState(*old_mouse.x, *old_mouse.y);
+        mouse_ratio_relative_to_window.x = cast(float, old_mouse.x) / old_window.x;
+        mouse_ratio_relative_to_window.y = cast(float, old_mouse.y) / old_window.y;
+    }
+
     display_mode : SDL_DisplayMode;
     SDL_GetDesktopDisplayMode(0, *display_mode);
 
@@ -81,6 +109,14 @@ go_windowed :: () {
     SDL_SetWindowResizable(window, SDL_FALSE);
 
     SDL_GetWindowDisplayMode(window, *display_mode);
+
+    {
+        new_window  : SDL_Point;
+        SDL_GetWindowSize(window, *new_window.x, *new_window.y);
+        x := cast(s32, new_window.x * mouse_ratio_relative_to_window.x);
+        y := cast(s32, new_window.y * mouse_ratio_relative_to_window.y);
+        SDL_WarpMouseInWindow(window, x, y);
+    }
 }
 
 set_screen_mode_according_to_fullscreen_variable :: () {
@@ -117,18 +153,6 @@ activate_mouse :: () {
     SDL_ShowCursor(1);
     SDL_SetRelativeMouseMode(SDL_FALSE);
     SDL_WarpMouseInWindow(window, window_context.window_width / 2, window_context.window_height / 2);
-}
-
-// @TODO: When you switch from fullscreen to windowed or vice versa, most applications keep your mouse in the same relative location on the screen.
-// We should do that too!
-// Right now, it's just kind of wonky.
-warp_mouse_in_preparation_for_next_mode :: (next_mode_is_fullscreen : bool) {
-    x, y: int;
-
-    if next_mode_is_fullscreen {
-    }
-
-    SDL_WarpMouseInWindow(window, x, y);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
