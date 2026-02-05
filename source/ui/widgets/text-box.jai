@@ -3,28 +3,78 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 Text_Box_Visuals :: struct {
-    Colors :: struct {
-        Neutral     :: struct {
-            BACKGROUND  :: black;
-            TEXT        :: white;
+    colors : struct {
+        box : struct {
+            neutral : Color;
+            disabled : Color; 
         }
-        Disabled    :: struct {
-            BACKGROUND  :: gray;
-            TEXT        :: white;
+        outline : struct {
+            neutral : Color;
+            disabled : Color;
+        }
+        text : struct {
+            neutral : Color;
+            disabled : Color;
         }
     }
 
-    Formatting :: struct {
-        Margin :: struct {
-            X :: 4;
-            Y :: 4;
-        }
-
-        LINE_SEPARATION :: 0;
+    text : struct {
+        font_kind : Font_Kind;
+        alignment : Alignment;
+        margin : Pair;
+        line_separation : int;
     }
 }
 
-text_box :: (box: Box, text: string, disabled := false, text_alignment := Alignment.LEFT) -> (draw_call: *Text_Box_Draw_Call) {
+Text_Box_Visuals_Default :: Text_Box_Visuals.{
+    colors = .{
+        box = .{
+            neutral = black,
+            disabled = gray,
+        },
+        outline = .{
+            neutral = white,
+            disabled = white,
+        },
+        text = .{
+            neutral = white,
+            disabled = black,
+        }
+    },
+
+    text = .{
+        font_kind = .MAIN,
+        alignment = .LEFT,
+        margin = .{ x = 4, y = 4, },
+        line_separation = 0,
+    },
+};
+
+Text_Box_Visuals_Transparent :: Text_Box_Visuals.{
+    colors = .{
+        box = .{
+            neutral = color_none,
+            disabled = color_none,
+        },
+        outline = .{
+            neutral = color_none,
+            disabled = color_none,
+        },
+        text = .{
+            neutral = white,
+            disabled = gray,
+        }
+    },
+
+    text = .{
+        font_kind = .MAIN,
+        alignment = .LEFT,
+        margin = .{ x = 4, y = 4, },
+        line_separation = 0,
+    },
+};
+
+text_box :: (box: Box, text: string, disabled := false, visuals := Text_Box_Visuals_Default) -> (draw_call: *Text_Box_Draw_Call) {
     id := get_widget_id(text);
 
     within := mouse_is_within(box);
@@ -50,15 +100,21 @@ text_box :: (box: Box, text: string, disabled := false, text_alignment := Alignm
 
         draw_call.box   = box;
         draw_call.text  = text;
-        draw_call.text_alignment = text_alignment;
+
+        draw_call.font_kind = visuals.text.font_kind;
+        draw_call.alignment = visuals.text.alignment;
+        draw_call.margin    = visuals.text.margin;
+        draw_call.line_separation = visuals.text.line_separation;
 
         if disabled {
-            draw_call.background_color = Text_Box_Visuals.Colors.Disabled.BACKGROUND;
-            draw_call.text_color = Text_Box_Visuals.Colors.Disabled.TEXT;
+            draw_call.box_color     = visuals.colors.box.disabled;
+            draw_call.outline_color = visuals.colors.outline.disabled;
+            draw_call.text_color    = visuals.colors.text.disabled;
         }
         else {
-            draw_call.background_color = Text_Box_Visuals.Colors.Neutral.BACKGROUND;
-            draw_call.text_color = Text_Box_Visuals.Colors.Neutral.TEXT;
+            draw_call.box_color     = visuals.colors.box.neutral;
+            draw_call.outline_color = visuals.colors.outline.neutral;
+            draw_call.text_color    = visuals.colors.text.neutral;
         }
 
         array_add(*ui_context.draw_calls, cast(*Widget_Draw_Call, draw_call));
@@ -73,25 +129,30 @@ Text_Box_Draw_Call :: struct {
 
     box         : Box;
     text        : string;
-    text_alignment : Alignment;
+
+    font_kind : Font_Kind;
+    alignment : Alignment;
+    margin : Pair;
+    line_separation : int;
 
     using colors : struct {
-        background_color    : Color;
-        text_color          : Color;
+        box_color       : Color;
+        outline_color   : Color;
+        text_color      : Color;
     }
 }
 
 text_box_draw :: (using draw_call: Text_Box_Draw_Call) {
-    draw(box, background_color);
+    draw(box, box_color, outline_color);
 
     center := box.x + box.width / 2;
-    left := box.x + Text_Box_Visuals.Formatting.Margin.X;
-    right := box.x + box.width - Text_Box_Visuals.Formatting.Margin.X;
-    top := box.y + box.height - 8 - Text_Box_Visuals.Formatting.LINE_SEPARATION - Text_Box_Visuals.Formatting.Margin.Y;
+    left := box.x + margin.x;
+    right := box.x + margin.x;
+    top := box.y + box.height - 8 - line_separation - margin.y;
 
     {
         x : int;
-        if text_alignment == {
+        if alignment == {
             case .LEFT;     x = left;
             case .CENTER;   x = center;
             case .RIGHT;    x = right;
@@ -101,10 +162,10 @@ text_box_draw :: (using draw_call: Text_Box_Draw_Call) {
             text,
             x = x,
             y = top,
-            alignment   = text_alignment,
-            font        = .MAIN,
+            alignment   = alignment,
+            font        = font_kind,
             color       = text_color,
-            separation  = Text_Box_Visuals.Formatting.LINE_SEPARATION,
+            separation  = line_separation,
         );
     }
 }

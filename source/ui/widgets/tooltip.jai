@@ -2,7 +2,31 @@
 // Tooltip (Widget)
 ////////////////////////////////////////////////////////////////////////////////
 
-tooltip :: (box: Box, text: string, hover_element_label: string, text_alignment := Alignment.LEFT) -> (draw_call: *Text_Box_Draw_Call) {
+Tooltip_Visuals_Default :: Text_Box_Visuals.{
+    colors = .{
+        box = .{
+            neutral = black,
+            disabled = gray,
+        },
+        outline = .{
+            neutral = color_none,
+            disabled = color_none,
+        },
+        text = .{
+            neutral = white,
+            disabled = black,
+        }
+    },
+
+    text = .{
+        font_kind = .MAIN,
+        alignment = .CENTER,
+        margin = .{ x = 2, y = 2, },
+        line_separation = 0,
+    },
+};
+
+tooltip :: (box: Box, text: string, hover_element_label: string, visuals := Tooltip_Visuals_Default) -> (draw_call: *Text_Box_Draw_Call) {
     id := get_widget_id(text);
 
     // We only display this element if the specified hover element is hot.
@@ -48,11 +72,16 @@ tooltip :: (box: Box, text: string, hover_element_label: string, text_alignment 
 
         draw_call.box   = moved_box;
         draw_call.text  = text;
-        draw_call.text_alignment = text_alignment;
+
+        draw_call.font_kind = visuals.text.font_kind;
+        draw_call.alignment = visuals.text.alignment;
+        draw_call.margin    = visuals.text.margin;
+        draw_call.line_separation = visuals.text.line_separation;
 
         {
-            draw_call.background_color = Text_Box_Visuals.Colors.Neutral.BACKGROUND;
-            draw_call.text_color = Text_Box_Visuals.Colors.Neutral.TEXT;
+            draw_call.box_color = visuals.colors.box.neutral;
+            draw_call.outline_color = visuals.colors.outline.neutral;
+            draw_call.text_color = visuals.colors.text.neutral;
         }
 
         array_add(*ui_context.draw_calls, cast(*Widget_Draw_Call, draw_call));

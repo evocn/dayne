@@ -27,6 +27,7 @@ Button_Visuals :: struct {
     text : struct {
         font_kind : Font_Kind;
         alignment : Alignment;
+        margin : Pair;
     }
 }
 
@@ -55,6 +56,7 @@ Button_Visuals_Default :: Button_Visuals.{
     text = .{
         font_kind = .MAIN,
         alignment = .CENTER,
+        margin = .{ x = 2, y = 2, },
     },
 };
 
@@ -83,6 +85,7 @@ Button_Visuals_Transparent :: Button_Visuals.{
     text = .{
         font_kind = .MAIN,
         alignment = .CENTER,
+        margin = .{ x = 2, y = 2, },
     },
 };
 
@@ -130,6 +133,7 @@ button :: (box: Box, text: string, disabled := false, visuals := Button_Visuals_
 
         draw_call.font_kind = visuals.text.font_kind;
         draw_call.text_alignment = visuals.text.alignment;
+        draw_call.margin = visuals.text.margin;
 
         // Color
         {
@@ -175,6 +179,7 @@ Button_Draw_Call :: struct {
 
     font_kind : Font_Kind;
     text_alignment : Alignment;
+    margin : Pair;
 
     using colors : struct {
         box_color       : Color;
@@ -184,11 +189,10 @@ Button_Draw_Call :: struct {
 }
 
 button_draw :: (using draw_call: Button_Draw_Call) {
-    margin :: 1;
-    left   := box.x + margin;
-    right  := box.x + box.width - margin;
+    left   := box.x + margin.x;
+    right  := box.x + box.width - margin.x;
     middle := box.x + box.width / 2;
-    bottom := box.y + margin;
+    bottom := box.y + margin.y;
 
     draw(box, box_color, outline_color);
 

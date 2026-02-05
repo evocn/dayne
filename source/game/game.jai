@@ -110,29 +110,6 @@ simulate :: (using game: *Game, dt: float) {
 
     debug_print(tprint("Simulated % entities", entities.count), yellow);
     debug_print(tprint("Camera: %", camera), yellow);
-
-    {
-        visuals := Button_Visuals_Default;
-        visuals.colors.box.neutral = color_none;
-        visuals.colors.outline.neutral = color_none;
-
-        margin :: 10;
-        box := Box.{PIXEL_WIDTH - 40 - margin, margin, 10, 10};
-        if button(box, "<&1", visuals = visuals) {
-        }
-        box.x += 12;
-
-        if button(box, ">&1", visuals = visuals) {
-        }
-        box.x += 12;
-
-        {
-            box := Box.{0, 0, 40, 14};
-            tooltip(box, "right", ">&1");
-
-            tooltip(box, "left", "<&1");
-        }
-    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
