@@ -33,6 +33,46 @@ color_from_hex :: ($h: u32) -> Color {
     return color;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+main_color_palette :: #run -> [] Color {
+    return .[
+        black,
+        gray,
+        white,
+
+        brown,
+        purple,
+        green,
+        blue,
+
+        red,
+        yellow,
+        orange,
+        seafoam,
+        teal,
+        pink,
+    ];
+}
+
+draw_palette :: (palette: [] Color, origin: Pair) {
+    swatch_size :: 8;
+    separation  :: 2;
+
+    box := Box.{
+        x = origin.x,
+        y = origin.y,
+        width  = swatch_size,
+        height = swatch_size,
+    };
+
+    for color : palette {
+        draw(box, color, outline_color = black);
+        box.y -= swatch_size + separation;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 // Rainbow Color
 

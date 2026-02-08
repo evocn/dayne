@@ -6,14 +6,14 @@ initialize_everything :: () {
     initialize_sdl();
     initialize_gl();
 
-    #if DEVELOPER_TOOLS {
-        initialize_imgui();
-    }
-
     initialize_window_context();
     initialize_graphics_context();
     initialize_audio_context();
     initialize_ui_context();
+
+    #if DEVELOPER_TOOLS {
+        initialize_imgui();
+    }
 
     apply_default_settings :: () {
         window_context.fullscreen = false;
@@ -48,6 +48,8 @@ initialize_everything :: () {
 // Subsystem Initialization ////////////////////////////////////////////////////
 initialize_sdl :: () {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
+
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 
     window = SDL_CreateWindow(program_title,
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_context.window_width, window_context.window_height,
@@ -101,6 +103,10 @@ initialize_imgui :: () {
 
     io := ImGui.GetIO();
     io.IniFilename = "bin/imgui.ini";
+
+    font_size := program_state.window_context.window_height / 60.0;
+    log("%", font_size);
+    io.Fonts.AddFontFromFileTTF(io.Fonts, "assets/fonts/Merriweather/Merriweather-VariableFont_opsz,wdth,wght.ttf", font_size, null, io.Fonts.GetGlyphRangesDefault(io.Fonts));
 
     // Settings
     {

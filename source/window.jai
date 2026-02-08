@@ -61,12 +61,10 @@ go_fullscreen :: () {
     display_mode : SDL_DisplayMode;
     SDL_GetDesktopDisplayMode(0, *display_mode);
 
-    SDL_SetWindowResizable(window, SDL_FALSE);
     SDL_SetWindowBordered(window, SDL_FALSE);
     SDL_SetWindowPosition(window, 0, 0);
     SDL_SetWindowSize(window, display_mode.w, display_mode.h);
-
-    SDL_GetWindowDisplayMode(window, *display_mode);
+    SDL_SetWindowResizable(window, SDL_FALSE);
 
     {
         new_window  : SDL_Point;
@@ -96,7 +94,6 @@ go_windowed :: () {
     }
     scaled_width, scaled_height := get_scaled_window_dimensions();
 
-    SDL_SetWindowResizable(window, SDL_TRUE);
     SDL_SetWindowBordered(window, SDL_TRUE);
     SDL_SetWindowSize(window,
         scaled_width,
@@ -106,9 +103,6 @@ go_windowed :: () {
         display_mode.w / 2 - scaled_width / 2,
         display_mode.h / 2 - scaled_height / 2
     );
-    SDL_SetWindowResizable(window, SDL_FALSE);
-
-    SDL_GetWindowDisplayMode(window, *display_mode);
 
     {
         new_window  : SDL_Point;

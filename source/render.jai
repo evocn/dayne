@@ -37,6 +37,8 @@ render :: (game: Game, menu: Menu) {
                 draw(debug_messages);
 
                 draw(last_frame_report);
+
+                draw_palette(main_color_palette, .{PIXEL_WIDTH - 10, PIXEL_HEIGHT - 10});
             }
 
             if want_screenshot {
